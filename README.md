@@ -1,6 +1,6 @@
 # Zenit Studio
 
-Repositorio de organización de **Zenit Studio** (Mikel): copia de la documentación de todos los proyectos y de las sesiones programadas, en un solo sitio. **Es una copia de referencia**: cada juego sigue viviendo y publicándose en su propio repositorio, y las sesiones automáticas siguen trabajando allí. Este repositorio no tiene sesiones programadas ni flujos de publicación, así que no interfiere con nada.
+Repositorio de **Zenit Studio** (Mikel): copia de la documentación de Scrap Empire y Óxido (que siguen viviendo y publicándose en sus propios repositorios, donde trabajan sus sesiones automáticas) y **hogar de los juegos nuevos**, empezando por Space Harvest. Este repositorio no tiene sesiones programadas ni flujos de publicación, así que no interfiere con nada.
 
 Foto tomada el 2026-10-21.
 
@@ -10,7 +10,7 @@ Foto tomada el 2026-10-21.
 |---|---|---|---|
 | `idlescrapyard/` | Scrap Empire: Idle Factory (antes Chatarrero), idle de desguace para Android | `MikelJka/IdleScrapyard` (web: https://mikeljka.github.io/IdleScrapyard/) | En desarrollo; publicado en GitHub Pages |
 | `oxido/` | Óxido, gestión de colonia postapocalíptica (estilo RimWorld) | `MikelJka/OxidoGame` (web: https://mikeljka.github.io/OxidoGame/) | En desarrollo; fase 5 cerrada, empieza la fase 6 (facciones) |
-| `space-harvest/` | Space Harvest, idle de estación espacial: agricultura, minería de planetas y energía solar | Aún sin repositorio propio (vive en `space-harvest/` de IdleScrapyard) | Diseño y pruebas de gráficos (PixiJS y Blender) |
+| `space-harvest/` | Space Harvest, idle de estación espacial: agricultura, minería de planetas y energía solar | **Vive aquí, en Zenit** (monorepo de juegos; queda una copia con el prototipo web en `space-harvest/` de IdleScrapyard) | Documento de diseño completo en borrador (`space-harvest/docs/DISENO.md`); pruebas de gráficos hechas |
 
 Cada carpeta lleva su `CLAUDE.md` (instrucciones de trabajo) y su `docs/` (diseño, feedback, progreso, roadmap).
 

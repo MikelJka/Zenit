@@ -1,10 +1,11 @@
 # Space Harvest
 
-Juego idle de estación espacial de Zenit Studio: **agricultura, minería de planetas y recogida de energía solar**, hecho por módulos (investigación primero). Proyecto **separado** de Scrap Empire: Idle Factory (el resto de este repositorio). Esta carpeta es el paquete completo para llevárselo a su propio repositorio cuando Mikel lo cree; no depende de nada fuera de ella.
+Juego idle de estación espacial de Zenit Studio: **agricultura, minería de planetas y recogida de energía solar**, hecho por módulos (investigación primero). Vive en el repositorio privado `zenit` (junto a las copias de documentación de Scrap Empire y Óxido) y no depende de nada fuera de esta carpeta.
 
 ## Contenido
 
-- `docs/DISENO.md` — diseño: idea, pilares, bucle, módulos y orden, arquitectura, plan de gráficos y preguntas.
+- `docs/DISENO.md` — documento de diseño completo (visión, economía, módulos, sistemas, arte, arquitectura, hitos, riesgos y decisiones abiertas).
+- `docs/BORRADOR_INICIAL.md` — primer borrador con las pruebas de gráficos (PixiJS y Blender).
 - `docs/FEEDBACK.md` — decisiones de Mikel y preguntas abiertas.
 - `docs/PROGRESO.md` — diario de trabajo.
 - `prototipos/espacio-pixi/` — prueba de gráficos con PixiJS (4 escenas y capturas). Publicada en `/prototipos/espacio/` de la web de Scrap Empire mientras no haya repositorio propio.
@@ -14,6 +15,6 @@ Juego idle de estación espacial de Zenit Studio: **agricultura, minería de pla
 
 Idioma: código en inglés; comentarios, textos del juego, commits y documentación en español. Simulación pura y determinista separada del dibujado. Coste cero: solo herramientas gratuitas y recursos CC0 o de licencia comercial. Mikel aprueba todo lo nuevo.
 
-## Cómo moverlo a un repositorio nuevo
+## Nota sobre la copia en Scrap Empire
 
-Copiar el contenido de `space-harvest/` a la raíz del repositorio nuevo, ajustar la ruta del paso «Prototipo de gráficos» de `.github/workflows/deploy.yml` de Scrap Empire (o quitarlo) y borrar esta carpeta de Scrap Empire.
+Todavía queda una copia de esta carpeta en el repositorio de Scrap Empire (`space-harvest/`), de donde se publica el prototipo en `/prototipos/espacio/`. La copia de referencia es la de Zenit.
