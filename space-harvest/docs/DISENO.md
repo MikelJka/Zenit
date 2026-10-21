@@ -308,7 +308,9 @@ Cada hito acaba **jugable y publicado** en una versión web de prueba.
 | Economía rota con tantos sistemas | Simulación de jugador desde el primer hito; todo en JSON con números ajustables |
 | Mezclar proyectos y sesiones automáticas | Monorepo Zenit con carpetas por juego; cada juego con su `CLAUDE.md`, y el bloqueo manual en PROGRESO para trabajar sin pisarse |
 
-## 15. Decisiones abiertas (con recomendación)
+## 15. Decisiones (todas las recomendaciones aceptadas por Mikel el 2026-10-21)
+
+**[Decidido]** Mikel acepta las recomendaciones de D1-D11. Se conserva el texto original.
 
 1. **D1 — Tono:** ciencia ficción amable y realista (recomendado) o fantasía espacial.
 2. **D2 — Prestigio «Nueva Estación»:** sí, con Legado y biomas (recomendado) o no.

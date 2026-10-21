@@ -8,11 +8,11 @@ Foto tomada el 2026-10-21.
 
 | Carpeta | Proyecto | Repositorio de origen | Estado |
 |---|---|---|---|
-| `idlescrapyard/` | Scrap Empire: Idle Factory (antes Chatarrero), idle de desguace para Android | `MikelJka/IdleScrapyard` (web: https://mikeljka.github.io/IdleScrapyard/) | En desarrollo; publicado en GitHub Pages |
+| `scrap-empire/` | Scrap Empire: Idle Factory (antes Chatarrero), idle de desguace para Android | **Código y documentación completos copiados aquí** (foto del 2026-10-21); el original sigue operativo en `MikelJka/IdleScrapyard` (web: https://mikeljka.github.io/IdleScrapyard/, sesión programada y publicación). Ver `scrap-empire/MIGRACION.md` | En desarrollo; publicado en GitHub Pages |
 | `oxido/` | Óxido, gestión de colonia postapocalíptica (estilo RimWorld) | `MikelJka/OxidoGame` (web: https://mikeljka.github.io/OxidoGame/) | En desarrollo; fase 5 cerrada, empieza la fase 6 (facciones) |
 | `space-harvest/` | Space Harvest, idle de estación espacial: agricultura, minería de planetas y energía solar | **Vive aquí, en Zenit** (monorepo de juegos; queda una copia con el prototipo web en `space-harvest/` de IdleScrapyard) | Documento de diseño completo en borrador (`space-harvest/docs/DISENO.md`); pruebas de gráficos hechas |
 
-Cada carpeta lleva su `CLAUDE.md` (instrucciones de trabajo) y su `docs/` (diseño, feedback, progreso, roadmap).
+Cada carpeta lleva su `CLAUDE.md` (instrucciones de trabajo) y su `docs/` (diseño, feedback, progreso, roadmap). `scrap-empire/` además lleva todo el código.
 
 ## Sesiones programadas
 
@@ -27,6 +27,6 @@ Ver `sesiones-programadas/README.md`: qué hay, cada cuánto y el texto de la se
 
 ## Pendiente de Mikel (resumen, 2026-10-21)
 
-- **IdleScrapyard:** comprobar el juego en el móvil; crear la cuenta de desarrollador de Play y confirmar el identificador `studio.zenit.scrapempire`; crear el proyecto de Firebase del ranking al publicar.
+- **Scrap Empire:** comprobar el juego en el móvil; crear la cuenta de desarrollador de Play y confirmar el identificador `studio.zenit.scrapempire`; crear el proyecto de Firebase del ranking al publicar.
 - **Óxido:** nada abierto (decisiones del muelle, balsas y fase 5 ya anotadas).
 - **Space Harvest:** subir los paquetes CC0 en `.glb`, decidir el repositorio propio, tripulación con o sin personalidad y los fps del prototipo en el móvil.

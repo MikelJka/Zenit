@@ -1,0 +1,86 @@
+[
+  {
+    "id": "earned1k",
+    "name": "Primeros mil",
+    "kind": "earned",
+    "value": 1000
+  },
+  {
+    "id": "earned1m",
+    "name": "Millonario de chatarra",
+    "kind": "earned",
+    "value": 1000000
+  },
+  {
+    "id": "earned1b",
+    "name": "Magnate del desguace",
+    "kind": "earned",
+    "value": 1000000000
+  },
+  {
+    "id": "zones2",
+    "name": "Segunda línea",
+    "kind": "zones",
+    "value": 2
+  },
+  {
+    "id": "zones4",
+    "name": "Media fábrica",
+    "kind": "zones",
+    "value": 4
+  },
+  {
+    "id": "zones10",
+    "name": "Imperio completo",
+    "kind": "zones",
+    "value": 10
+  },
+  {
+    "id": "zones8",
+    "name": "Fábrica completa",
+    "kind": "zones",
+    "value": 8
+  },
+  {
+    "id": "ml5",
+    "name": "Máquina grado 1",
+    "kind": "machineLevel",
+    "value": 5
+  },
+  {
+    "id": "ml15",
+    "name": "Máquina grado 3",
+    "kind": "machineLevel",
+    "value": 15
+  },
+  {
+    "id": "ml30",
+    "name": "Máquina de leyenda",
+    "kind": "machineLevel",
+    "value": 30
+  },
+  {
+    "id": "carts5",
+    "name": "Flota de carretillas",
+    "kind": "carts",
+    "value": 5
+  },
+  {
+    "id": "helper10",
+    "name": "Ayudante veterano",
+    "kind": "helperLevel",
+    "value": 10
+  },
+  {
+    "id": "machines9",
+    "name": "Nave llena de máquinas",
+    "kind": "machines",
+    "value": 9
+  },
+  {
+    "id": "orders1",
+    "name": "Primer pedido",
+    "kind": "orders",
+    "value": 1
+  }
+]

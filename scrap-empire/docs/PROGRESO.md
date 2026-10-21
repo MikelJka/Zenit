@@ -2,7 +2,22 @@
 
 Diario de sesiones, la más reciente arriba.
 
-> **BLOQUEO (2026-10-21): Mikel trabaja en esta sesión a mano hasta las 13:00 (hora local).** Las sesiones automáticas no deben tocar nada hasta esa hora: si lo lees antes, termina sin commits ni notificación.
+## 2026-10-21 — Tope en las huellas de salida
+
+- Cada producto del muelle admite como máximo 500 piezas (`dock.productCap`, valor provisional; el «x» no lo dio Mikel). Con la huella llena las carretillas de esa línea esperan con su tanda, el palé se llena y la línea para; al salir un camión vuelve a producir. En el panel de la línea se ve «piezas/tope».
+- Los pedidos especiales limitan su cantidad a la parte de lo que se llevan los camiones (con el muelle saturado no se podrían cumplir si no). La simulación de equilibrio no cambia (el muelle ya era el cuello de botella).
+- Qué probar: dejar una línea muy mejorada y ver cómo para al llegar al tope.
+
+## 2026-10-21 — Suelo con más detalle y pruebas de rendimiento
+
+- Suelo del desguace con más calidad, horneado en la imagen estática (no cuesta nada al jugar): brillo diagonal, borde más oscuro, manchas de aceite, marcas de ruedas, motas de polvo y franja de peligro junto al muelle (`floorWearSvg` en `src/ui/yard.ts`).
+- Pruebas de rendimiento con `scripts/perf.mjs` (ahora acepta `OUTDIR` para comparar dos compilaciones; CPU ×4, 3 pasadas alternas; el ruido es de ±4 fps): **sin mejora medible** al convertir las máquinas en imágenes fijas con partes vivas encima (24-39 fps frente a 31-40; se descartó y no está en el código), al quitar la viñeta del mapa, ni con `shape-rendering: optimizeSpeed` (peor: 30-33 frente a 35-41). La interfaz nueva y el suelo con detalle no empeoran los fps (36,7 frente a 34,5).
+- Conclusión: el dibujado con SVG está cerca de su techo (~35 fps con la CPU frenada ×4); para ganar de verdad hay que pasar el mapa a canvas/WebGL (como la prueba de PixiJS de Space Harvest), una tarea grande que necesita aprobación de Mikel.
+
+## 2026-10-21 — Pulido visual v2
+
+- Interfaz con más relieve y profundidad (solo CSS, sin coste en el mapa): barra de dinero con degradado y brillo, moneda con volumen, producción por segundo en píldora, botones laterales con reflejo y brillo al estar listos, hoja de paneles con asa y degradado, botones de compra con más relieve, icono con volumen y precio con brillo, barras de progreso con degradado, aviso amarillo con brillo, foco visible al navegar con teclado y barra de desplazamiento fina. Respeta «reducir movimiento» y el alto contraste.
+- Qué probar: abrir una línea y el panel de objetivos en el móvil.
 
 ## 2026-10-21 — Space Harvest se separa de este proyecto
 

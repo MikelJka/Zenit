@@ -1,0 +1,160 @@
+{
+  "costGrowth": 1.1,
+  "offlineCapSeconds": 3600,
+  "tap": {
+    "scrap": 1
+  },
+  "scrapTrucks": {
+    "baseCost": 10,
+    "scrapPerSecond": 0.5
+  },
+  "carts": {
+    "start": 1,
+    "baseCost": 15,
+    "tripSeconds": 10,
+    "batch": 10,
+    "batchPerLevel": 5
+  },
+  "dock": {
+    "baseLoad": 10,
+    "loadPerLevel": 5,
+    "baseCost": 25,
+    "returnSeconds": 5,
+    "productCap": 500
+  },
+  "zoneUpgrades": {
+    "speed": {
+      "baseCost": 20,
+      "effectPerLevel": 0.1
+    },
+    "capacity": {
+      "baseCost": 10,
+      "startCapacity": 10,
+      "effectPerLevel": 10
+    },
+    "machines": {
+      "baseCost": 50
+    },
+    "machineLevel": {
+      "baseCost": 300,
+      "growth": 1.8,
+      "outputMultiplierPerLevel": 2
+    }
+  },
+  "helpers": {
+    "secondsPerLevel": 3600,
+    "maxLevel": 25,
+    "valuePerLevel": 0.1,
+    "speedPerLevel": 0.05,
+    "baseCost": 100,
+    "costGrowth": 1.5
+  },
+  "pass": {
+    "offlineCapSeconds": 28800,
+    "priceEur": 2.99
+  },
+  "boost": {
+    "multiplier": 2,
+    "seconds": 1800,
+    "cooldownSeconds": 1800
+  },
+  "goldenTruck": {
+    "everySeconds": 900,
+    "visibleSeconds": 20,
+    "dockMultiplier": 10
+  },
+  "dailyStreak": {
+    "rewardMinutes": [
+      10,
+      20,
+      30,
+      45,
+      60,
+      90,
+      120
+    ]
+  },
+  "transports": {
+    "rail": {
+      "baseLoad": 100,
+      "loadPerLevel": 50,
+      "baseCost": 500000000,
+      "returnSeconds": 60,
+      "payMultiplier": 1.5
+    },
+    "sea": {
+      "baseLoad": 300,
+      "loadPerLevel": 150,
+      "baseCost": 2500000000,
+      "returnSeconds": 300,
+      "payMultiplier": 3
+    }
+  },
+  "orders": {
+    "everySeconds": 900,
+    "windowSeconds": 120,
+    "fillSeconds": 62,
+    "bonusMultiplier": 1
+  },
+  "dailyGoals": {
+    "count": 3,
+    "levels": [
+      1,
+      2,
+      4
+    ],
+    "rewardMinutes": 10,
+    "freeGoldenSeconds": 30,
+    "windowSeconds": 600,
+    "safety": 0.5,
+    "minTrucks": 3,
+    "tapBase": 50,
+    "buyBase": 3,
+    "workingSeconds": 600
+  },
+  "routes": [
+    {
+      "id": "local",
+      "wait": 1,
+      "pay": 1,
+      "unlockMult": 0
+    },
+    {
+      "id": "near",
+      "wait": 1,
+      "pay": 1.5,
+      "unlockMult": 10
+    },
+    {
+      "id": "mid",
+      "wait": 2,
+      "pay": 3,
+      "unlockMult": 100
+    },
+    {
+      "id": "far",
+      "wait": 4,
+      "pay": 6,
+      "unlockMult": 1000
+    }
+  ],
+  "captain": {
+    "secondsPerLevel": 3600,
+    "maxLevel": 25,
+    "payPerLevel": 0.1,
+    "tripPerLevel": 0.03,
+    "baseCost": 100,
+    "costGrowth": 1.5,
+    "adCooldownSeconds": 7200
+  },
+  "warehouse": {
+    "baseCapacity": 500,
+    "capacityPerLevel": 250,
+    "maxLevel": 10,
+    "costGrowth": 1.8,
+    "baseCostFraction": 0.5,
+    "bonusPerStep": 0.05,
+    "stepFill": 0.25,
+    "maxSteps": 4
+  }
+}

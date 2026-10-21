@@ -1,0 +1,7 @@
+{
+  "appId": "studio.zenit.scrapempire",
+  "appName": "Scrap Empire: Idle Factory",
+  "webDir": "dist",
+  "android": { "allowMixedContent": false },
+  "server": { "androidScheme": "https" }
+}

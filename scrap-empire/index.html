@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#1b1712" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="description" content="Scrap Empire: Idle Factory. Juego incremental de desguace / idle scrapyard game. Zenit Studio." />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%icon.svg" />
+    <link rel="apple-touch-icon" href="%BASE_URL%icon.svg" />
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
+    <title>Scrap Empire: Idle Factory — Zenit Studio</title>
+    <style>
+      #boot { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: #1b1712; color: #ffd76a; font: 900 28px 'Trebuchet MS', system-ui, sans-serif; letter-spacing: .06em; z-index: 50; transition: opacity .4s; }
+      #boot img { width: 96px; height: 96px; }
+      #boot small { font-size: 11px; letter-spacing: .3em; color: #9a8e78; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <div id="boot"><img src="%BASE_URL%icon.svg" alt="" /><span>SCRAP EMPIRE</span><small>ZENIT STUDIO</small></div>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
