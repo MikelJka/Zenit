@@ -45,7 +45,7 @@ jobs:
             echo
             head -c 3500 resumen.txt
             echo
-            echo "🎮 https://mikeljka.github.io/zenit/oxido/"
+            echo "🎮 https://mikeljka.github.io/Zenit/oxido/"
           } > mensaje.txt
           curl -sS --fail -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT}" \

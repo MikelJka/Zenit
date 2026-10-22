@@ -13,17 +13,17 @@ Por decisión de Mikel del 2026-10-22, Óxido deja de desarrollarse en `MikelJka
 
 - **Workflows** (en `.github/workflows/` de la raíz de Zenit, solo se lanzan con cambios en `oxido/**` y trabajan en `oxido/`):
   - `oxido-probar-rama.yml` — «Óxido: probar rama»: tests, build, prueba de humo y capturas. Las capturas van a la rama `capturas-oxido` (antes `capturas`), para no chocar con otros juegos.
-  - `oxido-publicar.yml` — «Óxido: probar y publicar»: tests de Óxido y despliegue en GitHub Pages.
+  - Publicación: al principio `oxido-publicar.yml` («Óxido: probar y publicar»); desde el 2026-10-22, al mudarse también Scrap Empire, la sustituye el flujo común «Zenit: publicar web» (`zenit-publicar.yml`), que prueba y publica todos los juegos de `web/juegos.txt`.
   - `oxido-telegram.yml` — «Óxido: resumen a Telegram»: igual que antes, con la ruta `oxido/docs/PROGRESO.md` y la nueva URL. Sin el secreto `TELEGRAM_BOT_TOKEN` en Zenit no hace nada.
-- **Publicación**: nueva URL **https://mikeljka.github.io/zenit/oxido/** (`base: '/zenit/oxido/'` en `vite.config.ts`; también en `scripts/smoke.mjs` y `scripts/vitrina.mjs`).
-- **Sitio de Zenit preparado para varios juegos**: `.github/scripts/construir-web.sh` construye en `_site/` la portada (`web/index.html`, en https://mikeljka.github.io/zenit/) y cada juego listado en `web/juegos.txt` en su subcarpeta. Para publicar otro juego: añadirlo a `web/juegos.txt`, poner `base: '/zenit/<carpeta>/'` en su Vite, enlazarlo en `web/index.html` y crear su workflow copiando `oxido-publicar.yml`. Todos comparten el grupo de concurrencia `pages` sin cancelarse entre sí.
+- **Publicación**: nueva URL **https://mikeljka.github.io/Zenit/oxido/** (`base: '/Zenit/oxido/'` en `vite.config.ts` y en `scripts/smoke.mjs` y `scripts/vitrina.mjs`; la ruta de GitHub Pages distingue mayúsculas y el repositorio se llama `MikelJka/Zenit`).
+- **Sitio de Zenit preparado para varios juegos**: `.github/scripts/construir-web.sh` construye en `_site/` la portada (`web/index.html`, en https://mikeljka.github.io/Zenit/) y cada juego listado en `web/juegos.txt` en su subcarpeta. Para publicar otro juego: añadirlo a `web/juegos.txt`, poner `base: '/Zenit/<carpeta>/'` en su Vite, enlazarlo en `web/index.html` y añadir su carpeta a «paths» de `zenit-publicar.yml`. Todos comparten el grupo de concurrencia `pages` sin cancelarse entre sí.
 - **Botón 🐞**: crea las incidencias en `mikeljka/zenit` con las etiquetas `feedback`, `oxido` y el tipo (`bug`, `peticion` o `cambio`) (`src/ui/feedback.ts` y su test).
 - **Panel de progreso**: la próxima sesión automática se calcula cada 2 horas (`SESSION_HOURS` en `src/ui/devPanel.ts`).
 - **`CLAUDE.md` y `README.md`**: referencias y URL cambiadas a Zenit; la cola del 🐞 se lee de `mikeljka/zenit` filtrando por `feedback,oxido`.
 
 ## Qué debe hacer Mikel
 
-1. Poner `mikeljka/zenit` **público** (Settings → General → Danger zone → Change visibility): con el plan gratuito, GitHub Pages solo funciona en repositorios públicos. Decisión de Mikel del 2026-10-22: público mientras dure el desarrollo; al terminar y publicar el juego, se vuelve a poner privado. Después, activar **Settings → Pages → Source: GitHub Actions** en `mikeljka/zenit` y relanzar «Óxido: probar y publicar» (pestaña Actions → Run workflow).
+1. Poner `mikeljka/zenit` **público** (Settings → General → Danger zone → Change visibility): con el plan gratuito, GitHub Pages solo funciona en repositorios públicos. Decisión de Mikel del 2026-10-22: público mientras dure el desarrollo; al terminar y publicar el juego, se vuelve a poner privado. Después, activar **Settings → Pages → Source: GitHub Actions** en `mikeljka/zenit` y relanzar «Zenit: publicar web» (pestaña Actions → Run workflow).
 2. Crear en `mikeljka/zenit` las etiquetas `oxido`, `feedback`, `bug`, `peticion` y `cambio` si no existen (GitHub ignora en silencio las etiquetas que no existen al abrir una incidencia desde el 🐞, y la sesión filtra por `feedback` + `oxido`).
 3. Partidas guardadas: siguen en el mismo dominio (`mikeljka.github.io`), así que el navegador las conserva al abrir la nueva URL. La partida en la nube (Gist) no cambia.
 4. Cuando lo vea bien, apagar la sesión programada antigua de OxidoGame si sigue activa, y opcionalmente archivar `MikelJka/OxidoGame` o poner en su README un enlace a la nueva URL (la sesión no lo hace).

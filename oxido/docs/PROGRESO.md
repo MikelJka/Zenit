@@ -5,7 +5,7 @@ Diario de sesiones, la más reciente arriba.
 ## 2026-10-22 (72) — Óxido se muda a Zenit
 
 - Por decisión de Mikel, Óxido deja `MikelJka/OxidoGame` y pasa a la carpeta `oxido/` de `mikeljka/zenit`, con todo su código, tests, datos y documentación (copiado del commit `e2665a4`; detalles en `oxido/MIGRACION.md`). OxidoGame no se ha tocado.
-- Nueva dirección para jugar: **https://mikeljka.github.io/zenit/oxido/** (la portada de Zenit, en https://mikeljka.github.io/zenit/). Las partidas guardadas en el navegador siguen ahí, porque el dominio es el mismo.
+- Nueva dirección para jugar: **https://mikeljka.github.io/Zenit/oxido/** (la portada de Zenit, en https://mikeljka.github.io/Zenit/). Las partidas guardadas en el navegador siguen ahí, porque el dominio es el mismo.
 - El botón 🐞 abre las incidencias en `mikeljka/zenit` con las etiquetas `feedback` y `oxido`. La sesión automática trabaja ahora en Zenit, cada 2 horas.
 - El juego no cambia. Tests con Bun (689) y la prueba completa, en GitHub Actions.
 - Qué probar: abrir la nueva dirección en el móvil y en el PC, cargar la partida y mandar algo de prueba con 🐞.
