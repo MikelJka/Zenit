@@ -1,0 +1,2100 @@
+[
+  {
+    "id": "muro_madera",
+    "name": "Muro de madera",
+    "category": "muro",
+    "cost": {
+      "madera": 5
+    },
+    "work": 200,
+    "hp": 150,
+    "blocks": true,
+    "colors": {
+      "top": "#b08552",
+      "face": "#7a5634",
+      "dark": "#4e3520"
+    },
+    "height": 1
+  },
+  {
+    "id": "muro_piedra",
+    "name": "Muro de piedra",
+    "category": "muro",
+    "cost": {
+      "piedra": 6
+    },
+    "work": 420,
+    "hp": 420,
+    "blocks": true,
+    "colors": {
+      "top": "#b4b1a8",
+      "face": "#8a877f",
+      "dark": "#55534e"
+    },
+    "height": 1
+  },
+  {
+    "id": "muro_chatarra",
+    "name": "Muro de chatarra",
+    "category": "muro",
+    "cost": {
+      "chatarra": 5
+    },
+    "work": 300,
+    "hp": 280,
+    "blocks": true,
+    "colors": {
+      "top": "#a7744a",
+      "face": "#7d4f2e",
+      "dark": "#4a2f1d"
+    },
+    "height": 1
+  },
+  {
+    "id": "empalizada_alta",
+    "name": "Empalizada alta",
+    "category": "muro",
+    "cost": {
+      "madera": 10
+    },
+    "work": 350,
+    "hp": 300,
+    "blocks": true,
+    "height": 2,
+    "colors": {
+      "top": "#a57a48",
+      "face": "#74512f",
+      "dark": "#45301c"
+    }
+  },
+  {
+    "id": "muralla_piedra",
+    "name": "Muralla de piedra",
+    "category": "muro",
+    "cost": {
+      "piedra": 12
+    },
+    "work": 750,
+    "hp": 850,
+    "blocks": true,
+    "height": 2,
+    "colors": {
+      "top": "#aeaba2",
+      "face": "#83807a",
+      "dark": "#4f4d49"
+    }
+  },
+  {
+    "id": "muro_alto_chatarra",
+    "name": "Muro alto de chatarra",
+    "category": "muro",
+    "cost": {
+      "chatarra": 10
+    },
+    "work": 550,
+    "hp": 560,
+    "blocks": true,
+    "height": 2,
+    "colors": {
+      "top": "#9e6c44",
+      "face": "#76492b",
+      "dark": "#452b1b"
+    }
+  },
+  {
+    "id": "muro_metal",
+    "name": "Muro de metal",
+    "category": "muro",
+    "cost": {
+      "metal": 5
+    },
+    "work": 380,
+    "hp": 700,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    }
+  },
+  {
+    "id": "muro_aspilleras_piedra",
+    "name": "Muro con aspilleras de piedra",
+    "category": "muro",
+    "cost": {
+      "piedra": 7
+    },
+    "research": "fortificacion",
+    "work": 420,
+    "hp": 336,
+    "blocks": true,
+    "loophole": 0.75,
+    "height": 1,
+    "colors": {
+      "top": "#b4b1a8",
+      "face": "#8a877f",
+      "dark": "#55534e"
+    }
+  },
+  {
+    "id": "muro_aspilleras_metal",
+    "name": "Muro con aspilleras de metal",
+    "category": "muro",
+    "cost": {
+      "metal": 6
+    },
+    "research": "fortificacion",
+    "work": 380,
+    "hp": 560,
+    "blocks": true,
+    "loophole": 0.75,
+    "height": 1,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    }
+  },
+  {
+    "id": "muro_alto_metal",
+    "name": "Muro alto de metal",
+    "category": "muro",
+    "cost": {
+      "metal": 10
+    },
+    "work": 700,
+    "hp": 1400,
+    "blocks": true,
+    "height": 2,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    }
+  },
+  {
+    "id": "muro_hormigon",
+    "name": "Muro de hormigón",
+    "category": "muro",
+    "cost": {
+      "hormigon": 4
+    },
+    "work": 350,
+    "hp": 900,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#a8a49c",
+      "face": "#86827a",
+      "dark": "#5a5751"
+    }
+  },
+  {
+    "id": "muro_alto_hormigon",
+    "name": "Muro alto de hormigón",
+    "category": "muro",
+    "cost": {
+      "hormigon": 8
+    },
+    "work": 650,
+    "hp": 1800,
+    "blocks": true,
+    "height": 2,
+    "colors": {
+      "top": "#a8a49c",
+      "face": "#86827a",
+      "dark": "#5a5751"
+    }
+  },
+  {
+    "id": "porton_madera",
+    "name": "Portón de madera",
+    "category": "porton",
+    "cost": {
+      "madera": 18
+    },
+    "work": 450,
+    "hp": 350,
+    "blocks": false,
+    "moveCost": 1.4,
+    "height": 2,
+    "colors": {
+      "top": "#a57a48",
+      "face": "#6a4a2c",
+      "dark": "#3e2a18"
+    }
+  },
+  {
+    "id": "porton_chapa",
+    "name": "Portón de chapa",
+    "category": "porton",
+    "cost": {
+      "chatarra": 18,
+      "componentes": 2
+    },
+    "work": 650,
+    "hp": 620,
+    "blocks": false,
+    "moveCost": 1.4,
+    "height": 2,
+    "colors": {
+      "top": "#8e8c86",
+      "face": "#6a6862",
+      "dark": "#3d3c38"
+    }
+  },
+  {
+    "id": "porton_metal",
+    "name": "Portón blindado",
+    "category": "porton",
+    "cost": {
+      "metal": 16,
+      "componentes": 2
+    },
+    "work": 800,
+    "hp": 1200,
+    "blocks": false,
+    "moveCost": 1.4,
+    "height": 2,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    }
+  },
+  {
+    "id": "puerta_madera",
+    "name": "Puerta de madera",
+    "category": "puerta",
+    "cost": {
+      "madera": 10
+    },
+    "work": 300,
+    "hp": 120,
+    "blocks": false,
+    "colors": {
+      "top": "#b08552",
+      "face": "#6a4a2c",
+      "dark": "#3e2a18"
+    },
+    "height": 1,
+    "moveCost": 1.3
+  },
+  {
+    "id": "puerta_chapa",
+    "name": "Puerta de chapa",
+    "category": "puerta",
+    "cost": {
+      "chatarra": 10,
+      "componentes": 1
+    },
+    "work": 450,
+    "hp": 220,
+    "blocks": false,
+    "colors": {
+      "top": "#8e8c86",
+      "face": "#6a6862",
+      "dark": "#3d3c38"
+    },
+    "height": 1,
+    "moveCost": 1.3
+  },
+  {
+    "id": "puerta_metal",
+    "name": "Puerta blindada",
+    "category": "puerta",
+    "cost": {
+      "metal": 8,
+      "componentes": 1
+    },
+    "work": 500,
+    "hp": 600,
+    "blocks": false,
+    "moveCost": 1.3,
+    "height": 1,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    }
+  },
+  {
+    "id": "puerta_auto",
+    "name": "Puerta automática",
+    "category": "puerta",
+    "cost": {
+      "chatarra": 10,
+      "componentes": 2
+    },
+    "work": 450,
+    "hp": 220,
+    "blocks": false,
+    "moveCost": 1.3,
+    "height": 1,
+    "power": -20,
+    "autoDoor": true,
+    "colors": {
+      "top": "#8e9a8c",
+      "face": "#5e6a5c",
+      "dark": "#333b32"
+    }
+  },
+  {
+    "id": "torre_madera",
+    "name": "Torre de vigía de madera",
+    "category": "torre",
+    "cost": {
+      "madera": 25
+    },
+    "work": 700,
+    "hp": 250,
+    "blocks": false,
+    "height": 3,
+    "sight": 8,
+    "colors": {
+      "top": "#b08552",
+      "face": "#7a5634",
+      "dark": "#4e3520"
+    },
+    "moveCost": 1.5
+  },
+  {
+    "id": "torre_piedra",
+    "name": "Torre de vigía de piedra",
+    "category": "torre",
+    "cost": {
+      "piedra": 30,
+      "madera": 8
+    },
+    "work": 1100,
+    "hp": 700,
+    "blocks": false,
+    "height": 3,
+    "sight": 10,
+    "colors": {
+      "top": "#b4b1a8",
+      "face": "#8a877f",
+      "dark": "#55534e"
+    },
+    "moveCost": 1.5
+  },
+  {
+    "id": "torre_chatarra",
+    "name": "Torre de vigía de chatarra",
+    "category": "torre",
+    "cost": {
+      "chatarra": 25,
+      "componentes": 2
+    },
+    "work": 900,
+    "hp": 480,
+    "blocks": false,
+    "height": 3,
+    "sight": 9,
+    "colors": {
+      "top": "#a7744a",
+      "face": "#7d4f2e",
+      "dark": "#4a2f1d"
+    },
+    "moveCost": 1.5
+  },
+  {
+    "id": "torre_metal",
+    "name": "Torre de vigía de metal",
+    "category": "torre",
+    "cost": {
+      "metal": 20,
+      "componentes": 2
+    },
+    "work": 1000,
+    "hp": 1000,
+    "blocks": false,
+    "moveCost": 1.5,
+    "height": 3,
+    "sight": 11,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    }
+  },
+  {
+    "id": "barricada_madera",
+    "name": "Barricada de madera",
+    "category": "defensa",
+    "cost": {
+      "madera": 6
+    },
+    "work": 150,
+    "hp": 160,
+    "blocks": false,
+    "moveCost": 2.5,
+    "height": 1,
+    "colors": {
+      "top": "#a57a48",
+      "face": "#74512f",
+      "dark": "#45301c"
+    },
+    "kit": true
+  },
+  {
+    "id": "barricada_chatarra",
+    "name": "Barricada de chatarra",
+    "category": "defensa",
+    "cost": {
+      "chatarra": 6
+    },
+    "work": 200,
+    "hp": 260,
+    "blocks": false,
+    "moveCost": 2.5,
+    "height": 1,
+    "colors": {
+      "top": "#9e6c44",
+      "face": "#76492b",
+      "dark": "#452b1b"
+    },
+    "kit": true
+  },
+  {
+    "id": "pinchos_madera",
+    "name": "Pinchos de madera",
+    "category": "defensa",
+    "cost": {
+      "madera": 4
+    },
+    "work": 120,
+    "hp": 80,
+    "blocks": false,
+    "moveCost": 3,
+    "height": 0,
+    "colors": {
+      "top": "#b89a6a",
+      "face": "#7a5634",
+      "dark": "#4e3520"
+    }
+  },
+  {
+    "id": "barricada_metal",
+    "name": "Barricada de metal",
+    "category": "defensa",
+    "cost": {
+      "metal": 5
+    },
+    "work": 220,
+    "hp": 450,
+    "blocks": false,
+    "moveCost": 2.5,
+    "height": 1,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    },
+    "kit": true
+  },
+  {
+    "id": "pinchos_metal",
+    "name": "Pinchos de metal",
+    "category": "defensa",
+    "cost": {
+      "metal": 4
+    },
+    "work": 160,
+    "hp": 200,
+    "blocks": false,
+    "moveCost": 3,
+    "height": 0,
+    "colors": {
+      "top": "#c8ccd0",
+      "face": "#8a9096",
+      "dark": "#4a4e52"
+    }
+  },
+  {
+    "id": "barricada_hormigon",
+    "name": "Barricada de hormigón",
+    "category": "defensa",
+    "cost": {
+      "hormigon": 4
+    },
+    "work": 220,
+    "hp": 650,
+    "blocks": false,
+    "moveCost": 2.5,
+    "height": 1,
+    "colors": {
+      "top": "#a8a49c",
+      "face": "#86827a",
+      "dark": "#5a5751"
+    },
+    "kit": true
+  },
+  {
+    "id": "sacos_arena",
+    "name": "Sacos de arena",
+    "category": "defensa",
+    "cost": {
+      "fibra": 2,
+      "piedra": 3
+    },
+    "work": 40,
+    "hp": 100,
+    "blocks": false,
+    "moveCost": 2.5,
+    "height": 1,
+    "fullRefund": true,
+    "colors": {
+      "top": "#c9b27e",
+      "face": "#a38a58",
+      "dark": "#6b5836"
+    },
+    "kit": true
+  },
+  {
+    "id": "alambre_espino",
+    "name": "Alambre de espino",
+    "category": "defensa",
+    "cost": {
+      "chatarra": 2
+    },
+    "research": "fortificacion",
+    "work": 60,
+    "hp": 60,
+    "blocks": false,
+    "moveCost": 3,
+    "height": 0,
+    "stepDamage": 0.05,
+    "colors": {
+      "top": "#b7b3a8",
+      "face": "#7d786c",
+      "dark": "#4a463f"
+    }
+  },
+  {
+    "id": "mina_casera",
+    "name": "Mina casera",
+    "category": "defensa",
+    "cost": {
+      "chatarra": 6,
+      "componentes": 1
+    },
+    "research": "trampas",
+    "researchAlso": "polvora",
+    "work": 60,
+    "hp": 40,
+    "blocks": false,
+    "height": 0,
+    "mine": {
+      "damage": 4,
+      "radius": 1
+    },
+    "colors": {
+      "top": "#8a8a6a",
+      "face": "#5e5e46",
+      "dark": "#33332a"
+    }
+  },
+  {
+    "id": "trampa_electrica",
+    "name": "Trampa eléctrica",
+    "category": "defensa",
+    "cost": {
+      "chatarra": 6,
+      "componentes": 2
+    },
+    "research": "trampas",
+    "researchAlso": "baterias",
+    "work": 60,
+    "hp": 60,
+    "blocks": false,
+    "height": 0,
+    "power": -50,
+    "stunSeconds": 5,
+    "colors": {
+      "top": "#7a8088",
+      "face": "#4e545c",
+      "dark": "#2c3036"
+    }
+  },
+  {
+    "id": "torreta_ligera",
+    "name": "Torreta ligera",
+    "category": "defensa",
+    "cost": {
+      "chatarra": 25,
+      "componentes": 4
+    },
+    "research": "torretas",
+    "work": 600,
+    "hp": 250,
+    "blocks": true,
+    "height": 1,
+    "power": -120,
+    "turret": {
+      "damage": 2.2,
+      "cooldown": 1,
+      "reach": 9
+    },
+    "colors": {
+      "top": "#8a8f84",
+      "face": "#5e635a",
+      "dark": "#30332e"
+    },
+    "kit": true
+  },
+  {
+    "id": "torreta_pesada",
+    "name": "Torreta pesada",
+    "category": "defensa",
+    "cost": {
+      "metal": 30,
+      "componentes": 6
+    },
+    "research": "artilleria",
+    "work": 1000,
+    "hp": 500,
+    "blocks": true,
+    "height": 2,
+    "power": -300,
+    "turret": {
+      "damage": 3.0,
+      "cooldown": 1.35,
+      "reach": 14
+    },
+    "colors": {
+      "top": "#7c8590",
+      "face": "#525a63",
+      "dark": "#2a2f35"
+    },
+    "size": [
+      2,
+      2
+    ],
+    "kit": true
+  },
+  {
+    "id": "torreta_rotativa",
+    "name": "Torreta rotativa",
+    "category": "defensa",
+    "cost": {
+      "metal": 25,
+      "componentes": 8
+    },
+    "research": "ametralladoras",
+    "work": 800,
+    "hp": 300,
+    "blocks": true,
+    "height": 1,
+    "power": -400,
+    "turret": {
+      "damage": 1.2,
+      "cooldown": 0.3333,
+      "reach": 10
+    },
+    "colors": {
+      "top": "#868a7c",
+      "face": "#585c50",
+      "dark": "#2e302a"
+    },
+    "kit": true
+  },
+  {
+    "id": "mortero",
+    "name": "Mortero",
+    "category": "defensa",
+    "cost": {
+      "metal": 20,
+      "componentes": 4,
+      "chatarra": 10
+    },
+    "research": "artilleria",
+    "work": 700,
+    "hp": 200,
+    "blocks": true,
+    "height": 0,
+    "mortar": {
+      "minReach": 6,
+      "reach": 20,
+      "ammo": {
+        "resource": "chatarra",
+        "capacity": 20
+      },
+      "ammoPerShot": 2,
+      "missChance": 0.4,
+      "missSpread": 2,
+      "cooldownSeconds": 8,
+      "flightTicks": 60
+    },
+    "colors": {
+      "top": "#6e7468",
+      "face": "#4a4f46",
+      "dark": "#262a24"
+    },
+    "kit": true
+  },
+  {
+    "id": "suelo_madera",
+    "name": "Suelo de madera",
+    "category": "suelo",
+    "cost": {
+      "madera": 3
+    },
+    "work": 80,
+    "hp": 60,
+    "blocks": false,
+    "moveCost": 0.85,
+    "height": 0,
+    "colors": {
+      "top": "#9a7448",
+      "face": "#7a5634",
+      "dark": "#5a3e26"
+    }
+  },
+  {
+    "id": "suelo_piedra",
+    "name": "Losas de piedra",
+    "category": "suelo",
+    "cost": {
+      "piedra": 3
+    },
+    "work": 120,
+    "hp": 120,
+    "blocks": false,
+    "moveCost": 0.85,
+    "height": 0,
+    "colors": {
+      "top": "#9c9990",
+      "face": "#7c7a73",
+      "dark": "#5c5a55"
+    }
+  },
+  {
+    "id": "suelo_chapa",
+    "name": "Suelo de chapa",
+    "category": "suelo",
+    "cost": {
+      "chatarra": 3
+    },
+    "work": 100,
+    "hp": 90,
+    "blocks": false,
+    "moveCost": 0.85,
+    "height": 0,
+    "colors": {
+      "top": "#7c7a74",
+      "face": "#5e5c57",
+      "dark": "#45433f"
+    }
+  },
+  {
+    "id": "suelo_hormigon",
+    "name": "Suelo de hormigón",
+    "category": "suelo",
+    "cost": {
+      "hormigon": 2
+    },
+    "work": 90,
+    "hp": 200,
+    "blocks": false,
+    "moveCost": 0.8,
+    "height": 0,
+    "colors": {
+      "top": "#9a978f",
+      "face": "#85827a",
+      "dark": "#6a675f"
+    }
+  },
+  {
+    "id": "puente_madera",
+    "research": "puentes",
+    "name": "Puente de madera",
+    "category": "suelo",
+    "cost": {
+      "madera": 8
+    },
+    "work": 150,
+    "hp": 200,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "bridge": {
+      "deepCostMultiplier": 2
+    },
+    "colors": {
+      "top": "#a07a4c",
+      "face": "#6e5032",
+      "dark": "#3e2a18"
+    }
+  },
+  {
+    "id": "puente_metal",
+    "research": "puentes",
+    "name": "Puente de metal",
+    "category": "suelo",
+    "cost": {
+      "metal": 4
+    },
+    "work": 250,
+    "hp": 600,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "bridge": {
+      "deepCostMultiplier": 2
+    },
+    "colors": {
+      "top": "#8e949a",
+      "face": "#5e6469",
+      "dark": "#33373b"
+    }
+  },
+  {
+    "id": "puente_levadizo",
+    "research": "hidraulica",
+    "name": "Puente levadizo",
+    "category": "defensa",
+    "cost": {
+      "metal": 12,
+      "componentes": 3
+    },
+    "work": 500,
+    "hp": 600,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "size": [
+      4,
+      2
+    ],
+    "power": -20,
+    "drawbridge": true,
+    "colors": {
+      "top": "#8e949a",
+      "face": "#5e6469",
+      "dark": "#33373b"
+    }
+  },
+  {
+    "id": "plataforma_madera",
+    "research": "puentes",
+    "name": "Plataforma de madera",
+    "category": "suelo",
+    "cost": {
+      "madera": 12
+    },
+    "work": 200,
+    "hp": 200,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "platform": {
+      "deepWater": false
+    },
+    "colors": {
+      "top": "#9c7446",
+      "face": "#6a4c2e",
+      "dark": "#3a2716"
+    }
+  },
+  {
+    "id": "plataforma_metal",
+    "research": "puentes",
+    "name": "Plataforma de metal",
+    "category": "suelo",
+    "cost": {
+      "chatarra": 10,
+      "componentes": 1
+    },
+    "work": 300,
+    "hp": 600,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "platform": {
+      "deepWater": true
+    },
+    "colors": {
+      "top": "#868b8f",
+      "face": "#575c60",
+      "dark": "#2f3235"
+    }
+  },
+  {
+    "id": "cama",
+    "movable": true,
+    "name": "Cama",
+    "category": "mueble",
+    "cost": {
+      "madera": 15
+    },
+    "work": 300,
+    "hp": 80,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 0,
+    "colors": {
+      "top": "#8a6a4a",
+      "face": "#5a6b4a",
+      "dark": "#3a2a1c"
+    },
+    "size": [
+      2,
+      1
+    ]
+  },
+  {
+    "id": "estanteria_madera",
+    "movable": true,
+    "name": "Estantería de madera",
+    "category": "mueble",
+    "cost": {
+      "madera": 12
+    },
+    "work": 250,
+    "hp": 100,
+    "blocks": false,
+    "moveCost": 1.5,
+    "height": 1,
+    "storage": 3,
+    "colors": {
+      "top": "#a57a48",
+      "face": "#74512f",
+      "dark": "#45301c"
+    }
+  },
+  {
+    "id": "estanteria_metal",
+    "movable": true,
+    "name": "Estantería de metal",
+    "category": "mueble",
+    "cost": {
+      "metal": 8
+    },
+    "work": 300,
+    "hp": 250,
+    "blocks": false,
+    "moveCost": 1.5,
+    "height": 1,
+    "storage": 4,
+    "colors": {
+      "top": "#9aa0a6",
+      "face": "#6e747a",
+      "dark": "#3e4246"
+    }
+  },
+  {
+    "id": "armario",
+    "movable": true,
+    "name": "Armario",
+    "category": "mueble",
+    "cost": {
+      "madera": 15,
+      "chatarra": 4
+    },
+    "work": 300,
+    "hp": 120,
+    "blocks": false,
+    "moveCost": 1.5,
+    "height": 1,
+    "storage": 2,
+    "colors": {
+      "top": "#8a6a4a",
+      "face": "#6a4a2c",
+      "dark": "#3e2a18"
+    },
+    "size": [
+      2,
+      1
+    ]
+  },
+  {
+    "id": "armero",
+    "movable": true,
+    "name": "Armero",
+    "category": "mueble",
+    "cost": {
+      "madera": 15,
+      "chatarra": 8
+    },
+    "work": 300,
+    "hp": 150,
+    "blocks": false,
+    "moveCost": 1.5,
+    "height": 1,
+    "storage": 3,
+    "storageFor": "armas",
+    "colors": {
+      "top": "#6a5a48",
+      "face": "#4a3c2e",
+      "dark": "#2a2018"
+    },
+    "size": [
+      2,
+      1
+    ]
+  },
+  {
+    "id": "nevera",
+    "movable": true,
+    "name": "Nevera",
+    "category": "mueble",
+    "cost": {
+      "chatarra": 20,
+      "metal": 6,
+      "componentes": 3
+    },
+    "work": 400,
+    "hp": 150,
+    "blocks": false,
+    "moveCost": 1.5,
+    "height": 1,
+    "storage": 6,
+    "storageFor": "comida",
+    "fridge": true,
+    "power": -80,
+    "colors": {
+      "top": "#d8dee4",
+      "face": "#aab4be",
+      "dark": "#5a646e"
+    },
+    "size": [
+      2,
+      1
+    ]
+  },
+  {
+    "id": "calefactor",
+    "movable": true,
+    "name": "Calefactor",
+    "category": "mueble",
+    "cost": {
+      "chatarra": 12,
+      "metal": 4,
+      "componentes": 3
+    },
+    "work": 300,
+    "hp": 80,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 1,
+    "power": -150,
+    "climate": {
+      "mode": "calor",
+      "degrees": 22
+    },
+    "colors": {
+      "top": "#c8b8a0",
+      "face": "#8a7a68",
+      "dark": "#4a3e34"
+    }
+  },
+  {
+    "id": "aire_acondicionado",
+    "movable": true,
+    "name": "Aire acondicionado",
+    "category": "mueble",
+    "cost": {
+      "chatarra": 16,
+      "metal": 6,
+      "componentes": 5
+    },
+    "work": 400,
+    "hp": 80,
+    "blocks": false,
+    "moveCost": 1.3,
+    "height": 1,
+    "power": -200,
+    "climate": {
+      "mode": "frio",
+      "degrees": 16
+    },
+    "colors": {
+      "top": "#e0e6ea",
+      "face": "#a8b4bc",
+      "dark": "#56626a"
+    }
+  },
+  {
+    "id": "cama_prision",
+    "movable": true,
+    "name": "Cama de prisionero",
+    "category": "mueble",
+    "cost": {
+      "madera": 12,
+      "chatarra": 3
+    },
+    "work": 280,
+    "hp": 80,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 0,
+    "size": [
+      2,
+      1
+    ],
+    "colors": {
+      "top": "#7a6a5a",
+      "face": "#5a4a3a",
+      "dark": "#3a2a1c"
+    }
+  },
+  {
+    "id": "cama_hospital",
+    "movable": true,
+    "name": "Cama de hospital",
+    "category": "mueble",
+    "cost": {
+      "madera": 15,
+      "chatarra": 6,
+      "fibra": 4
+    },
+    "work": 340,
+    "hp": 90,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 0,
+    "size": [
+      2,
+      1
+    ],
+    "colors": {
+      "top": "#c8ccd0",
+      "face": "#e8eaec",
+      "dark": "#7a828a"
+    }
+  },
+  {
+    "id": "hoguera",
+    "name": "Hoguera",
+    "category": "mueble",
+    "cost": {
+      "madera": 5
+    },
+    "work": 120,
+    "hp": 60,
+    "blocks": true,
+    "height": 0,
+    "fuel": {
+      "resource": "madera",
+      "hoursPerUnit": 2.4,
+      "capacity": 20
+    },
+    "burnsCorpses": true,
+    "colors": {
+      "top": "#7a7068",
+      "face": "#4e4640",
+      "dark": "#241e1a"
+    },
+    "light": 3,
+    "cheer": {
+      "radius": 3,
+      "mood": 0.05,
+      "hours": 2
+    }
+  },
+  {
+    "id": "estufa",
+    "name": "Estufa",
+    "category": "mueble",
+    "research": "calefaccion",
+    "cost": {
+      "piedra": 10,
+      "chatarra": 6
+    },
+    "work": 300,
+    "hp": 120,
+    "blocks": true,
+    "height": 1,
+    "fuel": {
+      "resource": "madera",
+      "hoursPerUnit": 3,
+      "capacity": 10
+    },
+    "heater": true,
+    "colors": {
+      "top": "#6a6460",
+      "face": "#4a4440",
+      "dark": "#2a2420"
+    }
+  },
+  {
+    "id": "mesa",
+    "name": "Mesa",
+    "category": "mueble",
+    "movable": true,
+    "cost": {
+      "madera": 8
+    },
+    "work": 150,
+    "hp": 80,
+    "blocks": true,
+    "height": 1,
+    "beauty": 2,
+    "colors": {
+      "top": "#9c7446",
+      "face": "#6a4c2e",
+      "dark": "#3a2716"
+    }
+  },
+  {
+    "id": "silla",
+    "name": "Silla",
+    "category": "mueble",
+    "movable": true,
+    "cost": {
+      "madera": 4
+    },
+    "work": 80,
+    "hp": 40,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 0,
+    "beauty": 1,
+    "colors": {
+      "top": "#8a6a44",
+      "face": "#5e4630",
+      "dark": "#2a1e14"
+    }
+  },
+  {
+    "id": "alfombra",
+    "name": "Alfombra",
+    "category": "mueble",
+    "movable": true,
+    "cost": {
+      "fibra": 6
+    },
+    "work": 80,
+    "hp": 30,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "beauty": 2,
+    "colors": {
+      "top": "#9a3d3d",
+      "face": "#6a2a2a",
+      "dark": "#3a1a1a"
+    }
+  },
+  {
+    "id": "cuadro",
+    "name": "Cuadro",
+    "category": "mueble",
+    "movable": true,
+    "cost": {
+      "madera": 2,
+      "fibra": 2
+    },
+    "work": 100,
+    "hp": 20,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "beauty": 3,
+    "colors": {
+      "top": "#c8a050",
+      "face": "#8a6a30",
+      "dark": "#4a3a1a"
+    }
+  },
+  {
+    "id": "mesa_juego",
+    "name": "Mesa de juego",
+    "category": "mueble",
+    "movable": true,
+    "cost": {
+      "madera": 15
+    },
+    "work": 250,
+    "hp": 80,
+    "blocks": true,
+    "height": 1,
+    "size": [
+      2,
+      1
+    ],
+    "beauty": 1,
+    "recreation": true,
+    "colors": {
+      "top": "#3e6a4a",
+      "face": "#6a4c2e",
+      "dark": "#3a2716"
+    }
+  },
+  {
+    "id": "cocina",
+    "movable": true,
+    "name": "Cocina",
+    "category": "taller",
+    "cost": {
+      "piedra": 15,
+      "chatarra": 8,
+      "madera": 5
+    },
+    "work": 500,
+    "hp": 250,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#9a7a5a",
+      "face": "#6a4a32",
+      "dark": "#3a2a1e"
+    },
+    "size": [
+      2,
+      1
+    ],
+    "electrify": {
+      "cost": {
+        "chatarra": 10,
+        "componentes": 3
+      },
+      "power": 300,
+      "work": 300
+    }
+  },
+  {
+    "id": "horno",
+    "movable": true,
+    "name": "Horno de fundición",
+    "category": "taller",
+    "cost": {
+      "piedra": 25,
+      "chatarra": 10
+    },
+    "work": 800,
+    "hp": 400,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#8a877f",
+      "face": "#6a5a4a",
+      "dark": "#3a302a"
+    },
+    "size": [
+      2,
+      2
+    ],
+    "electrify": {
+      "cost": {
+        "chatarra": 10,
+        "componentes": 3
+      },
+      "power": 300,
+      "work": 300
+    }
+  },
+  {
+    "id": "banco_trabajo",
+    "movable": true,
+    "name": "Banco de trabajo",
+    "category": "taller",
+    "cost": {
+      "madera": 20,
+      "chatarra": 10
+    },
+    "work": 600,
+    "hp": 200,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#9a7448",
+      "face": "#6a4a2c",
+      "dark": "#3e2a18"
+    },
+    "size": [
+      2,
+      1
+    ],
+    "electrify": {
+      "cost": {
+        "chatarra": 10,
+        "componentes": 3
+      },
+      "power": 300,
+      "work": 300
+    }
+  },
+  {
+    "id": "cantera",
+    "name": "Cantera",
+    "category": "taller",
+    "cost": {
+      "madera": 20,
+      "piedra": 10
+    },
+    "work": 700,
+    "hp": 300,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#9a958c",
+      "face": "#6a5a4a",
+      "dark": "#3a302a"
+    },
+    "size": [
+      3,
+      3
+    ]
+  },
+  {
+    "id": "recicladora",
+    "name": "Recicladora",
+    "category": "taller",
+    "cost": {
+      "chatarra": 20,
+      "componentes": 2
+    },
+    "work": 800,
+    "hp": 300,
+    "blocks": true,
+    "height": 1,
+    "power": -250,
+    "colors": {
+      "top": "#8a7a6a",
+      "face": "#6a5a4a",
+      "dark": "#3a302a"
+    },
+    "size": [
+      2,
+      2
+    ]
+  },
+  {
+    "id": "destileria",
+    "movable": true,
+    "name": "Destilería",
+    "category": "taller",
+    "cost": {
+      "chatarra": 20,
+      "componentes": 2
+    },
+    "work": 700,
+    "hp": 300,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#b0703a",
+      "face": "#7a5a3a",
+      "dark": "#3a2a1e"
+    },
+    "size": [
+      2,
+      2
+    ],
+    "explodes": true
+  },
+  {
+    "id": "mesa_boticario",
+    "movable": true,
+    "research": "medicina_campo",
+    "name": "Mesa de boticario",
+    "category": "taller",
+    "workSkill": "medicina",
+    "cost": {
+      "madera": 15,
+      "chatarra": 6
+    },
+    "work": 500,
+    "hp": 150,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#8a7a5a",
+      "face": "#5a4a32",
+      "dark": "#2e2418"
+    },
+    "size": [
+      2,
+      1
+    ]
+  },
+  {
+    "id": "muelle",
+    "research": "puentes",
+    "name": "Muelle",
+    "category": "taller",
+    "workSkill": "supervivencia",
+    "skillSpeed": [
+      1,
+      2
+    ],
+    "dock": true,
+    "cost": {
+      "madera": 10
+    },
+    "work": 250,
+    "hp": 150,
+    "blocks": false,
+    "moveCost": 1,
+    "height": 0,
+    "colors": {
+      "top": "#9c7446",
+      "face": "#6a4c2e",
+      "dark": "#3a2716"
+    }
+  },
+  {
+    "id": "trampa_pesca",
+    "research": "puentes",
+    "name": "Trampa de pesca",
+    "category": "mueble",
+    "fishTrap": {
+      "perDay": 1,
+      "hour": 6
+    },
+    "cost": {
+      "madera": 6,
+      "fibra": 2
+    },
+    "work": 150,
+    "hp": 60,
+    "blocks": false,
+    "height": 0,
+    "colors": {
+      "top": "#8a6a44",
+      "face": "#5e4630",
+      "dark": "#2a1e14"
+    }
+  },
+  {
+    "id": "valla_madera",
+    "name": "Valla de madera",
+    "category": "granja",
+    "fence": true,
+    "cost": {
+      "madera": 2
+    },
+    "work": 80,
+    "hp": 60,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#a8804e",
+      "face": "#7a5634",
+      "dark": "#4e3520"
+    }
+  },
+  {
+    "id": "puerta_valla",
+    "name": "Puerta de valla",
+    "category": "granja",
+    "fence": true,
+    "gate": true,
+    "cost": {
+      "madera": 4
+    },
+    "work": 100,
+    "hp": 50,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 1,
+    "colors": {
+      "top": "#a8804e",
+      "face": "#7a5634",
+      "dark": "#4e3520"
+    }
+  },
+  {
+    "id": "poste_atar",
+    "name": "Poste con cuerda",
+    "category": "granja",
+    "tiePost": {
+      "animals": 2,
+      "leash": 2
+    },
+    "cost": {
+      "madera": 3,
+      "fibra": 2
+    },
+    "work": 60,
+    "hp": 40,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 1,
+    "colors": {
+      "top": "#8a6a44",
+      "face": "#5e4630",
+      "dark": "#c8b07a"
+    }
+  },
+  {
+    "id": "establo",
+    "name": "Establo",
+    "category": "granja",
+    "stable": {
+      "animals": 4,
+      "foodMult": 0.5
+    },
+    "size": [
+      2,
+      2
+    ],
+    "cost": {
+      "madera": 30,
+      "fibra": 6
+    },
+    "work": 500,
+    "hp": 200,
+    "blocks": false,
+    "moveCost": 1.5,
+    "height": 1,
+    "colors": {
+      "top": "#8a3a2a",
+      "face": "#6a4a2c",
+      "dark": "#d8c070"
+    }
+  },
+  {
+    "id": "espantapajaros",
+    "name": "Espantapájaros",
+    "category": "granja",
+    "scarecrow": {
+      "radius": 5
+    },
+    "cost": {
+      "madera": 4,
+      "fibra": 3
+    },
+    "work": 80,
+    "hp": 40,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 1,
+    "beauty": 0,
+    "colors": {
+      "top": "#c8a050",
+      "face": "#7a5634",
+      "dark": "#4a6a8a"
+    }
+  },
+  {
+    "id": "compostera",
+    "research": "agricultura",
+    "name": "Compostera",
+    "category": "granja",
+    "compost": {
+      "perDay": 2,
+      "hour": 7
+    },
+    "cost": {
+      "madera": 12
+    },
+    "work": 150,
+    "hp": 60,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#4a3a24",
+      "face": "#7a5634",
+      "dark": "#3a2a18"
+    }
+  },
+  {
+    "id": "bandeja_hidroponica",
+    "research": "hidroponica",
+    "name": "Bandeja hidropónica",
+    "category": "granja",
+    "hydroponics": {
+      "speed": 1.5,
+      "crops": [
+        "patata",
+        "maiz",
+        "hierba"
+      ]
+    },
+    "size": [
+      1,
+      2
+    ],
+    "cost": {
+      "chatarra": 10,
+      "componentes": 2
+    },
+    "power": -100,
+    "work": 300,
+    "hp": 80,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#3a8a5a",
+      "face": "#8a9098",
+      "dark": "#4a4e54"
+    }
+  },
+  {
+    "id": "banco_investigacion",
+    "movable": true,
+    "name": "Banco de investigación",
+    "category": "taller",
+    "workSkill": "investigacion",
+    "cost": {
+      "madera": 20,
+      "chatarra": 15,
+      "componentes": 2
+    },
+    "work": 600,
+    "hp": 200,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#7a7468",
+      "face": "#4e4a40",
+      "dark": "#26241e"
+    },
+    "size": [
+      2,
+      1
+    ]
+  },
+  {
+    "id": "pozo",
+    "name": "Pozo",
+    "category": "agua",
+    "cost": {
+      "piedra": 20,
+      "madera": 5
+    },
+    "work": 900,
+    "hp": 300,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#4a6a7a",
+      "face": "#8a877f",
+      "dark": "#55534e"
+    }
+  },
+  {
+    "id": "depuradora",
+    "name": "Depuradora",
+    "category": "agua",
+    "cost": {
+      "chatarra": 15,
+      "componentes": 2
+    },
+    "work": 700,
+    "hp": 250,
+    "blocks": true,
+    "height": 1,
+    "nearWater": true,
+    "power": -150,
+    "colors": {
+      "top": "#5a8a9a",
+      "face": "#6a6862",
+      "dark": "#3d3c38"
+    }
+  },
+  {
+    "id": "cable",
+    "name": "Cable",
+    "category": "electricidad",
+    "cost": {
+      "chatarra": 1
+    },
+    "work": 40,
+    "hp": 30,
+    "blocks": false,
+    "height": 0,
+    "conduit": true,
+    "colors": {
+      "top": "#c27a3e",
+      "face": "#8a4a26",
+      "dark": "#2a1a10"
+    }
+  },
+  {
+    "id": "generador_lena",
+    "name": "Generador de leña",
+    "category": "electricidad",
+    "cost": {
+      "chatarra": 20,
+      "componentes": 2
+    },
+    "work": 600,
+    "hp": 200,
+    "blocks": true,
+    "height": 1,
+    "size": [
+      2,
+      2
+    ],
+    "power": 1000,
+    "fuel": {
+      "resource": "madera",
+      "hoursPerUnit": 2,
+      "capacity": 10
+    },
+    "colors": {
+      "top": "#5c5a56",
+      "face": "#3e3c38",
+      "dark": "#1e1c1a"
+    },
+    "kit": true,
+    "explodes": true
+  },
+  {
+    "id": "placa_solar",
+    "name": "Placa solar",
+    "category": "electricidad",
+    "cost": {
+      "chatarra": 15,
+      "componentes": 3
+    },
+    "work": 450,
+    "hp": 100,
+    "blocks": true,
+    "height": 1,
+    "size": [
+      2,
+      2
+    ],
+    "power": 600,
+    "source": "solar",
+    "colors": {
+      "top": "#2c3e66",
+      "face": "#4a4c50",
+      "dark": "#1a1c22"
+    },
+    "kit": true
+  },
+  {
+    "id": "molino_viento",
+    "name": "Molino de viento",
+    "category": "electricidad",
+    "cost": {
+      "madera": 20,
+      "chatarra": 10,
+      "componentes": 2
+    },
+    "work": 500,
+    "hp": 120,
+    "blocks": true,
+    "height": 2,
+    "power": 900,
+    "source": "wind",
+    "colors": {
+      "top": "#b8b2a4",
+      "face": "#6e5a40",
+      "dark": "#2a2218"
+    },
+    "kit": true
+  },
+  {
+    "id": "molino_agua",
+    "research": "hidraulica",
+    "name": "Molino de agua",
+    "category": "electricidad",
+    "cost": {
+      "madera": 25,
+      "chatarra": 10,
+      "componentes": 3
+    },
+    "work": 600,
+    "hp": 200,
+    "blocks": true,
+    "height": 1,
+    "size": [
+      1,
+      2
+    ],
+    "power": 500,
+    "onWater": true,
+    "colors": {
+      "top": "#8a6a44",
+      "face": "#5e4630",
+      "dark": "#2a1e14"
+    }
+  },
+  {
+    "id": "bateria",
+    "name": "Batería",
+    "category": "electricidad",
+    "cost": {
+      "chatarra": 10,
+      "componentes": 2
+    },
+    "work": 300,
+    "hp": 120,
+    "blocks": true,
+    "height": 1,
+    "battery": 6000,
+    "colors": {
+      "top": "#4a5a3a",
+      "face": "#33402a",
+      "dark": "#1a2014"
+    },
+    "kit": true
+  },
+  {
+    "id": "lampara",
+    "movable": true,
+    "name": "Lámpara",
+    "category": "electricidad",
+    "cost": {
+      "chatarra": 3,
+      "componentes": 1
+    },
+    "work": 120,
+    "hp": 40,
+    "blocks": false,
+    "moveCost": 1.2,
+    "height": 1,
+    "power": -50,
+    "light": 3,
+    "colors": {
+      "top": "#d8c27a",
+      "face": "#6e6c66",
+      "dark": "#2a2826"
+    },
+    "kit": true
+  },
+  {
+    "id": "radio",
+    "movable": true,
+    "name": "Radio de llamada",
+    "category": "electricidad",
+    "cost": {
+      "chatarra": 20,
+      "componentes": 4
+    },
+    "work": 500,
+    "hp": 120,
+    "blocks": true,
+    "height": 1,
+    "power": -100,
+    "colors": {
+      "top": "#6a7a5a",
+      "face": "#4a4a42",
+      "dark": "#22221e"
+    }
+  },
+  {
+    "id": "buggy",
+    "name": "Buggy blindado",
+    "category": "vehiculo",
+    "vehicle": "buggy",
+    "cost": {
+      "chatarra": 40,
+      "metal": 10,
+      "componentes": 6
+    },
+    "work": 1200,
+    "hp": 600,
+    "blocks": true,
+    "height": 1,
+    "colors": {
+      "top": "#7a6a4a",
+      "face": "#4a4032",
+      "dark": "#22201a"
+    },
+    "size": [
+      2,
+      2
+    ]
+  },
+  {
+    "id": "balsa",
+    "research": "navegacion",
+    "name": "Balsa",
+    "category": "vehiculo",
+    "vehicle": "balsa",
+    "cost": {
+      "madera": 20
+    },
+    "work": 500,
+    "hp": 150,
+    "blocks": true,
+    "height": 1,
+    "onWater": true,
+    "colors": {
+      "top": "#9a7a4a",
+      "face": "#6a5232",
+      "dark": "#2a2014"
+    },
+    "size": [
+      2,
+      2
+    ]
+  },
+  {
+    "id": "lancha_armada",
+    "research": "motores",
+    "name": "Lancha armada",
+    "category": "vehiculo",
+    "vehicle": "lancha_armada",
+    "cost": {
+      "chatarra": 30,
+      "componentes": 4
+    },
+    "work": 1000,
+    "hp": 400,
+    "blocks": true,
+    "height": 1,
+    "onWater": true,
+    "colors": {
+      "top": "#6a6a62",
+      "face": "#44443e",
+      "dark": "#1e1e1a"
+    },
+    "size": [
+      2,
+      2
+    ]
+  },
+  {
+    "id": "barcaza",
+    "research": "navegacion",
+    "name": "Barcaza de carga",
+    "category": "vehiculo",
+    "vehicle": "barcaza",
+    "cost": {
+      "madera": 40,
+      "fibra": 10,
+      "chatarra": 10
+    },
+    "work": 900,
+    "hp": 300,
+    "blocks": true,
+    "height": 1,
+    "onWater": true,
+    "colors": {
+      "top": "#8a6a3e",
+      "face": "#5e4630",
+      "dark": "#2a1e14"
+    },
+    "size": [
+      2,
+      2
+    ]
+  },
+  {
+    "id": "lancha_blindada",
+    "research": "motores",
+    "name": "Lancha blindada",
+    "category": "vehiculo",
+    "vehicle": "lancha_blindada",
+    "cost": {
+      "metal": 25,
+      "chatarra": 20,
+      "componentes": 6
+    },
+    "work": 1400,
+    "hp": 800,
+    "blocks": true,
+    "height": 1,
+    "onWater": true,
+    "colors": {
+      "top": "#4a4e54",
+      "face": "#2e3236",
+      "dark": "#16181a"
+    },
+    "size": [
+      2,
+      2
+    ],
+    "researchAlso": "blindaje"
+  }
+]

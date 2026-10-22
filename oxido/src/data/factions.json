@@ -1,0 +1,150 @@
+{
+  "_": "Bloque 7 del catálogo (aprobado por Mikel el 2026-10-18; cambiado por Mikel el 2026-10-21): tres asentamientos fijos en cada partida, con su nombre al azar, y relación de −100 a 100. Los Chatarreros y los Granjeros empiezan neutrales y su relación sube o baja (hostiles, neutrales o aliados); los Piratas del Óxido son siempre hostiles y lanzan los raids.",
+  "factions": [
+    {
+      "id": "chatarreros",
+      "name": "Chatarreros",
+      "icon": "🐫",
+      "start": 0,
+      "description": "Comerciantes: traen las caravanas.",
+      "settlements": [
+        "Puerto Herrumbre",
+        "La Chatarrería",
+        "Villatornillo",
+        "El Desguace",
+        "Cruce de las Latas",
+        "Mercado Viejo"
+      ]
+    },
+    {
+      "id": "granjeros",
+      "name": "Granjeros del valle",
+      "icon": "🌾",
+      "start": 0,
+      "description": "Venden comida y semillas; posibles aliados.",
+      "settlements": [
+        "Valle Verde",
+        "Los Bancales",
+        "Huerta del Pozo",
+        "Prado Limpio",
+        "La Acequia",
+        "Molinos Altos"
+      ]
+    },
+    {
+      "id": "piratas_oxido",
+      "name": "Piratas del Óxido",
+      "icon": "☠",
+      "start": -100,
+      "description": "Siempre hostiles: lanzan los raids de saqueadores.",
+      "settlements": [
+        "La Fundición",
+        "Torre Roña",
+        "El Vertedero",
+        "Fosa Negra",
+        "Ciudad Ceniza",
+        "El Horno"
+      ],
+      "fixed": true
+    }
+  ],
+  "relation": {
+    "min": -100,
+    "max": 100,
+    "ally": 60,
+    "war": -50,
+    "giftValuePerPoint": 20,
+    "releasePrisoner": 15,
+    "tradeCaravan": 2,
+    "killOrHold": -10,
+    "refuseTribute": -20
+  },
+  "traderFaction": "chatarreros",
+  "raiderFaction": "piratas_oxido",
+  "allyHelp": {
+    "_": "Con alianza (60 o más), si os atacan mandan 2–4 combatientes, una vez cada 10 días (bloque 7, aprobado por Mikel el 2026-10-18).",
+    "fighters": [
+      2,
+      4
+    ],
+    "everyDays": 10
+  },
+  "war": {
+    "_": "Con −50 o menos, guerra: raids propios además de los normales (bloque 7). Los Hijos del Óxido ya son los de los raids normales, así que esto vale para las otras dos. El primero, a los 2 días de entrar en guerra; luego, tan a menudo como los normales (lo ha puesto la sesión del 2026-10-21).",
+    "firstRaidDays": 2
+  },
+  "tribute": {
+    "_": "Tributo (bloque 7): los Piratas del Óxido piden unas 200 chapas en recursos; pagar evita ese raid. Desde qué día, cada cuánto y cuánto esperan respuesta los ha puesto la sesión del 2026-10-21.",
+    "fromDay": 10,
+    "every": 3,
+    "value": 200,
+    "hours": 12
+  },
+  "radio": {
+    "_": "Con «Radio» investigada y una radio de llamada con corriente, en 📜 → 🏳 Facciones se llama a una caravana o se pide ayuda a los aliados (bloque 7). La espera, cada cuánto y la relación mínima los ha puesto la sesión del 2026-10-21.",
+    "research": "radio",
+    "caravanHours": 4,
+    "caravanEveryDays": 3,
+    "caravanMinRelation": 0
+  },
+  "newFactions": {
+    "_": "Si quedan menos de 3 facciones, a los pocos días llega una nueva de esta lista (elegido por Mikel el 2026-10-21, opción 4B). Los días y la lista los ha puesto la sesión del 2026-10-21.",
+    "minFactions": 3,
+    "days": [
+      3,
+      6
+    ]
+  },
+  "extraFactions": [
+    {
+      "id": "mercenarios",
+      "name": "Mercenarios de la autopista",
+      "icon": "🛣",
+      "start": 0,
+      "description": "Gente armada que vende sus servicios a quien pague.",
+      "settlements": [
+        "Peaje Norte",
+        "El Área de Servicio",
+        "Kilómetro 40",
+        "La Gasolinera"
+      ]
+    },
+    {
+      "id": "culto_reactor",
+      "name": "Culto del Reactor",
+      "icon": "☢",
+      "start": -100,
+      "fixed": true,
+      "description": "Fanáticos de la radiación: siempre hostiles.",
+      "settlements": [
+        "El Núcleo",
+        "Torre de Refrigeración",
+        "La Sala de Control"
+      ]
+    },
+    {
+      "id": "nomadas",
+      "name": "Nómadas del desierto",
+      "icon": "🐪",
+      "start": 0,
+      "description": "Van de un lado a otro con sus rebaños; comercian y a veces ayudan.",
+      "settlements": [
+        "Campamento del Pozo",
+        "Las Dunas Rojas",
+        "Oasis Seco"
+      ]
+    },
+    {
+      "id": "hermandad",
+      "name": "Hermandad de la Chatarra",
+      "icon": "⚙",
+      "start": 0,
+      "description": "Ingenieros que reparan máquinas viejas; valoran los ⚙️ componentes.",
+      "settlements": [
+        "El Taller Grande",
+        "La Chatarrería del Puente",
+        "Fundición Vieja"
+      ]
+    }
+  ]
+}
