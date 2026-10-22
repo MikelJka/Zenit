@@ -23,7 +23,7 @@ Por decisión de Mikel del 2026-10-22, Óxido deja de desarrollarse en `MikelJka
 
 ## Qué debe hacer Mikel
 
-1. Si la primera publicación falla en `deploy`, activar **Settings → Pages → Source: GitHub Actions** en `mikeljka/zenit` y relanzar «Óxido: probar y publicar» (pestaña Actions → Run workflow).
+1. Poner `mikeljka/zenit` **público** (Settings → General → Danger zone → Change visibility): con el plan gratuito, GitHub Pages solo funciona en repositorios públicos. Decisión de Mikel del 2026-10-22: público mientras dure el desarrollo; al terminar y publicar el juego, se vuelve a poner privado. Después, activar **Settings → Pages → Source: GitHub Actions** en `mikeljka/zenit` y relanzar «Óxido: probar y publicar» (pestaña Actions → Run workflow).
 2. Crear en `mikeljka/zenit` las etiquetas `oxido`, `feedback`, `bug`, `peticion` y `cambio` si no existen (GitHub ignora en silencio las etiquetas que no existen al abrir una incidencia desde el 🐞, y la sesión filtra por `feedback` + `oxido`).
 3. Partidas guardadas: siguen en el mismo dominio (`mikeljka.github.io`), así que el navegador las conserva al abrir la nueva URL. La partida en la nube (Gist) no cambia.
 4. Cuando lo vea bien, apagar la sesión programada antigua de OxidoGame si sigue activa, y opcionalmente archivar `MikelJka/OxidoGame` o poner en su README un enlace a la nueva URL (la sesión no lo hace).

@@ -30,5 +30,5 @@ Ver `sesiones-programadas/README.md`: qué hay, cada cuánto y sus textos.
 ## Pendiente de Mikel (resumen, 2026-10-21)
 
 - **Scrap Empire:** comprobar el juego en el móvil; crear la cuenta de desarrollador de Play y confirmar el identificador `studio.zenit.scrapempire`; crear el proyecto de Firebase del ranking al publicar.
-- **Óxido:** revisar la mudanza (`oxido/MIGRACION.md`): activar Pages con GitHub Actions en Zenit si hace falta, crear las etiquetas `feedback` y `oxido`, y apagar la sesión antigua de OxidoGame.
+- **Óxido:** revisar la mudanza (`oxido/MIGRACION.md`): poner Zenit público y activar Pages con GitHub Actions (con el plan gratuito, Pages solo funciona en repositorios públicos; decisión del 2026-10-22: público mientras dure el desarrollo y privado otra vez al terminar el juego), crear las etiquetas `feedback` y `oxido`, y apagar la sesión antigua de OxidoGame.
 - **Space Harvest:** subir los paquetes CC0 en `.glb`, decidir el repositorio propio, tripulación con o sin personalidad y los fps del prototipo en el móvil.

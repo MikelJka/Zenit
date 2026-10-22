@@ -49,4 +49,6 @@ El panel «📋 Progreso del desarrollo» del juego se genera de `ROADMAP.md`, `
 
 Límites para no gastar la suscripción: una o dos tareas por sesión, como máximo unos 45 minutos de trabajo. Si algo se atasca tras dos intentos, anótalo en `PROGRESO.md` como bloqueo y para.
 
+**Fin del desarrollo y visibilidad del repositorio** (decisión de Mikel del 2026-10-22): `mikeljka/zenit` se hace público para poder publicar en GitHub Pages gratis. Cuando Óxido esté terminado y publicado, la notificación de fin del desarrollo debe recordar a Mikel que lo vuelva a poner privado (Settings → General → Danger zone → Change visibility), avisándole de que con el plan gratuito la web de Pages deja de estar disponible al hacerlo. La sesión no puede cambiar la visibilidad.
+
 No pases a la fase siguiente hasta que el criterio de "terminado" de la fase actual se cumpla y esté anotado en `PROGRESO.md`.
