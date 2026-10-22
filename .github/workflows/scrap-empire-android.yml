@@ -1,12 +1,16 @@
-name: Android (APK de prueba)
+name: 'Scrap Empire: Android (APK de prueba)'
 
-# Empaqueta la web con Capacitor y genera un APK de depuración, que se descarga de los artefactos de la ejecución.
-# El archivo firmado para Google Play (AAB) llega cuando Mikel cree la clave de firma (ver docs/ANDROID.md).
+# Empaqueta la web de Scrap Empire con Capacitor y genera un APK de depuración, que se descarga de los
+# artefactos de la ejecución. El AAB firmado para Google Play llega cuando Mikel cree la clave (ver scrap-empire/docs/ANDROID.md).
 on:
   workflow_dispatch:
   push:
     branches: ['sesion/**']
-    paths: ['capacitor.config.json', '.github/workflows/android.yml', 'package.json']
+    paths: ['scrap-empire/capacitor.config.json', 'scrap-empire/package.json', '.github/workflows/scrap-empire-android.yml']
+
+defaults:
+  run:
+    working-directory: scrap-empire
 
 jobs:
   apk:
@@ -27,8 +31,8 @@ jobs:
       - run: npx cap add android
       - run: npx cap sync android
       - run: ./gradlew assembleDebug
-        working-directory: android
+        working-directory: scrap-empire/android
       - uses: actions/upload-artifact@v4
         with:
           name: scrap-empire-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: scrap-empire/android/app/build/outputs/apk/debug/app-debug.apk

@@ -4,7 +4,7 @@ Cada sesión toma la primera tarea sin marcar de la fase actual que esté aproba
 
 ## Fase 0 — Base del proyecto
 
-Terminado: la URL pública muestra la pantalla del juego en el móvil y en PC, las capturas llegan a la rama `capturas` y el diseño está decidido.
+Terminado: la URL pública muestra la pantalla del juego en el móvil y en PC, las capturas llegan a la rama `capturas` (desde el 2026-10-22, `capturas-scrap-empire` de Zenit) y el diseño está decidido.
 
 - [x] Proyecto Vite + TypeScript estricto + Vitest
 - [x] Publicación automática en GitHub Pages y capturas de la prueba de humo

@@ -6,7 +6,7 @@ import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const PORT = 4173;
-const URL = `http://localhost:${PORT}/IdleScrapyard/`;
+const URL = `http://localhost:${PORT}/Zenit/scrap-empire/`;
 mkdirSync('smoke', { recursive: true });
 
 const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'inherit' });

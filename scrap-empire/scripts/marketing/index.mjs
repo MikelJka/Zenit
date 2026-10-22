@@ -9,7 +9,7 @@ import { CAPTIONS, SHOTS, STORE } from './content.mjs';
 
 const OUT = 'public/press';
 const PORT = 4180;
-const BASE = `http://localhost:${PORT}/IdleScrapyard/`;
+const BASE = `http://localhost:${PORT}/Zenit/scrap-empire/`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 for (const d of ['shots', 'icons', 'video', 'raw']) mkdirSync(`${OUT}/${d}`, { recursive: true });
 
