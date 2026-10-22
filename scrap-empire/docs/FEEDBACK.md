@@ -54,122 +54,16 @@ Escribe aquí lo que quieras, o abre una incidencia en GitHub con la etiqueta `f
 
 ## Propuestas para Mikel
 
-Aquí se concreta el diseño de Chatarrero entre Mikel y Claude, por partes. La estructura genérica está en `docs/DISENO.md`. Responde con las letras (p. ej. «O2S») o con tu idea, por el chat, editando este archivo o con una incidencia `feedback`.
+Aquí se concreta el diseño de Scrap Empire entre Mikel y Claude, por partes. La estructura genérica está en `docs/DISENO.md`. Responde con las letras (p. ej. «O2S») o con tu idea, por el chat, editando este archivo o con una incidencia `feedback`.
 
-### Parte 26 — F3, F4 y F5: números (2026-10-21) — decidido: R1, A1, C1 (hecho, ver Pendiente)
+### Parte 27 — Qué hacemos ahora (2026-10-22)
 
-Aprobados los tres. Propuesta de números para no inventar al implementar:
-- **F3 destinos (tren y barco, 3 cada uno):** cerca (espera ×1, paga ×1,5), medio (×2, paga ×2,5), lejos (×4, paga ×4,5). «Espera» es el tiempo del viaje respecto al actual; se desbloquean pagando 10 / 100 / 1000 veces el valor de un cargamento. Cada destino pide un producto de la línea del transporte (vagones o contenedores; los destinos lejanos piden además la mitad de la otra línea).
-  - **R1 —** como se propone. **R2 —** solo 2 destinos por transporte (cerca y lejos). **R3 —** otros números tuyos.
-- **F4 almacén:** capacidad 500 unidades por producto (+250 por nivel, hasta nivel 10, cada nivel cuesta ×1,8); bonificación +5 % por cada 25 % del almacén que se llena al salir el transporte (máx. +20 %).
-  - **A1 —** como se propone. **A2 —** sin bonificación, solo amortigua los picos.
-- **F5 capitán:** un capitán por transporte, sube de nivel por horas de trabajo (como los ayudantes: máximo 25, +10 % de paga y −3 % de viaje por nivel); anuncio opcional: «viaje ya» o «×2 cargamento», con espera de 2 h entre usos (Pase: sin espera).
-  - **C1 —** como se propone. **C2 —** solo anuncio, sin capitán.
+Todo lo aprobado está hecho (Fase 2b completa, F3-F5, objetivos diarios, tope del muelle). Lo que queda abierto depende de ti: comprobar la web nueva en el móvil (https://mikeljka.github.io/Zenit/scrap-empire/), la clave de firma para el AAB de Google Play y la configuración de Firebase para el ranking. Para que las sesiones sigan avanzando, elige una o varias (en orden):
 
-Responde con letras (p. ej. «R1 A1 C1»).
+- **S1 — Rendimiento de verdad:** pasar el dibujo del mapa de SVG a canvas con PixiJS (gratis, licencia MIT, la misma prueba que Space Harvest), por partes: primero suelo y máquinas, el mismo aspecto pero más fps en móviles flojos (hoy el SVG toca techo en ~35 fps con la CPU frenada ×4).
+- **S2 — Botón 🐞 dentro del juego,** como el de Óxido: abre una incidencia en `MikelJka/Zenit` con las etiquetas `feedback` y `scrap-empire`, el tipo (fallo o petición) y los datos de la partida, sin salir del móvil.
+- **S3 — Preparar Google Play (Fase 3):** página de política de privacidad en la web, aviso de consentimiento de anuncios para la UE (Google UMP, gratis) y AdMob en modo de prueba. Los identificadores reales de AdMob y Play Billing los tendrías que crear tú.
+- **S4 — Prestigio (reinicio con premio):** en DISENO quedó para «una actualización posterior»; alargaría la partida cuando todo está abierto. Si lo eliges, la siguiente sesión te propone cómo funciona (moneda, qué se conserva, números).
 
-### Parte 11 — Qué hacemos ahora (2026-10-19)
+Responde con las letras (p. ej. «S2 S1»), por el chat, editando este archivo o con una incidencia `feedback` + `scrap-empire`.
 
-Todo lo aprobado está hecho salvo «pulir» y comprobar la web en el móvil. Para la siguiente sesión, ¿qué prefieres?
-
-- **N1 — Equilibrio:** ajusto precios y tiempos con una simulación de partida (cuánto tarda cada zona en estar al máximo) y te propongo una tabla de números para aprobar.
-- **N2 — Android:** empaquetar con Capacitor y generar el archivo para Google Play en GitHub Actions (sin anuncios reales aún).
-- **N3 — Textos en inglés:** pasar todos los textos a un archivo de traducciones (es/en) con selector de idioma.
-- **N4 — Rendimiento:** medir y aligerar la escena para móviles flojos (el parpadeo del vídeo), sin cambiar el juego.
-- **N5 — Otra cosa:** dime tu idea.
-
-Responde con las letras (p. ej. «N1N4»).
-
-### Parte 22 — Pedidos especiales y las dos zonas de tren y barco (2026-10-20) — decidido: Z1, 2b, precios y pedidos OK (hecho, ver Pendiente)
-
-Se cruza con la Parte 21 (F1-F5, transporte ferroviario y marítimo): las dos cosas hablan del tren y del barco del fondo, así que conviene decidirlas juntas. Entendido: B1b, B2a, B3-a y B3-c. Para no inventar números, necesito cuatro cosas:
-
-**1. Las zonas nuevas.** Dices «coches que se cargan en el tren» y «otro material que se carga en el barco». Hoy la zona 8 ya es «Coches reconstruidos» y sale en el camión. ¿Cuál de estas lecturas es la tuya?
-- **Z1 —** Zona 9 = **Vagones** (o coches clásicos) que salen solo en el **tren** del fondo, y zona 10 = **Contenedores** (o motores navales) que salen solo en el **barco**. La zona 8 sigue en el camión.
-- **Z2 —** La zona 8 (coches reconstruidos) pasa a cargarse en el tren, y se añaden dos zonas nuevas: una para el barco y otra más (a elegir) para el camión.
-- **Z3 —** Otra cosa: dime qué producto lleva cada una.
-
-**2. Cómo se manda el tren y el barco.** El tren y el barco ya pasan de decoración. Opciones: (a) llegan cada pocos minutos, se llenan con lo de su línea y se van (como el camión de expedición, con su propio muelle y palé de salida); (b) se llenan despacio y salen cuando están llenos, y se pagan más por viaje que el camión.
-
-**3. Precio y valor (mi propuesta, ajustable).** Zona 9: abrir 4 800 000 000 $ y 4× el valor por pieza de la zona 8; zona 10: abrir 24 000 000 000 $ y 4× la zona 9; cada una con ayudante nuevo con su frase (te propongo nombres: «Vagón» y «Ancla»).
-
-**4. Pedidos especiales (B3-a).** Mi propuesta: cada ~15 min aparece un pedido de un producto de una línea abierta, con 2 min para entregarlo; la cantidad pedida equivale a 3 min de lo que produce esa línea (así sirve en toda la partida, no solo con los 50 bloques del principio); si se cumple, se cobra el doble de su valor y si no, no pasa nada. Se ve como un cartel en el mapa con cuenta atrás. ¿Te vale? Si prefieres otra cantidad (p. ej. 5 min) o que se pueda ver un anuncio para alargar el plazo, dímelo.
-
-Responde: Z1/Z2/Z3, 2a/2b, «precios ok» o tus números, y «pedidos ok» o lo que cambies.
-
-### Parte 18 — Resultado de la simulación de jugador y qué ajustar (2026-10-20)
-
-Simulación (`npx vite-node scripts/balance.ts`): dos jugadores que compran como el bot de pruebas. **Casual** = 4 sesiones de 5 min al día; **atento** = una sesión de 4 min cada 40 min, 16 h al día. El juego cerrado produce hasta 1 h.
-
-- Todas las zonas abiertas: **casual ~9 días, atento ~2,4 días** (zona 2 a las ~4 h / ~1 h; zona 4 a ~2 días / ~15 h).
-- Después no queda nada nuevo: el dinero crece hasta 1e12-1e13 $ en 60 días y las compras se quedan en subir números (camiones de chatarra ~240, muelle nv ~130).
-- Lo más largo sin comprar nada: ~2 días (casual) y ~3 días (atento) justo antes de abrir una zona cara: ahí falta un estímulo.
-- **Máquinas:** cuestan ×4 por nivel y solo doblan una línea, así que el bot nunca las compra. Con 1,5e13 $ ganados la línea 1 llegaría a nivel ~17; el logro «Máquina de leyenda» (nivel 30) cuesta ~3e20 $: **imposible**. Hay que bajar el ×4 o el logro.
-- **Ritmo R2:** con las carretillas por línea la zona 4 llega a ~3,6 h jugando atento sin parar (antes ~6 h). Ajustado el test a «más de 3 h».
-
-Opciones (responde con las letras):
-- **B1 — Ritmo:** (a) dejarlo como está; (b) subir el precio de abrir las zonas 3 y 4 ×1,5 para volver a ~6 h.
-- **B2 — Máquinas:** (a) crecimiento ×4 → ×2,2 (el nivel 30 cuesta ~5e12 $, alcanzable en 1-2 meses); (b) dejar ×4 y bajar el logro a nivel 15; (c) otra idea.
-- **B3 — Más estímulos (entretenimiento):** (a) **Pedidos especiales** cada ~15 min (entrega 50 bloques en 2 min → premio doble); (b) **cofre de hito por hora jugada** con premio sorpresa; (c) **zonas 9-12** más allá de los coches (reconstruidos → motos, barcos, aviones, trenes), cada una con ayudante; (d) **objetivos diarios** (3 al día) con premio; (e) **camión VIP** que aparece sin anuncio y paga mucho si se toca a tiempo. Mi recomendación: a + b + c.
-
-### Parte 19 — Nombre global (2026-10-20) — decidido: G2, «Scrap Empire: Idle Factory» (hecho)
-
-«Chatarrero» solo se entiende en español. Google Play permite un título distinto por idioma, así que se puede mantener «Chatarrero» en español y poner uno global en inglés, o cambiar todo. Opciones (hay que comprobar que no estén ocupadas en Play y como marca antes de decidir):
-
-- **G1 — Idle Scrapyard** (ya es el nombre del repositorio; claro para buscar en la tienda).
-- **G2 — Scrap Empire: Idle Factory** (promete progresión y fábrica).
-- **G3 — Scrapyard Tycoon Idle** (descriptivo, muy buscable, pero genérico).
-- **G4 — Crusher Inc.** (corto, de marca; menos descriptivo).
-- **G5 — Dejarlo en «Chatarrero»** como marca del juego en todos los idiomas.
-
-Elige letra; el logo universal (sin texto, solo el icono) sirve con cualquiera.
-
-### Parte 20 — Material para anunciar el juego (2026-10-20, N5) — decidido: M1, M2, M3 y M4 (hecho, ver Pendiente)
-
-Todo a coste cero y generado por código desde el propio juego (Playwright + SVG), en español e inglés:
-
-- **M1 — Capturas con rótulos para Play Store:** 6-8 capturas de 1080×1920 con frase corta encima («Aplasta, funde, ¡y cobra!»), sacadas de partidas de ejemplo (inicio, línea llena, noche, muelle con camión dorado). Más el gráfico de función 1024×500.
-- **M2 — Logo universal:** icono sin texto (ya hay `public/icon.svg`) en 512×512 y variantes (fondo liso, adaptativo de Android, monocromo) y un rótulo con el nombre elegido en G.
-- **M3 — Vídeo de 20-30 s:** grabación del juego con una partida guionizada (Playwright graba vídeo), con rótulos y sonidos del propio juego; sale en MP4/WebM vertical. Play pide enlace de YouTube, así que lo subirías tú. Es factible, pero queda menos pulido que a mano.
-- **M4 — Página web de prensa** en GitHub Pages con las capturas, el vídeo y el texto de la ficha.
-
-Elige (p. ej. «M1M2M4» o «todo»).
-
-### Parte 21 — Transporte ferroviario y marítimo para alargar el juego (2026-10-20, idea de Mikel)
-
-Hoy todo sale por un único muelle de camiones y, cuando se abren las 8 zonas, solo queda subir números (Parte 18). Ya hay tren, vía, grúa pórtico y barco dibujados de adorno en el puerto de fondo: se pueden convertir en sistemas con los que jugar. Ideas (se pueden combinar):
-
-- **F1 — Estación de tren (carga pesada):** un segundo muelle que se abre tras la zona 5. Las vigas, piezas de motor, motores y coches reconstruidos pueden ir por tren en vez de por camión: un tren sale cuando tiene sus vagones llenos (un vagón por producto) y paga más por unidad (p. ej. ×1,5) pero tarda más en completarse. Mejoras: vagones (más carga), locomotora (más rápido) y vías (un segundo tren a la vez). Lo que más cambia el juego: da un destino nuevo donde gastar dinero y producto.
-- **F2 — Puerto y barco (pedidos grandes, viajes largos):** un barco llega cada cierto tiempo y pide un cargamento enorme (contenedores). Al cargarlo zarpa y vuelve tras un viaje de horas (por eso encaja con el juego cerrado: sale, se juega otra cosa y vuelve con una paga muy grande). Mejoras: grúa pórtico (carga más rápida), tamaño del barco (carguero → portacontenedores → buque gigante), y nº de barcos.
-- **F3 — Rutas y contratos (para elegir):** cada barco o tren puede ir a un destino distinto (ciudad vecina, país, otro continente): cuanto más lejos, más tarda y más paga, y cada destino pide un producto concreto. Da decisiones (¿ruta corta cada poco o larga sin mirar?) y metas a largo plazo (desbloquear cada destino).
-- **F4 — Almacén intermedio:** un almacén entre las líneas y los transportes que acumula producto; los trenes y barcos lo vacían en lotes. Los lotes grandes pagan bonificación, lo que premia ampliar el almacén y tener varios transportes.
-- **F5 — Con ayudante y anuncios:** un jefe de estación/capitán (como los ayudantes de zona, con nivel por horas de trabajo) y un anuncio opcional para acortar un viaje o duplicar un cargamento, igual que el camión dorado.
-
-Mi recomendación, por fases para no tocar todo a la vez: **F1 primero** (reutiliza el sistema de camión, es pequeño y ya alarga el juego unos días), después **F2 + F3** (barcos con destinos, lo que más alarga porque los viajes son largos) y **F5**. Antes de implementar nada necesito que elijas y, si quieres, números: cuándo se abre cada transporte (tras qué zona y a qué precio) y cuánto más paga que el camión. Si no tienes preferencia, propongo: estación tras la zona 5 (coste ~100× el de la zona 5), barco tras la zona 8, y que cada transporte pague ×1,5 / ×3 respecto a un camión por la misma carga.
-
-Responde con las letras (p. ej. «F1F2F3F5»).
-
-### Parte 17 — Logística por tandas y mejoras por línea (decidida: T3, hecha)
-
-Hoy las carretillas y el muelle son globales: cada carretilla lleva 1 unidad/s y el palé baja de forma continua, por eso sale siempre a 0. Para que llegue en tandas:
-
-- **T1 — Carretillas por línea:** cada línea tiene sus carretillas y su palé; la carretilla recoge una tanda (10 al principio, +5 por nivel de carretilla) y solo al llegar al muelle suma al palé de salida. Mejoras de carretilla (nivel, número) y del camión de salida dentro del menú de cada línea.
-- **T2 — Tandas globales:** se mantiene la flota común pero cada viaje es una tanda (10, 15, 20… por nivel de carretillas, común); las mejoras siguen en el muelle.
-- **T3 — Como T1, pero el camión de salida sigue siendo común** (un muelle, mejoras de carretilla por línea).
-
-
-
-## Hecho
-
-- [x] **Parte 1 del diseño — tema y monedas** (2026-10-19): decidido por Mikel; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 2 del diseño — cómo funciona la cadena** (2026-10-19): decidido por Mikel; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 3 del diseño — zonas y ayudantes** (2026-10-19): decidido por Mikel; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 4 del diseño — ritmo y nombres** (2026-10-19): decidido por Mikel; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 5 del diseño — retención, anuncios y compras** (2026-10-19): decidido por Mikel; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 6 del diseño — ayudantes, racha y pase** (2026-10-19): decidido por Mikel; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 7 del diseño — racha** (2026-10-19): si se falta un día, vuelve al día 1.
-- [x] **Parte 8 del diseño — sincronización entre dispositivos** (2026-10-19): S1, solo código manual; fácil de sustituir. Resumido en «Decidido» de DISENO.md.
-- [x] **Parte 9 del diseño — fondo y decorado** (2026-10-19): D1, D3, D4 y D5; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 10 del diseño — anuncios al volver** (2026-10-19): A3 y A4; resumido en «Decidido» de DISENO.md.
-- [x] **Parte 12 del diseño — ranking mundial** (2026-10-19): R1, Firebase gratuito.
-- [x] **Partes 13-16** (2026-10-19): «como mejor veas», ver Pendiente.

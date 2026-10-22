@@ -2,6 +2,13 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-22 — Propuesta: qué hacemos ahora (Parte 27)
+
+- Primera sesión en Zenit: la web nueva se publica bien («Zenit: publicar web» en verde, con prueba de humo y capturas de Scrap Empire). Ninguna incidencia `feedback` + `scrap-empire` abierta.
+- Todo lo aprobado está hecho; lo que queda (web en el móvil, clave de firma, Firebase) depende de Mikel. Nueva **Parte 27** en `FEEDBACK.md`: S1 rendimiento con canvas (PixiJS), S2 botón 🐞 en el juego, S3 preparar Google Play (privacidad, consentimiento, AdMob de prueba), S4 prestigio. Quitadas las propuestas ya decididas (Partes 11, 18-22 y 26), que están en «Pendiente» y en DISENO.
+- No cambia nada del juego.
+- Sigue: lo que Mikel elija en la Parte 27.
+
 ## 2026-10-22 — Scrap Empire se muda a Zenit
 
 - El juego vive ahora en la carpeta `scrap-empire/` de `MikelJka/Zenit`. Nueva URL: https://mikeljka.github.io/Zenit/scrap-empire/ (las partidas guardadas se conservan: mismo dominio). Detalle y lista de tareas de Mikel en `MIGRACION.md`.
