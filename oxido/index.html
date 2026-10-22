@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#141210" />
+    <title>Óxido</title>
+  </head>
+  <body>
+    <div id="game"></div>
+
+    <header id="topbar" class="panel">
+      <div class="brand"><strong>ÓXIDO</strong></div>
+      <div id="clock">Día 1 · 07:00</div>
+      <div id="speeds" role="group" aria-label="Velocidad">
+        <button type="button" data-speed="0" title="Pausa (espacio)">❚❚</button>
+        <button type="button" data-speed="1" title="Velocidad x1 (1)">▶</button>
+        <button type="button" data-speed="2" title="Velocidad x2 (2)">▶▶</button>
+        <button type="button" data-speed="3" title="Velocidad x3 (3)">▶▶▶</button>
+      </div>
+      <button id="people-btn" type="button" title="Diario, prisioneros y comercio">📜</button>
+      <button id="report-btn" type="button" title="Informar de un bug, petición o cambio">🐞</button>
+      <button id="menu-btn" type="button" title="Menú">☰</button>
+    </header>
+
+    <div id="view-ctl" class="panel" role="group" aria-label="Girar la vista">
+      <button id="rot-left" type="button" title="Girar la vista a la izquierda (Q)">⟲</button>
+      <span id="compass" title="Punto cardinal que queda arriba">↑N</span>
+      <button id="rot-right" type="button" title="Girar la vista a la derecha (E)">⟳</button>
+      <button id="tilt-btn" type="button" title="Cambiar la inclinación (R / F)">∠3</button>
+      <button id="god-btn" type="button" title="Modo Dios: aparecer cosas y probar" hidden>🪄</button>
+    </div>
+
+    <div id="orders" class="panel" role="group" aria-label="Órdenes y construcción">
+      <div class="orders-top">
+        <button id="build-btn" type="button" title="Construir: muros y puertas (B)">🏗</button>
+        <button id="orders-btn" type="button" title="Órdenes: talar, picar, saquear, almacenes (T)">⚒</button>
+      </div>
+    </div>
+
+    <div id="order-modes" class="panel sheet tool-sheet" hidden role="dialog" aria-label="Órdenes">
+      <div class="sheet-head">
+        <strong>⚒ Órdenes</strong>
+        <span class="ts-current muted"></span>
+        <button class="ts-expand" type="button" title="Ver todas las órdenes" aria-label="Ver todas">▴</button>
+        <button class="ts-close" type="button" title="Cerrar (T o Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div class="menu-sec">Recoger</div>
+        <div class="tool-grid">
+            <button type="button" data-mode="talar" title="Talar árboles y matorrales"><span class="mi">🪓</span><span class="tl">Talar</span><span class="n"></span></button>
+            <button type="button" data-mode="minar" title="Picar rocas y muros"><span class="mi">⛏</span><span class="tl">Picar</span><span class="n"></span></button>
+            <button type="button" data-mode="saquear" title="Saquear chatarra, coches y escombros"><span class="mi">🔩</span><span class="tl">Saquear</span><span class="n"></span></button>
+            <button type="button" data-mode="cancelar" title="Quitar órdenes"><span class="mi">✖</span><span class="tl">Quitar órdenes</span></button>
+        </div>
+        <div class="menu-sec">Gente</div>
+        <div class="tool-grid">
+            <button type="button" data-mode="seleccionar" title="Elegir a varios a la vez marcando un recuadro (en el PC, también arrastrando con el clic derecho)"><span class="mi">⬚</span><span class="tl">Elegir varios</span></button>
+        </div>
+        <div class="menu-sec">Zonas</div>
+        <div class="tool-grid">
+            <button type="button" data-mode="almacen" title="Marcar una zona de almacén"><span class="mi">📦</span><span class="tl">Almacén</span></button>
+            <button type="button" data-mode="cultivo" title="Marcar un huerto"><span class="mi">🌱</span><span class="tl">Huerto</span></button>
+            <button type="button" data-mode="quitarAlmacen" title="Quitar casillas de almacén o de huerto"><span class="mi">✖</span><span class="tl">Quitar zona</span></button>
+        </div>
+        <div class="menu-sec">Terreno</div>
+        <div class="tool-grid">
+            <button type="button" data-mode="rebajar" title="Bajar el nivel del terreno"><span class="mi">⬇</span><span class="tl">Rebajar</span></button>
+            <button type="button" data-mode="elevar" title="Subir el nivel del terreno"><span class="mi">⬆</span><span class="tl">Elevar</span></button>
+            <button type="button" data-mode="rampa" title="Convertir un acantilado en pendiente"><span class="mi">◢</span><span class="tl">Rampa</span></button>
+            <button type="button" data-mode="zanja" title="Cavar una zanja defensiva"><span class="mi">▭</span><span class="tl">Zanja</span></button>
+            <button type="button" data-mode="rellenar" title="Tapar una zanja"><span class="mi">▬</span><span class="tl">Rellenar</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div id="build-modes" class="panel sheet tool-sheet" hidden role="dialog" aria-label="Construir">
+      <div class="sheet-head">
+        <strong>🏗 Construir</strong>
+        <span class="ts-current muted"></span>
+        <button class="ts-expand" type="button" title="Ver todas las construcciones" aria-label="Ver todas">▴</button>
+        <button class="ts-close" type="button" title="Cerrar (B o Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="ts-tools">
+        <button id="build-rot" type="button" title="Girar camas, talleres y demás construcciones grandes (R o X)">↻ Girar</button>
+        <button id="build-shape" type="button" title="Contorno: solo el borde del rectángulo · Relleno: todas las casillas">▭ Contorno</button>
+        <button type="button" data-mode="quitarPlano" title="Demoler construcciones o quitar planos">⛏ Demoler</button>
+        <button id="build-ok" type="button" class="ts-ok" title="Poner aquí lo que se ve en blanco" hidden>✔ Colocar</button>
+        <button id="build-cancel" type="button" title="Quitar la vista previa y dejar de construir" hidden>✖</button>
+      </div>
+      <div id="build-tabs" class="ts-tabs" role="tablist" aria-label="Tipo de construcción"></div>
+      <div class="sheet-body">
+        <div id="build-list" class="build-grid"></div>
+      </div>
+    </div>
+    <div id="design-hint" class="panel" hidden></div>
+
+    <div id="menu" class="panel sheet" hidden role="dialog" aria-label="Menú">
+      <div class="sheet-head">
+        <strong>☰ Menú</strong>
+        <span id="seed" class="muted"></span>
+        <button id="menu-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div class="menu-sec">Partida</div>
+        <div class="menu-grid">
+          <button id="save-now" type="button" title="La partida también se guarda sola cada 30 s y al salir"><span class="mi">💾</span><span>Guardar</span></button>
+          <button id="save-export" type="button" title="Descargar la partida en un archivo"><span class="mi">⬇</span><span>Exportar</span></button>
+          <button id="save-import" type="button" title="Cargar una partida desde un archivo"><span class="mi">⬆</span><span>Importar</span></button>
+          <button id="save-backup" type="button" title="Volver a la partida guardada anterior"><span class="mi">↶</span><span>Anterior</span></button>
+        </div>
+        <div id="save-status" class="muted"></div>
+        <div class="menu-sec">☁ Nube · seguir en otro dispositivo</div>
+        <div id="cloud-out" class="cloud-box">
+          <p class="help">Entra con tu cuenta de GitHub y la partida se guardará sola en un gist privado tuyo. En el otro dispositivo, entra con el mismo token y sigue donde lo dejaste.</p>
+          <a class="cloud-link" href="https://github.com/settings/tokens/new?scopes=gist&amp;description=%C3%93xido%20-%20partida%20en%20la%20nube" target="_blank" rel="noopener">1 · Crear un token en GitHub (solo permiso «gist») ↗</a>
+          <div class="cloud-row">
+            <input id="cloud-token" type="password" autocomplete="off" spellcheck="false" placeholder="2 · Pega aquí el token (ghp_…)" aria-label="Token de GitHub" />
+            <button id="cloud-signin" type="button" class="primary">Entrar</button>
+          </div>
+        </div>
+        <div id="cloud-in" class="cloud-box" hidden>
+          <div class="menu-grid">
+            <button id="cloud-up" type="button" title="Subir ya la partida a la nube"><span class="mi">☁⬆</span><span>Subir</span></button>
+            <button id="cloud-down" type="button" title="Cargar la partida de la nube"><span class="mi">☁⬇</span><span>Bajar</span></button>
+            <button id="cloud-signout" type="button" title="Olvidar el token en este dispositivo"><span class="mi">🚪</span><span>Salir</span></button>
+          </div>
+        </div>
+        <div id="cloud-status" class="muted"></div>
+        <div class="menu-sec">Vista y más</div>
+        <div class="menu-grid">
+          <button id="sound-btn" type="button" title="Volumen: alto, bajo o sin sonido"><span class="mi">🔊</span><span>Sonido</span></button>
+          <button id="focus-btn" type="button" title="Que la cámara vaya sola a los ataques e incendios"><span class="mi">🎬</span><span>Enfoque</span></button>
+          <button id="gfx-btn" type="button" title="Calidad gráfica: alta, media o baja (la baja va más fluida en móviles)"><span class="mi">🖼</span><span>Gráficos</span></button>
+          <button id="dev-btn" type="button" title="Qué hay hecho y qué viene"><span class="mi">📋</span><span>Progreso</span></button>
+          <button id="main-menu-btn" type="button" title="Continuar, nueva partida con opciones, cargar, modo Dios"><span class="mi">🏠</span><span>Inicio</span></button>
+          <button id="new-map" type="button" title="Empezar otra partida en un mapa al azar"><span class="mi">✚</span><span>Mapa nuevo</span></button>
+        </div>
+        <div id="map-resources" class="muted"></div>
+        <details class="menu-help">
+          <summary>❓ Cómo se juega</summary>
+          <dl class="help">
+            <dt>🎥 Cámara</dt>
+            <dd>Arrastrar: mover · Rueda o pellizco: zoom · ⟲ ⟳ (Q/E) o girar dos dedos: girar · ∠ (R/F) o deslizar dos dedos: inclinar.</dd>
+            <dt>🧍 Colonos</dt>
+            <dd>Tocar un colono: elegirlo · Tocar el suelo: mandarlo allí · Tocar algo con trabajo (árbol, plano…): que lo haga ya · 🎖 Reclutar (G): deja de trabajar y espera órdenes · Grupo: 👥 o mantener pulsado un nombre (Mayús+clic en PC).</dd>
+            <dt>⚒ Órdenes (T)</dt>
+            <dd>Elegir talar, picar, saquear, almacén, huerto u obras de terreno y arrastrar un área (o tocar una casilla). Con dos dedos se sigue moviendo la cámara.</dd>
+            <dt>🏗 Construir (B)</dt>
+            <dd>Elegir qué y arrastrar; ↻ (R o X) gira lo grande. Los colonos llevan el material y lo levantan.</dd>
+            <dt>📦 Almacenes, huertos y talleres</dt>
+            <dd>Tocarlos para elegir prioridad y qué se guarda, qué se planta o qué se fabrica. Arriba a la izquierda, lo que tiene la colonia.</dd>
+            <dt>🧊 Vista 3D</dt>
+            <dd>Botón central del ratón (o Alt + arrastrar) para pivotar; WASD o arrastrar para moverse; dos dedos para girar e inclinar.</dd>
+            <dt>⌨ PC</dt>
+            <dd>Clic derecho: dar la orden · Espacio, 1, 2, 3: velocidad · Esc: cerrar o deseleccionar.</dd>
+          </dl>
+        </details>
+      </div>
+    </div>
+
+    <section id="report" class="panel" hidden aria-label="Informar">
+      <div class="rp-head">
+        <strong>Informar</strong>
+        <button id="rp-close" type="button" title="Cerrar">✕</button>
+      </div>
+      <div class="rp-kinds" role="group" aria-label="Tipo">
+        <button type="button" data-kind="bug">🐞 Bug</button>
+        <button type="button" data-kind="peticion">💡 Petición</button>
+        <button type="button" data-kind="cambio">🔧 Cambio</button>
+      </div>
+      <textarea id="rp-text" rows="4"></textarea>
+      <label class="rp-attach"><input id="rp-attach" type="checkbox" /> <span id="rp-attach-label"></span></label>
+      <div class="rp-actions">
+        <button id="rp-send" type="button" class="primary">Enviar a la cola</button>
+        <button id="rp-save" type="button">Guardar para luego</button>
+      </div>
+      <p id="rp-status" class="muted"></p>
+      <details>
+        <summary>Cola de este navegador</summary>
+        <div id="rp-queue"></div>
+        <button id="rp-copy" type="button">Copiar pendientes</button>
+      </details>
+      <details>
+        <summary>Errores detectados</summary>
+        <div id="rp-errors"></div>
+        <button id="rp-clear-errors" type="button">Borrar registro</button>
+      </details>
+    </section>
+
+    <section id="dev-panel" class="panel" hidden aria-label="Progreso del desarrollo">
+      <div class="rp-head">
+        <strong>Progreso del desarrollo</strong>
+        <button id="dp-close" type="button" title="Cerrar">✕</button>
+      </div>
+      <div id="dp-body"></div>
+    </section>
+
+    <div id="info-stack">
+      <div id="inventory" class="panel" title="Inventario de la colonia (recursos en el suelo)"></div>
+      <div id="tile" class="panel"></div>
+    </div>
+    <div id="toast" class="panel" hidden></div>
+
+    <section id="colonist-panel" class="panel sheet" hidden role="dialog" aria-label="Ficha del colono">
+      <div class="sheet-head cp-head">
+        <div class="cp-title">
+          <div id="cp-name"></div>
+          <div id="cp-sub"></div>
+        </div>
+        <button id="cp-fold" type="button" title="Recoger o desplegar la ficha" aria-label="Recoger la ficha" aria-expanded="true">▾</button>
+        <button id="cp-close" type="button" title="Deseleccionar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="cp-summary">
+        <div class="cp-now">
+          <div id="cp-activity"></div>
+          <div id="cp-health"></div>
+        </div>
+        <button id="cp-draft" type="button" title="Reclutado: deja de trabajar y solo obedece tus órdenes (tecla G)">🎖 Reclutar (G)</button>
+      </div>
+      <div id="cp-stances" class="cp-stances" role="group" aria-label="Postura del reclutado" hidden>
+        <button type="button" data-stance="mantener" title="No se mueve solo; dispara a lo que tenga a tiro">🛡 Mantener</button>
+        <button type="button" data-stance="atacar" title="Toca después a un enemigo: va solo a por él">🎯 Atacar a…</button>
+        <button type="button" data-stance="retirarse" title="Vuelve a la cama o habitación más cercana sin pelear">🏃 Retirarse</button>
+      </div>
+      <div id="cp-tabs" class="ts-tabs pp-tabs" role="tablist" aria-label="Apartado de la ficha">
+        <button type="button" role="tab" data-tab="estado"><span class="tab-icon">❤</span><span class="tab-label">Estado</span></button>
+        <button type="button" role="tab" data-tab="equipo"><span class="tab-icon">🗡</span><span class="tab-label">Equipo</span></button>
+        <button type="button" role="tab" data-tab="trabajos"><span class="tab-icon">🔨</span><span class="tab-label">Trabajos</span></button>
+        <button type="button" role="tab" data-tab="perfil"><span class="tab-icon">👤</span><span class="tab-label">Perfil</span></button>
+      </div>
+      <div id="cp-body" class="sheet-body">
+        <div class="cp-page" data-page="estado">
+          <div id="cp-needs"></div>
+          <div class="zp-label">Ánimo: por qué</div>
+          <div id="cp-mood"></div>
+        </div>
+        <div class="cp-page" data-page="equipo">
+          <div class="cp-gear">
+            <div class="cp-gear-label">Arma</div>
+            <div id="cp-weapon-now" class="cp-gear-now"></div>
+            <select id="cp-weapon" aria-label="Arma" title="Qué arma usa: la mejor libre, una concreta o ninguna"></select>
+          </div>
+          <div class="cp-gear">
+            <div class="cp-gear-label">Armadura</div>
+            <div id="cp-armor-now" class="cp-gear-now"></div>
+            <select id="cp-armor" aria-label="Armadura" title="Armadura: la mejor libre o ninguna">
+              <option value="auto">La mejor libre</option>
+              <option value="ninguna">Sin armadura</option>
+            </select>
+          </div>
+          <p class="pp-hint">Coge sola lo mejor que haya libre en el almacén o el armero, salvo que le fijes algo aquí.</p>
+        </div>
+        <div class="cp-page" data-page="trabajos">
+          <p class="pp-hint">Toca un trabajo para cambiar su prioridad: <strong>1</strong> lo primero … <strong>4</strong> lo último, <strong>—</strong> no lo hace.</p>
+          <div id="cp-work"></div>
+        </div>
+        <div class="cp-page" data-page="perfil">
+          <div class="zp-label">Rasgos (toca uno para ver qué hace)</div>
+          <div id="cp-traits"></div>
+          <div id="cp-trait-desc" class="pp-hint"></div>
+          <div class="zp-label">Habilidades (de 0 a 20 · 🔥 pasión · • interés)</div>
+          <div id="cp-skills"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="god-panel" class="panel" hidden>
+      <div class="cp-head">
+        <strong>🪄 Modo Dios</strong>
+        <button id="gp-close" type="button" title="Cerrar">✕</button>
+      </div>
+      <div class="zp-label">Tocar el mapa para…</div>
+      <div id="gp-tools" class="zp-row"></div>
+      <div class="zp-row gp-res">
+        <select id="gp-resource" aria-label="Recurso"></select>
+        <select id="gp-amount" aria-label="Cantidad">
+          <option value="10">10</option>
+          <option value="50" selected>50</option>
+          <option value="200">200</option>
+        </select>
+      </div>
+      <div id="gp-hint" class="muted"></div>
+      <div class="zp-label">Al momento</div>
+      <div id="gp-actions" class="zp-row"></div>
+    </section>
+
+    <section id="main-menu" hidden>
+      <div class="mm-bg" aria-hidden="true"></div>
+      <div class="mm-box">
+        <header class="mm-head">
+          <div class="mm-title">ÓXIDO</div>
+          <div class="mm-sub">Colonia en el páramo</div>
+        </header>
+        <div id="mm-home" class="mm-body">
+          <button id="mm-continue" class="mm-primary" type="button">
+            <span class="mm-ico">▶</span>
+            <span class="mm-txt"><strong>Continuar</strong><small id="mm-info"></small></span>
+          </button>
+          <div class="mm-grid">
+            <button id="mm-new-btn" class="mm-tile" type="button"><span class="mm-ico">✚</span><strong>Nueva partida</strong><small>Mapa, colonos y dificultad</small></button>
+            <button id="mm-load" class="mm-tile" type="button"><span class="mm-ico">📂</span><strong>Cargar</strong><small>Desde un archivo exportado</small></button>
+            <button id="mm-god" class="mm-tile" type="button"><span class="mm-ico">🪄</span><strong>Modo Dios</strong><small id="mm-god-state">Desactivado</small></button>
+            <button id="mm-progress" class="mm-tile" type="button"><span class="mm-ico">📋</span><strong>Progreso</strong><small>Qué hay y qué viene</small></button>
+          </div>
+        </div>
+        <div id="mm-new" class="mm-body" hidden>
+          <div class="mm-form">
+            <fieldset class="mm-group">
+              <legend>🗺 Mapa</legend>
+              <label for="mm-seed">Semilla (número o palabra)</label>
+              <div class="mm-inline">
+                <input id="mm-seed" type="text" inputmode="text" autocomplete="off" />
+                <button id="mm-seed-dice" type="button" title="Semilla al azar" aria-label="Semilla al azar">🎲</button>
+              </div>
+            </fieldset>
+            <fieldset class="mm-group">
+              <legend>👥 Colonia</legend>
+              <label for="mm-colonists">Colonos al empezar: <strong id="mm-colonists-n">3</strong></label>
+              <input id="mm-colonists" type="range" min="1" max="6" value="3" />
+            </fieldset>
+            <fieldset class="mm-group">
+              <legend>💀 Dificultad</legend>
+              <div id="mm-difficulty" class="mm-chips" role="radiogroup" aria-label="Dificultad">
+                <button type="button" role="radio" data-level="tranquila">Tranquila</button>
+                <button type="button" role="radio" data-level="normal">Normal</button>
+                <button type="button" role="radio" data-level="dura">Dura</button>
+                <button type="button" role="radio" data-level="brutal">Brutal</button>
+              </div>
+              <div id="mm-difficulty-desc" class="mm-note"></div>
+              <label for="mm-grace">Días sin raids al empezar: <strong id="mm-grace-n">5</strong></label>
+              <input id="mm-grace" type="range" min="0" max="20" value="5" />
+            </fieldset>
+            <fieldset class="mm-group">
+              <legend>⚙ Opciones</legend>
+              <label class="mm-check"><input id="mm-events" type="checkbox" checked /> Raids, caravanas y supervivientes</label>
+              <label class="mm-check"><input id="mm-god-new" type="checkbox" /> Modo Dios (para probar)</label>
+              <label class="mm-check"><input id="mm-tutorial" type="checkbox" checked /> Guía de primeros pasos</label>
+            </fieldset>
+          </div>
+          <div class="mm-note mm-warn">La partida actual se sustituye (puedes exportarla antes desde ☰ → ⬇).</div>
+          <div class="mm-bar">
+            <button id="mm-back" type="button">← Volver</button>
+            <button id="mm-start" class="mm-go" type="button">Empezar ▶</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="people-panel" class="panel sheet" hidden role="dialog" aria-label="Colonia">
+      <div class="sheet-head">
+        <strong>📜 Colonia</strong>
+        <span id="pp-sub" class="muted"></span>
+        <button id="pp-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="pp-tabs" class="ts-tabs pp-tabs" role="tablist" aria-label="Apartado"></div>
+      <div id="pp-body" class="sheet-body"></div>
+      <div id="pp-foot" class="pp-foot" hidden></div>
+    </section>
+    <section id="offer-panel" class="panel" hidden></section>
+    <section id="gameover" class="panel" hidden></section>
+
+    <section id="zone-panel" class="panel sheet place-sheet" hidden role="dialog" aria-label="Almacén">
+      <div class="sheet-head">
+        <div class="ps-title">
+          <div id="zp-name" class="ps-name"></div>
+          <div id="zp-sub" class="ps-sub"></div>
+        </div>
+        <button id="zp-fold" class="ps-fold" type="button" title="Recoger" aria-label="Recoger">▾</button>
+        <button id="zp-close" class="ps-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div class="ps-label">Prioridad <span class="ps-hint">se llenan antes los de más prioridad</span></div>
+        <div id="zp-priority" class="ps-seg" role="radiogroup" aria-label="Prioridad"></div>
+        <div class="ps-label">Qué se guarda <span class="ps-hint">toca para quitar o poner</span></div>
+        <div class="ps-quick">
+          <button id="zp-all" type="button">☑ Todo</button>
+          <button id="zp-none" type="button">☐ Nada</button>
+        </div>
+        <div id="zp-filter" class="ps-grid"></div>
+        <div id="zp-stock" class="ps-stock"></div>
+        <button id="zp-delete" class="ps-delete" type="button">🗑 Borrar almacén</button>
+      </div>
+    </section>
+
+    <section id="vehicle-panel" class="panel sheet place-sheet" hidden role="dialog" aria-label="Vehículo">
+      <div class="sheet-head">
+        <div class="ps-title">
+          <div id="vh-name" class="ps-name"></div>
+          <div id="vh-status" class="ps-sub"></div>
+        </div>
+        <button id="vh-close" class="ps-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <label class="vh-seat"><span id="vh-conductor-label" class="ps-label">Conductor</span><select id="vh-conductor" aria-label="Conductor"></select></label>
+        <label class="vh-seat"><span class="ps-label">Tirador</span><select id="vh-tirador" aria-label="Tirador"></select></label>
+        <div class="ps-quick">
+          <button id="vh-empty" type="button" title="Se bajan todos">⏏ Bajar todos</button>
+        </div>
+        <div id="vh-hint" class="ps-sub"></div>
+      </div>
+    </section>
+    <section id="piece-panel" class="panel sheet place-sheet" hidden role="dialog" aria-label="Mueble">
+      <div class="sheet-head">
+        <div class="ps-title">
+          <div id="pc-name" class="ps-name"></div>
+          <div id="pc-status" class="ps-sub"></div>
+        </div>
+        <button id="pc-close" class="ps-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div class="ps-quick">
+          <button id="pc-move" type="button" title="Llevarlo a otro sitio: coloca el fantasma y un colono lo lleva">✋ Mover</button>
+          <button id="pc-unmove" type="button" title="Dejarlo donde está">✖ No mover</button>
+          <button id="pc-cooler" type="button" hidden title="Bajar la temperatura elegida">−1 °C</button>
+          <button id="pc-warmer" type="button" hidden title="Subir la temperatura elegida">+1 °C</button>
+          <button id="pc-crop" type="button" hidden title="Cambiar lo que cultiva (empieza de cero)">🌱 Cambiar cultivo</button>
+          <button id="pc-raise" type="button" hidden title="Alzar o bajar el puente levadizo">⬆️ Alzar</button>
+          <button id="pc-pack" type="button" hidden title="Un colono con «Construir» la desmonta y queda como objeto en el almacén; luego se monta en otro sitio sin material">📦 Desmontar en kit</button>
+          <button id="pc-unpack" type="button" hidden title="Dejarla montada">✖ No desmontar</button>
+        </div>
+      </div>
+    </section>
+    <section id="foe-panel" class="panel sheet place-sheet" hidden role="dialog" aria-label="Saqueador en el suelo">
+      <div class="sheet-head">
+        <div class="ps-title">
+          <div id="fo-name" class="ps-name"></div>
+          <div id="fo-status" class="ps-sub"></div>
+        </div>
+        <button id="fo-close" class="ps-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div class="ps-quick">
+          <button id="fo-capture" type="button" title="Un carcelero lo captura y lo lleva a una cama de prisionero">⛓ Capturar</button>
+          <button id="fo-finish" type="button" title="Un carcelero acaba con él">🗡 Rematar</button>
+        </div>
+      </div>
+    </section>
+    <section id="station-panel" class="panel sheet place-sheet" hidden role="dialog" aria-label="Taller">
+      <div class="sheet-head">
+        <div class="ps-title">
+          <div id="sp-name" class="ps-name"></div>
+          <div id="sp-status" class="ps-sub"></div>
+        </div>
+        <button id="sp-fold" class="ps-fold" type="button" title="Recoger" aria-label="Recoger">▾</button>
+        <button id="sp-close" class="ps-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div id="sp-power" class="sp-power" hidden>
+          <div id="sp-power-text" class="ps-note"></div>
+          <div class="ps-quick">
+            <button id="sp-electrify" type="button">⚡ Electrificar</button>
+            <button id="sp-electrify-cancel" type="button">✖ Cancelar</button>
+          </div>
+        </div>
+        <div id="sp-move-row" class="ps-quick">
+          <button id="sp-move" type="button" title="Llevar el taller a otro sitio: coloca el fantasma y un colono lo lleva">✋ Mover</button>
+          <button id="sp-unmove" type="button" title="Dejarlo donde está">✖ No mover</button>
+        </div>
+        <div class="ps-label">Qué fabricar <span class="ps-hint">los colonos traen el material y lo hacen solos (trabajo «fabricar»); toca otra vez para quitar la orden</span></div>
+        <div id="sp-recipes" class="ps-cards"></div>
+      </div>
+      <div id="sp-controls" class="ps-foot sp-foot" hidden>
+        <div class="sp-modes" role="group" aria-label="Cómo fabricar">
+          <button id="sp-mode-count" type="button" aria-pressed="false">🔨 Fabricar</button>
+          <button id="sp-mode-until" type="button" aria-pressed="false">🎯 Hasta tener</button>
+        </div>
+        <div class="sp-amount">
+          <button id="sp-minus" type="button" aria-label="Uno menos">−</button>
+          <input id="sp-target" type="number" inputmode="numeric" min="0" max="999" step="1" aria-label="Cantidad" />
+          <button id="sp-plus" type="button" aria-label="Uno más">+</button>
+          <button id="sp-pause" type="button">⏸ Pausar</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="farm-panel" class="panel sheet place-sheet" hidden role="dialog" aria-label="Huerto">
+      <div class="sheet-head">
+        <div class="ps-title">
+          <div id="fp-name" class="ps-name"></div>
+          <div id="fp-sub" class="ps-sub"></div>
+        </div>
+        <button id="fp-fold" class="ps-fold" type="button" title="Recoger" aria-label="Recoger">▾</button>
+        <button id="fp-close" class="ps-close" type="button" title="Cerrar (Esc)" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="sheet-body">
+        <div id="fp-state" class="ps-stock"></div>
+        <div class="ps-label">Qué se planta <span class="ps-hint">los colonos siembran y cosechan solos (trabajo «cultivar»)</span></div>
+        <div id="fp-crops" class="ps-cards"></div>
+        <button id="fp-delete" class="ps-delete" type="button">🗑 Borrar huerto</button>
+      </div>
+    </section>
+
+    <nav id="roster" class="panel" aria-label="Colonos"></nav>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

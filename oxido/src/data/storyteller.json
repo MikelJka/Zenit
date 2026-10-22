@@ -1,0 +1,14 @@
+{
+  "wanderers": {
+    "_": "#21 A (elegido por Mikel el 2026-10-19): el primer superviviente puede llegar el día 2 y luego uno cada 2-4 días",
+    "firstDay": 2,
+    "gapDays": [
+      2,
+      4
+    ]
+  },
+  "radio": {
+    "_": "#21 C (elegido por Mikel el 2026-10-19): una radio de llamada con corriente atrae un superviviente más cada gapDays días",
+    "gapDays": 3
+  }
+}

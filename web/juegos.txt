@@ -1,0 +1,4 @@
+# Juegos que se publican en https://mikeljka.github.io/zenit/<carpeta>/ (una carpeta por línea).
+# Para publicar otro juego: añádelo aquí, pon base: '/zenit/<carpeta>/' en su Vite, enlázalo
+# en web/index.html y crea su workflow de publicación (copia de .github/workflows/oxido-publicar.yml).
+oxido

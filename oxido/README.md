@@ -2,7 +2,7 @@
 
 Juego de gestión de colonia postapocalíptica para navegador, en pixel art y vista cenital, inspirado en RimWorld. Jugable en móvil y PC.
 
-**Jugar:** https://mikeljka.github.io/OxidoGame/
+**Jugar:** https://mikeljka.github.io/zenit/oxido/
 
 ## Desarrollo
 

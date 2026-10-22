@@ -1,0 +1,597 @@
+[
+  {
+    "id": "guiso_patatas",
+    "name": "Guiso de patatas",
+    "station": "cocina",
+    "inputs": {
+      "patata": 5
+    },
+    "outputs": {
+      "comida": 2
+    },
+    "work": 200,
+    "description": "5 patatas dan 2 raciones: alimentan más que crudas y sientan bien."
+  },
+  {
+    "id": "tortas_maiz",
+    "name": "Tortas de maíz",
+    "station": "cocina",
+    "inputs": {
+      "maiz": 5
+    },
+    "outputs": {
+      "comida": 2
+    },
+    "work": 200,
+    "description": "5 de maíz dan 2 raciones."
+  },
+  {
+    "id": "setas_asadas",
+    "name": "Setas asadas",
+    "station": "cocina",
+    "inputs": {
+      "setas": 6
+    },
+    "outputs": {
+      "comida": 2
+    },
+    "work": 180,
+    "description": "6 setas dan 2 raciones."
+  },
+  {
+    "id": "pescado_asado",
+    "name": "Pescado asado",
+    "station": "cocina",
+    "inputs": {
+      "pescado": 4
+    },
+    "outputs": {
+      "comida": 2
+    },
+    "work": 200,
+    "description": "4 pescados dan 2 raciones: alimentan más que crudos y sientan bien."
+  },
+  {
+    "id": "carne_asada",
+    "name": "Carne asada",
+    "station": "cocina",
+    "inputs": {
+      "carne": 4
+    },
+    "outputs": {
+      "comida": 2
+    },
+    "work": 200,
+    "description": "4 de carne dan 2 raciones: alimentan más que cruda y sientan bien."
+  },
+  {
+    "id": "tortilla",
+    "name": "Tortilla",
+    "station": "cocina",
+    "inputs": {
+      "huevos": 4
+    },
+    "outputs": {
+      "comida": 2
+    },
+    "work": 150,
+    "description": "4 huevos dan 2 raciones."
+  },
+  {
+    "id": "fundir_chatarra",
+    "name": "Fundir chatarra",
+    "station": "horno",
+    "inputs": {
+      "chatarra": 10
+    },
+    "outputs": {
+      "metal": 5
+    },
+    "work": 400,
+    "description": "10 de chatarra dan 5 de metal."
+  },
+  {
+    "id": "montar_componentes",
+    "name": "Montar componentes",
+    "station": "banco_trabajo",
+    "inputs": {
+      "metal": 3,
+      "chatarra": 4
+    },
+    "outputs": {
+      "componentes": 1
+    },
+    "work": 500,
+    "description": "Piezas mecánicas para puertas, portones, torres y máquinas."
+  },
+  {
+    "id": "cortar_tablones",
+    "name": "Recuperar madera",
+    "station": "banco_trabajo",
+    "inputs": {
+      "fibra": 10
+    },
+    "outputs": {
+      "madera": 4
+    },
+    "work": 250,
+    "description": "Fibra de cáñamo prensada en tablones: madera cuando escasean los árboles."
+  },
+  {
+    "id": "hacer_hormigon",
+    "name": "Hacer hormigón",
+    "station": "horno",
+    "inputs": {
+      "piedra": 6,
+      "chatarra": 1
+    },
+    "outputs": {
+      "hormigon": 5
+    },
+    "work": 350,
+    "description": "Piedra molida y cocida con un poco de chatarra de armazón."
+  },
+  {
+    "id": "extraer_piedra",
+    "name": "Extraer piedra",
+    "station": "cantera",
+    "inputs": {},
+    "outputs": {
+      "piedra": 6
+    },
+    "work": 700,
+    "description": "Piedra sin fin, para cuando se acaben las rocas del mapa. Lento."
+  },
+  {
+    "id": "reciclar_restos",
+    "name": "Reciclar restos",
+    "station": "recicladora",
+    "inputs": {},
+    "outputs": {
+      "chatarra": 4
+    },
+    "work": 900,
+    "description": "Saca chatarra de la basura y los restos de la colonia. Lento."
+  },
+  {
+    "id": "reciclar_componentes",
+    "name": "Recuperar componentes",
+    "station": "recicladora",
+    "inputs": {
+      "chatarra": 12
+    },
+    "outputs": {
+      "componentes": 1
+    },
+    "work": 700,
+    "description": "Desguaza chatarra fina hasta sacar piezas útiles."
+  },
+  {
+    "id": "fabricar_palo",
+    "name": "Palo",
+    "station": "banco_trabajo",
+    "inputs": {
+      "madera": 4
+    },
+    "outputs": {
+      "palo": 1
+    },
+    "work": 150,
+    "description": "Un garrote de madera: ×1,4 de daño."
+  },
+  {
+    "id": "fabricar_cuchillo",
+    "name": "Cuchillo",
+    "station": "banco_trabajo",
+    "inputs": {
+      "chatarra": 6
+    },
+    "outputs": {
+      "cuchillo": 1
+    },
+    "work": 250,
+    "description": "Rápido: ×1,8 de daño y golpea antes."
+  },
+  {
+    "id": "fabricar_tuberia",
+    "name": "Tubería",
+    "station": "banco_trabajo",
+    "inputs": {
+      "chatarra": 8
+    },
+    "outputs": {
+      "tuberia": 1
+    },
+    "work": 250,
+    "description": "Lenta pero dura: ×2,2 de daño."
+  },
+  {
+    "id": "fabricar_lanza",
+    "name": "Lanza",
+    "station": "banco_trabajo",
+    "inputs": {
+      "madera": 6,
+      "chatarra": 3
+    },
+    "outputs": {
+      "lanza": 1
+    },
+    "work": 300,
+    "description": "×2 de daño; pega desde 2 casillas."
+  },
+  {
+    "id": "fabricar_machete",
+    "name": "Machete",
+    "station": "banco_trabajo",
+    "inputs": {
+      "metal": 5
+    },
+    "outputs": {
+      "machete": 1
+    },
+    "work": 350,
+    "description": "×2,8 de daño (necesita metal del horno)."
+  },
+  {
+    "id": "fabricar_arco",
+    "name": "Arco",
+    "station": "banco_trabajo",
+    "inputs": {
+      "madera": 8,
+      "fibra": 4
+    },
+    "outputs": {
+      "arco": 1
+    },
+    "work": 350,
+    "description": "Dispara a 8 casillas (×1,6, lento); gasta flechas."
+  },
+  {
+    "id": "fabricar_flechas",
+    "name": "Flechas (10)",
+    "station": "banco_trabajo",
+    "inputs": {
+      "madera": 2,
+      "fibra": 1
+    },
+    "outputs": {
+      "flechas": 10
+    },
+    "work": 150,
+    "description": "Munición para el arco."
+  },
+  {
+    "id": "fabricar_pistola",
+    "name": "Pistola casera",
+    "station": "banco_trabajo",
+    "research": "polvora",
+    "inputs": {
+      "chatarra": 8,
+      "componentes": 1
+    },
+    "outputs": {
+      "pistola": 1
+    },
+    "work": 400,
+    "description": "Dispara a 9 casillas (×2,2, normal); gasta balas."
+  },
+  {
+    "id": "fabricar_escopeta",
+    "name": "Escopeta",
+    "station": "banco_trabajo",
+    "research": "armas_largas",
+    "inputs": {
+      "metal": 6,
+      "componentes": 2
+    },
+    "outputs": {
+      "escopeta": 1
+    },
+    "work": 500,
+    "description": "Dispara a 6 casillas (×3,6 a 3 o menos, ×1,8 más lejos; lenta); gasta balas."
+  },
+  {
+    "id": "fabricar_rifle",
+    "name": "Rifle",
+    "station": "banco_trabajo",
+    "research": "armas_largas",
+    "inputs": {
+      "metal": 8,
+      "componentes": 3,
+      "madera": 4
+    },
+    "outputs": {
+      "rifle": 1
+    },
+    "work": 600,
+    "description": "Dispara a 14 casillas (×3,0, lento); gasta balas."
+  },
+  {
+    "id": "fabricar_subfusil",
+    "name": "Subfusil",
+    "station": "banco_trabajo",
+    "research": "armas_automaticas",
+    "inputs": {
+      "metal": 6,
+      "componentes": 3
+    },
+    "outputs": {
+      "subfusil": 1
+    },
+    "work": 600,
+    "description": "Dispara a 7 casillas (×1,3, muy rápido); gasta balas."
+  },
+  {
+    "id": "fabricar_francotirador",
+    "name": "Rifle de francotirador",
+    "station": "banco_trabajo",
+    "research": "armas_automaticas",
+    "inputs": {
+      "metal": 10,
+      "componentes": 4,
+      "madera": 4
+    },
+    "outputs": {
+      "francotirador": 1
+    },
+    "work": 700,
+    "description": "Dispara a 18 casillas (×4,5, muy lento); gasta balas."
+  },
+  {
+    "id": "fabricar_ballesta",
+    "name": "Ballesta",
+    "station": "banco_trabajo",
+    "research": "ballesta",
+    "inputs": {
+      "madera": 6,
+      "chatarra": 4,
+      "fibra": 3
+    },
+    "outputs": {
+      "ballesta": 1
+    },
+    "work": 450,
+    "description": "Dispara a 10 casillas (×2,4, lenta); gasta flechas."
+  },
+  {
+    "id": "fabricar_lanza_metal",
+    "name": "Lanza de metal",
+    "station": "banco_trabajo",
+    "research": "forja",
+    "inputs": {
+      "metal": 4,
+      "madera": 2
+    },
+    "outputs": {
+      "lanza_metal": 1
+    },
+    "work": 350,
+    "description": "×2,6 de daño; pega desde 2 casillas."
+  },
+  {
+    "id": "fabricar_balas",
+    "name": "Balas (15)",
+    "station": "banco_trabajo",
+    "research": "polvora",
+    "inputs": {
+      "chatarra": 3,
+      "componentes": 1
+    },
+    "outputs": {
+      "balas": 15
+    },
+    "work": 200,
+    "description": "Munición para las armas de fuego."
+  },
+  {
+    "id": "fabricar_granadas",
+    "name": "Granadas caseras (2)",
+    "station": "banco_trabajo",
+    "research": "explosivos",
+    "inputs": {
+      "chatarra": 2,
+      "componentes": 1
+    },
+    "outputs": {
+      "granadas": 2
+    },
+    "work": 200,
+    "description": "Cada colono lleva 2: las lanza a 6 casillas a grupos de enemigos (×3 en el 3×3)."
+  },
+  {
+    "id": "fabricar_lanzallamas",
+    "name": "Lanzallamas",
+    "station": "banco_trabajo",
+    "inputs": {
+      "metal": 8,
+      "componentes": 3,
+      "tuberia": 1
+    },
+    "outputs": {
+      "lanzallamas": 1
+    },
+    "work": 700,
+    "research": "explosivos",
+    "description": "Depósito a la espalda y una tubería con mechero: quema a 4 casillas y prende fuego a lo que toca. Gasta 🧴 napalm."
+  },
+  {
+    "id": "fabricar_chaleco_cuero",
+    "name": "Chaleco de cuero",
+    "station": "banco_trabajo",
+    "inputs": {
+      "cuero": 8
+    },
+    "outputs": {
+      "chaleco_cuero": 1
+    },
+    "work": 300,
+    "description": "Quita un 15 % del daño. Se hace con 🟫 cuero de la caza.",
+    "research": "sastreria"
+  },
+  {
+    "id": "fabricar_chaleco_chapa",
+    "name": "Chaleco de chapa",
+    "station": "banco_trabajo",
+    "inputs": {
+      "chatarra": 12
+    },
+    "outputs": {
+      "chaleco_chapa": 1
+    },
+    "work": 400,
+    "description": "Quita un 25 % del daño; se anda un 5 % más despacio."
+  },
+  {
+    "id": "fabricar_chaleco_metal",
+    "name": "Chaleco de metal",
+    "station": "banco_trabajo",
+    "inputs": {
+      "metal": 8,
+      "componentes": 1
+    },
+    "outputs": {
+      "chaleco_metal": 1
+    },
+    "work": 500,
+    "description": "Quita un 35 % del daño; se anda un 10 % más despacio."
+  },
+  {
+    "id": "fabricar_chaleco_tactico",
+    "name": "Chaleco táctico",
+    "station": "banco_trabajo",
+    "inputs": {
+      "metal": 10,
+      "componentes": 2,
+      "fibra": 6
+    },
+    "outputs": {
+      "chaleco_tactico": 1
+    },
+    "work": 500,
+    "description": "Quita un 45 % del daño; se anda un 5 % más despacio.",
+    "research": "blindaje"
+  },
+  {
+    "id": "fabricar_casco_chapa",
+    "name": "Casco de chapa",
+    "station": "banco_trabajo",
+    "inputs": {
+      "chatarra": 6
+    },
+    "outputs": {
+      "casco_chapa": 1
+    },
+    "work": 250,
+    "description": "Quita un 10 % del daño."
+  },
+  {
+    "id": "fabricar_casco_metal",
+    "name": "Casco de metal",
+    "station": "banco_trabajo",
+    "inputs": {
+      "metal": 4
+    },
+    "outputs": {
+      "casco_metal": 1
+    },
+    "work": 300,
+    "description": "Quita un 15 % del daño."
+  },
+  {
+    "id": "fabricar_casco_tactico",
+    "name": "Casco táctico",
+    "station": "banco_trabajo",
+    "inputs": {
+      "metal": 6,
+      "componentes": 1
+    },
+    "outputs": {
+      "casco_tactico": 1
+    },
+    "work": 300,
+    "description": "Quita un 20 % del daño.",
+    "research": "blindaje"
+  },
+  {
+    "id": "destilar_combustible",
+    "name": "Destilar combustible",
+    "station": "destileria",
+    "inputs": {
+      "madera": 10
+    },
+    "outputs": {
+      "combustible": 2
+    },
+    "work": 500,
+    "description": "10 de madera dan 2 de combustible para los vehículos."
+  },
+  {
+    "id": "hacer_napalm",
+    "name": "Napalm",
+    "station": "destileria",
+    "inputs": {
+      "combustible": 2,
+      "fibra": 1
+    },
+    "outputs": {
+      "napalm": 10
+    },
+    "work": 300,
+    "research": "explosivos",
+    "description": "Combustible espesado con fibra: munición del lanzallamas."
+  },
+  {
+    "id": "hacer_abono",
+    "name": "Abono",
+    "station": "banco_trabajo",
+    "inputs": {
+      "setas": 2,
+      "piedra": 1
+    },
+    "outputs": {
+      "abono": 3
+    },
+    "work": 150,
+    "research": "agricultura",
+    "description": "Setas y piedra molida: 3 de abono. Al sembrar, si hay abono en el almacén se echa 1 y esa planta da un 25 % más."
+  },
+  {
+    "id": "preparar_medicina",
+    "name": "Preparar medicina",
+    "station": "mesa_boticario",
+    "inputs": {
+      "hierba": 4,
+      "fibra": 1
+    },
+    "outputs": {
+      "medicina": 1
+    },
+    "work": 300,
+    "description": "4 de hierba curativa y 1 de fibra dan una 💊 Medicina. Va más rápido con buena Medicina."
+  },
+  {
+    "id": "pescar",
+    "name": "Pescar",
+    "station": "muelle",
+    "inputs": {},
+    "outputs": {
+      "pescado": 1
+    },
+    "work": 900,
+    "description": "Un 🐟 cada 2 horas con Supervivencia 0 y cada hora con 20. Crudo alimenta poco y sienta peor: en la cocina, «Pescado asado»."
+  },
+  {
+    "id": "fabricar_abrigo",
+    "name": "Abrigo",
+    "station": "banco_trabajo",
+    "inputs": {
+      "fibra": 10
+    },
+    "outputs": {
+      "abrigo": 1
+    },
+    "work": 400,
+    "research": "sastreria",
+    "description": "Abrigo de fibra: en invierno, de noche, quita el frío aunque se esté fuera. Los colonos cogen uno solos."
+  }
+]

@@ -1,0 +1,344 @@
+{
+  "_": "Bloque 2 del catálogo (aprobado por Mikel el 2026-10-18). walkSpeed: velocidad al andar respecto a un colono; health: vida respecto a un colono; damage: daño del golpe (×1 = puños); breaksWalls: rompe muros y puertas; wallDamage: vida que quita cada golpe a un muro o una puerta (el muro de madera tiene 150). La araña de chatarra y el dron de vigilancia son del bloque 6 (máquinas). flies: vuela por encima de muros, zanjas, barricadas, agua y trampas, y nada le da cobertura; gun: id del arma (en `weapons.json`) con la que dispara, sin gastar munición ni soltarla; female: para los textos («destrozada»).",
+  "creatures": {
+    "perro_mutante": {
+      "name": "Perro mutante",
+      "plural": "perros mutantes",
+      "emoji": "🐕",
+      "fromDay": 8,
+      "walkSpeed": 1.5,
+      "health": 0.6,
+      "damage": 1.2,
+      "breaksWalls": false,
+      "wallDamage": 0
+    },
+    "bruto_mutante": {
+      "name": "Bruto mutante",
+      "plural": "brutos mutantes",
+      "emoji": "👹",
+      "fromDay": 15,
+      "walkSpeed": 0.7,
+      "health": 3,
+      "damage": 3,
+      "breaksWalls": true,
+      "wallDamage": 30
+    },
+    "arana_chatarra": {
+      "name": "Araña de chatarra",
+      "plural": "arañas de chatarra",
+      "emoji": "🕷️",
+      "fromDay": 30,
+      "walkSpeed": 0.8,
+      "health": 4,
+      "damage": 3,
+      "breaksWalls": true,
+      "wallDamage": 30,
+      "armor": 0.4,
+      "machine": true,
+      "female": true
+    },
+    "dron_vigilancia": {
+      "name": "Dron de vigilancia",
+      "plural": "drones de vigilancia",
+      "emoji": "🛸",
+      "fromDay": 30,
+      "walkSpeed": 1.3,
+      "health": 0.5,
+      "damage": 1,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "machine": true,
+      "flies": true,
+      "gun": "pistola"
+    },
+    "ciervo_mutado": {
+      "name": "Ciervo mutado",
+      "plural": "ciervos mutados",
+      "emoji": "🦌",
+      "fromDay": 0,
+      "walkSpeed": 1.3,
+      "health": 0.8,
+      "damage": 0.6,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        8,
+        12
+      ],
+      "leather": [
+        3,
+        5
+      ],
+      "tamable": true,
+      "tame": {
+        "chance": 0.05,
+        "cargo": 50
+      }
+    },
+    "jabali": {
+      "name": "Jabalí",
+      "plural": "jabalíes",
+      "emoji": "🐗",
+      "fromDay": 0,
+      "walkSpeed": 1.1,
+      "health": 1.2,
+      "damage": 1.5,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        10,
+        15
+      ],
+      "leather": [
+        4,
+        6
+      ],
+      "fightsBack": true,
+      "tamable": true,
+      "tame": {
+        "chance": 0.03,
+        "cargo": 60
+      }
+    },
+    "rata_gigante": {
+      "name": "Rata gigante",
+      "plural": "ratas gigantes",
+      "emoji": "🐀",
+      "fromDay": 0,
+      "walkSpeed": 1.2,
+      "health": 0.3,
+      "damage": 0.5,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        2,
+        3
+      ],
+      "leather": [
+        1,
+        1
+      ],
+      "stealsFood": true,
+      "female": true
+    },
+    "cabra_salvaje": {
+      "name": "Cabra salvaje",
+      "plural": "cabras salvajes",
+      "emoji": "🐐",
+      "fromDay": 0,
+      "walkSpeed": 1.2,
+      "health": 0.6,
+      "damage": 0.6,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        5,
+        8
+      ],
+      "leather": [
+        2,
+        3
+      ],
+      "female": true,
+      "tamable": true,
+      "tame": {
+        "chance": 0.3,
+        "cargo": 30
+      }
+    },
+    "vaca_dos_cabezas": {
+      "name": "Vaca de dos cabezas",
+      "plural": "vacas de dos cabezas",
+      "emoji": "🐄",
+      "fromDay": 0,
+      "walkSpeed": 0.8,
+      "health": 1.6,
+      "damage": 1,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        15,
+        22
+      ],
+      "leather": [
+        5,
+        8
+      ],
+      "female": true,
+      "tamable": true,
+      "tame": {
+        "chance": 0.15,
+        "cargo": 100,
+        "produces": {
+          "resource": "leche",
+          "amount": 3
+        }
+      }
+    },
+    "caballo_salvaje": {
+      "name": "Caballo salvaje",
+      "plural": "caballos salvajes",
+      "emoji": "🐎",
+      "fromDay": 0,
+      "walkSpeed": 1.6,
+      "health": 1.3,
+      "damage": 1.2,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        12,
+        18
+      ],
+      "leather": [
+        4,
+        7
+      ],
+      "fightsBack": true,
+      "tamable": true,
+      "tame": {
+        "chance": 0.06,
+        "cargo": 120
+      }
+    },
+    "gallina_mutada": {
+      "name": "Gallina mutada",
+      "plural": "gallinas mutadas",
+      "emoji": "🐔",
+      "fromDay": 0,
+      "walkSpeed": 1,
+      "health": 0.25,
+      "damage": 0.3,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        2,
+        3
+      ],
+      "leather": [
+        0,
+        0
+      ],
+      "female": true,
+      "tamable": true,
+      "tame": {
+        "chance": 0.4,
+        "cargo": 0,
+        "produces": {
+          "resource": "huevos",
+          "amount": 2
+        }
+      }
+    },
+    "mula": {
+      "name": "Mula",
+      "plural": "mulas",
+      "emoji": "🫏",
+      "fromDay": 0,
+      "walkSpeed": 1,
+      "health": 1,
+      "damage": 0.8,
+      "breaksWalls": false,
+      "wallDamage": 0,
+      "animal": true,
+      "meat": [
+        8,
+        12
+      ],
+      "leather": [
+        3,
+        5
+      ],
+      "female": true,
+      "tamable": true,
+      "tame": {
+        "chance": 0.25,
+        "cargo": 80
+      }
+    }
+  },
+  "machines": {
+    "_": "Máquinas (bloque 6 del catálogo, aprobado por Mikel el 2026-10-18): desde `fromDay`, 1 de cada `every` ataques es de máquinas en lugar de saqueadores o mutantes. Trae entre spiders[0] y spiders[1] arañas y entre drones[0] y drones[1] drones de vigilancia. Las máquinas no tienen moral (no huyen), no dejan cadáver y al destruirlas sueltan entre scrap[0] y scrap[1] 🔩 y entre parts[0] y parts[1] ⚙️. Las armas de fuego les hacen `firearmBonus` más de daño. `armor` en cada máquina: parte del daño que se quita.",
+    "fromDay": 30,
+    "every": 4,
+    "spiders": [
+      1,
+      2
+    ],
+    "drones": [
+      2,
+      4
+    ],
+    "scrap": [
+      10,
+      20
+    ],
+    "parts": [
+      2,
+      4
+    ],
+    "firearmBonus": 0.25
+  },
+  "packs": {
+    "_": "Una manada llega en lugar de un raid de saqueadores 1 de cada `every` veces (1 de cada `everyNearRadiation` si la colonia está a menos de `radiationRange` casillas de una zona irradiada). Tamaño de la manada: entre size[0] y size[1] perros (por la dureza de la partida). Desde el día de `bruto_mutante.fromDay`, la manada trae además 1 bruto por cada `dogsPerBrute` perros. Equilibrio (2026-10-21, partidas simuladas): el máximo de la manada empieza en 3 el día del primer perro y sube 1 cada growDays días (antes podían llegar 8 perros el día 8 y acababan con la colonia).",
+    "every": 3,
+    "everyNearRadiation": 2,
+    "radiationRange": 25,
+    "size": [
+      3,
+      8
+    ],
+    "dogsPerBrute": 3,
+    "growDays": 4
+  },
+  "corpses": {
+    "_": "Cadáveres (bloque 2 del catálogo): al morir, perros y brutos dejan un cadáver que se pudre. Quien lo ve a `viewRadius` casillas o menos pierde `moodPenalty` de ánimo, que le dura `moodHours` horas después de dejar de verlo. A los `rotDays` días se ha podrido del todo y desaparece. Con una hoguera encendida (en `buildings.json`), los colonos los llevan a ella y los queman.",
+    "rotDays": 4,
+    "moodPenalty": 0.05,
+    "viewRadius": 5,
+    "moodHours": 2
+  },
+  "animals": {
+    "_": "Bloque 10 del catálogo (aprobado por Mikel el 2026-10-18): ciervos mutados, jabalíes y ratas gigantes por el mapa; cazados dan 🥩 carne y 🟫 cuero; los jabalíes heridos atacan y las ratas gigantes roban comida de los almacenes sin muros. Cuántos hay, cada cuánto llegan, cuánto se quedan y cuánto roba una rata los ha puesto la sesión del 2026-10-21.",
+    "max": 8,
+    "perDay": [
+      1,
+      3
+    ],
+    "weights": {
+      "ciervo_mutado": 3,
+      "jabali": 2,
+      "rata_gigante": 2,
+      "cabra_salvaje": 2,
+      "vaca_dos_cabezas": 1,
+      "caballo_salvaje": 1,
+      "gallina_mutada": 2
+    },
+    "stayDays": 3,
+    "ratSteals": 5
+  },
+  "taming": {
+    "_": "Animales de carga (elegido por Mikel el 2026-10-21: domarlos y comprarlos). Probabilidad de domarlo en cada intento (más con Supervivencia), comida que se gasta en cada intento y cada día, lo que llevan en una expedición, a qué distancia de la colonia pasean, días sin comer hasta que se escapan y precio de una mula en las caravanas de los Granjeros y los Nómadas: los ha puesto la sesión del 2026-10-21. Cada animal lleva en «tame» su probabilidad base de domarlo (chance) y lo que carga (cargo): cabra 30 % y 30 kg, mula 25 % y 80 kg, vaca de dos cabezas 15 % y 100 kg, caballo salvaje 6 % y 120 kg, ciervo 5 % y 50 kg, jabalí 3 % y 60 kg (pedido de Mikel del 2026-10-21: que cada uno cueste más o menos; números de la sesión). Supervivencia suma chancePerSkill por nivel, sin pasar de maxChance. Lo que da cada día un animal domado que ha comido («produces» en «tame»): la vaca de dos cabezas 3 🥛 leche y la gallina mutada (fácil, 40 %, no carga) 2 🥚 huevos (pedido de Mikel del 2026-10-21; números de la sesión).",
+    "chance": 0.15,
+    "chancePerSkill": 0.02,
+    "maxChance": 0.6,
+    "foodPerTry": 2,
+    "workPerTry": 120,
+    "foodPerDay": 2,
+    "cargo": 80,
+    "leash": 12,
+    "hungryDays": 2,
+    "enrageOnFail": 0.2,
+    "mulePrice": 60,
+    "mulesForSale": [
+      1,
+      2
+    ]
+  }
+}

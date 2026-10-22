@@ -7,7 +7,9 @@ Idioma: el código (nombres de variables, funciones, tipos) en inglés; comentar
 ## Tecnología
 
 - TypeScript estricto + Phaser 3 + Vite. Tests con Vitest.
-- Publicación automática en GitHub Pages al subir a `main` (`.github/workflows/deploy.yml`). URL: https://mikeljka.github.io/OxidoGame/
+- Óxido vive en la carpeta `oxido/` del repositorio `mikeljka/zenit` (monorepo de Zenit Studio; se mudó desde `MikelJka/OxidoGame` el 2026-10-22, ver `MIGRACION.md`). No toques las carpetas de los otros juegos.
+- Publicación automática en GitHub Pages al subir a `main` cambios en `oxido/**` (workflow «Óxido: probar y publicar», `.github/workflows/oxido-publicar.yml` en la raíz de Zenit). URL: https://mikeljka.github.io/zenit/oxido/
+- Los comandos `npm …` se ejecutan dentro de `oxido/`.
 - Sin backend. Todo corre en el navegador. Los compradores, facciones y enemigos "con IA" son agentes simulados dentro del juego, nunca llamadas a servicios externos.
 
 ## Arquitectura
@@ -19,9 +21,9 @@ Idioma: el código (nombres de variables, funciones, tipos) en inglés; comentar
 - Nunca uses `Math.random()` dentro de `src/sim/`: usa `Rng`.
 - Partidas guardadas (`src/sim/save.ts`): no las rompas. Si añades estado a la simulación, guárdalo en `serializeWorld` y léelo en `loadWorld` con un valor por defecto para partidas antiguas; si un cambio no se puede leer así, sube `SAVE_VERSION` y añade la migración.
 
-## Contenido primero; 3D aparcada (orden de Mikel del 2026-10-18)
+## Contenido primero; solo 2D (órdenes de Mikel del 2026-10-18 y 2026-10-21)
 
-- No se trabaja en la vista 3D (`src/render3d/`) salvo para arreglar algo que rompa el juego. Lo nuevo se dibuja solo en 2D.
+- La vista 3D se ha quitado (2026-10-21: «podemos descartar el 3d por completo»). Todo se dibuja en 2D, con calidad de estudio: `src/render/` (dibujo) y `src/audio/` (sonido).
 - El contenido que falta está en `docs/CATALOGO.md`. Un bloque marcado «✅ Aprobado» por Mikel pasa a «Pendiente» de `FEEDBACK.md` (por fases) y se implementa sin volver a preguntar; lo no aprobado, no.
 - La simulación debe poder llevarse a otro motor con mejor 3D (Babylon.js, PlayCanvas, Godot…), así que:
   - Todas las reglas van en `src/sim/` (TypeScript puro, sin Phaser, Three.js ni DOM). El dibujado y la interfaz solo leen el estado y llaman a métodos de `World`; nunca deciden reglas.
@@ -36,10 +38,10 @@ Cada función nueva debe funcionar con ratón y con dedo: arrastrar = mover cám
 ## Cómo trabaja cada sesión automática
 
 1. Lee `docs/FEEDBACK.md`, `docs/PROGRESO.md` y `docs/ROADMAP.md`.
-   Procesa la cola del botón 🐞: `gh api "repos/MikelJka/OxidoGame/issues?labels=feedback&state=open&sort=created&direction=asc"` (usa `gh api`, no `gh issue`: GraphQL está bloqueado). Por cada incidencia, añádela a «Pendiente» de `FEEDBACK.md` (con el número `#N`), comenta en ella qué se hará y ciérrala (`gh api -X PATCH repos/MikelJka/OxidoGame/issues/N -f state=closed`). Los bugs van antes que el resto.
+   Procesa la cola del botón 🐞: `gh api "repos/mikeljka/zenit/issues?labels=feedback,oxido&state=open&sort=created&direction=asc"` (o las herramientas MCP de GitHub; solo las que llevan las etiquetas `feedback` y `oxido`) (usa `gh api`, no `gh issue`: GraphQL está bloqueado). Por cada incidencia, añádela a «Pendiente» de `FEEDBACK.md` (con el número `#N`), comenta en ella qué se hará y ciérrala (`gh api -X PATCH repos/mikeljka/zenit/issues/N -f state=closed`). Los bugs van antes que el resto.
 2. Elige UNA tarea: primero los bugs, después los puntos de «Pendiente» de `FEEDBACK.md` en su orden. **Mikel aprueba todo lo nuevo** (orden suya del 2026-10-17): solo se implementa lo que está en «Pendiente» de `FEEDBACK.md` (lo ha pedido o aprobado él) y los arreglos de bugs. Nada de funciones, contenidos o reglas nuevas por iniciativa propia, aunque estén en el roadmap. Si lo siguiente no está aprobado, o hay que decidir cómo funciona algo (qué contiene, números, reglas), no lo implementes: si Mikel está en la conversación, pregúntale con opciones; si es una sesión automática, escribe la propuesta con opciones en «## Propuestas para Mikel» de `FEEDBACK.md`, súbela y avísale con una notificación. Si una tarea aprobada es grande, pártela y haz solo la primera parte.
 3. Impleméntala con tests cuando toque `src/sim/`.
-4. Ejecuta `npm test` y `npm run build`. No subas nada que falle. Si npm no puede descargar paquetes en el entorno, sube primero una rama `sesion/AAAA-MM-DD-tema`: el workflow «Probar rama» la prueba; cuando pase, llévala a `main`.
+4. Ejecuta `npm test` y `npm run build`. No subas nada que falle. Si npm no puede descargar paquetes en el entorno, sube primero una rama `sesion/AAAA-MM-DD-tema`: el workflow «Óxido: probar rama» la prueba (sus capturas quedan en la rama `capturas-oxido`); cuando pase, llévala a `main`.
 5. Marca la tarea en `ROADMAP.md` (y el punto de `FEEDBACK.md` como hecho) y añade una entrada al principio de `PROGRESO.md`: fecha, qué se hizo, qué probar, qué sigue.
 6. Haz commit y push a `main` con un mensaje en español que diga qué cambia para el jugador.
 

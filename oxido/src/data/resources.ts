@@ -1,0 +1,242 @@
+/** Recursos de la colonia y trabajos para obtenerlos del mapa. Ampliar aquí, no en la lógica. */
+import type { Skill } from './colonists';
+
+export const RESOURCES = ['madera', 'piedra', 'chatarra', 'componentes', 'patata', 'maiz', 'setas', 'fibra', 'metal', 'hormigon', 'comida', 'palo', 'cuchillo', 'tuberia', 'lanza', 'machete', 'arco', 'ballesta', 'lanza_metal', 'flechas', 'pistola', 'escopeta', 'rifle', 'subfusil', 'francotirador', 'lanzallamas', 'balas', 'napalm', 'granadas', 'chaleco_cuero', 'chaleco_chapa', 'chaleco_metal', 'chaleco_tactico', 'casco_chapa', 'casco_metal', 'casco_tactico', 'medicina', 'combustible', 'hierba', 'pescado', 'abrigo', 'carne', 'cuero', 'abono', 'leche', 'huevos', 'kit_barricada_madera', 'kit_barricada_chatarra', 'kit_barricada_metal', 'kit_barricada_hormigon', 'kit_sacos_arena', 'kit_torreta_ligera', 'kit_torreta_pesada', 'kit_torreta_rotativa', 'kit_mortero', 'kit_generador_lena', 'kit_placa_solar', 'kit_molino_viento', 'kit_bateria', 'kit_lampara'] as const;
+
+export type ResourceId = (typeof RESOURCES)[number];
+
+export const RESOURCE_NAMES: Record<ResourceId, string> = {
+  madera: 'Madera',
+  piedra: 'Piedra',
+  chatarra: 'Chatarra',
+  componentes: 'Componentes',
+  patata: 'Patatas',
+  maiz: 'Maíz',
+  setas: 'Setas',
+  fibra: 'Fibra',
+  metal: 'Metal',
+  hormigon: 'Hormigón',
+  comida: 'Comida cocinada',
+  palo: 'Palo',
+  cuchillo: 'Cuchillo',
+  tuberia: 'Tubería',
+  lanza: 'Lanza',
+  machete: 'Machete',
+  arco: 'Arco',
+  flechas: 'Flechas',
+  ballesta: 'Ballesta',
+  lanza_metal: 'Lanza de metal',
+  pistola: 'Pistola casera',
+  escopeta: 'Escopeta',
+  lanzallamas: 'Lanzallamas',
+  napalm: 'Napalm',
+  rifle: 'Rifle',
+  subfusil: 'Subfusil',
+  francotirador: 'Rifle de francotirador',
+  balas: 'Balas',
+  granadas: 'Granadas caseras',
+  chaleco_cuero: 'Chaleco de cuero',
+  chaleco_chapa: 'Chaleco de chapa',
+  chaleco_metal: 'Chaleco de metal',
+  chaleco_tactico: 'Chaleco táctico',
+  casco_chapa: 'Casco de chapa',
+  casco_metal: 'Casco de metal',
+  casco_tactico: 'Casco táctico',
+  medicina: 'Medicina',
+  combustible: 'Combustible',
+  hierba: 'Hierba curativa',
+  pescado: 'Pescado',
+  abrigo: 'Abrigo',
+  carne: 'Carne',
+  cuero: 'Cuero',
+  abono: 'Abono',
+  leche: 'Leche',
+  huevos: 'Huevos',
+  kit_barricada_madera: 'Kit: Barricada de madera',
+  kit_barricada_chatarra: 'Kit: Barricada de chatarra',
+  kit_barricada_metal: 'Kit: Barricada de metal',
+  kit_barricada_hormigon: 'Kit: Barricada de hormigón',
+  kit_sacos_arena: 'Kit: Sacos de arena',
+  kit_torreta_ligera: 'Kit: Torreta ligera',
+  kit_torreta_pesada: 'Kit: Torreta pesada',
+  kit_torreta_rotativa: 'Kit: Torreta rotativa',
+  kit_mortero: 'Kit: Mortero',
+  kit_generador_lena: 'Kit: Generador de leña',
+  kit_placa_solar: 'Kit: Placa solar',
+  kit_molino_viento: 'Kit: Molino de viento',
+  kit_bateria: 'Kit: Batería',
+  kit_lampara: 'Kit: Lámpara',
+};
+
+/** Recursos que se muestran siempre en el inventario (los demás, solo si hay). */
+export const BASE_RESOURCES: readonly ResourceId[] = ['madera', 'piedra', 'chatarra', 'componentes'];
+/** Lo que se come: la comida cocinada y los alimentos crudos. */
+export const FOOD_RESOURCES: readonly ResourceId[] = ['comida', 'patata', 'maiz', 'setas', 'pescado', 'carne', 'leche', 'huevos'];
+/** Alimentos crudos (se pueden comer, pero sientan peor y alimentan menos que cocinados). */
+export const RAW_FOOD: readonly ResourceId[] = ['patata', 'maiz', 'setas', 'pescado', 'carne', 'huevos'];
+
+/** Icono corto para la interfaz. */
+export const RESOURCE_ICONS: Record<ResourceId, string> = {
+  madera: '🪵',
+  piedra: '🪨',
+  chatarra: '🔩',
+  componentes: '⚙️',
+  patata: '🥔',
+  maiz: '🌽',
+  setas: '🍄',
+  fibra: '🧵',
+  metal: '🔗',
+  hormigon: '🧱',
+  comida: '🍲',
+  palo: '🏏',
+  cuchillo: '🔪',
+  tuberia: '🪈',
+  lanza: '🔱',
+  machete: '🗡️',
+  arco: '🏹',
+  flechas: '➶',
+  ballesta: '🏹',
+  lanza_metal: '🔱',
+  pistola: '🔫',
+  escopeta: '🔫',
+  lanzallamas: '🔥',
+  napalm: '🧴',
+  rifle: '🔫',
+  subfusil: '🔫',
+  francotirador: '🔫',
+  balas: '⁍',
+  granadas: '💣',
+  chaleco_cuero: '🦺',
+  chaleco_chapa: '🦺',
+  chaleco_metal: '🦺',
+  chaleco_tactico: '🦺',
+  casco_chapa: '⛑️',
+  casco_metal: '⛑️',
+  casco_tactico: '⛑️',
+  medicina: '💊',
+  combustible: '⛽',
+  hierba: '🌿',
+  pescado: '🐟',
+  abrigo: '🧥',
+  carne: '🥩',
+  cuero: '🟫',
+  abono: '🟤',
+  leche: '🥛',
+  huevos: '🥚',
+  kit_barricada_madera: '📦',
+  kit_barricada_chatarra: '📦',
+  kit_barricada_metal: '📦',
+  kit_barricada_hormigon: '📦',
+  kit_sacos_arena: '📦',
+  kit_torreta_ligera: '📦',
+  kit_torreta_pesada: '📦',
+  kit_torreta_rotativa: '📦',
+  kit_mortero: '📦',
+  kit_generador_lena: '📦',
+  kit_placa_solar: '📦',
+  kit_molino_viento: '📦',
+  kit_bateria: '📦',
+  kit_lampara: '📦',
+};
+
+/** Tipo de trabajo con el que se aprovecha un objeto del mapa. */
+export type HarvestJob = 'talar' | 'minar' | 'saquear';
+
+export const HARVEST_JOBS: readonly HarvestJob[] = ['talar', 'minar', 'saquear'];
+
+/** Habilidad que acelera cada trabajo. */
+export const HARVEST_JOB_SKILL: Record<HarvestJob, Skill> = {
+  talar: 'cultivo',
+  minar: 'mineria',
+  saquear: 'construccion',
+};
+
+/** Texto de la actividad de un colono mientras hace el trabajo. */
+export const HARVEST_JOB_VERBS: Record<HarvestJob, string> = {
+  talar: 'Talando',
+  minar: 'Picando',
+  saquear: 'Saqueando',
+};
+
+export const HARVEST_JOB_NAMES: Record<HarvestJob, string> = {
+  talar: 'Talar',
+  minar: 'Picar',
+  saquear: 'Saquear',
+};
+
+/** Rango [mínimo, máximo] de unidades, ambos incluidos. */
+export type AmountRange = readonly [number, number];
+
+/** Máximo de unidades de un recurso en un montón (una casilla del suelo). */
+export const MAX_STACK: Record<ResourceId, number> = {
+  madera: 75,
+  piedra: 50,
+  chatarra: 75,
+  componentes: 25,
+  patata: 75,
+  maiz: 75,
+  setas: 75,
+  fibra: 75,
+  metal: 50,
+  hormigon: 50,
+  comida: 25,
+  palo: 10,
+  cuchillo: 10,
+  tuberia: 10,
+  lanza: 10,
+  machete: 10,
+  arco: 10,
+  flechas: 100,
+  ballesta: 10,
+  lanza_metal: 10,
+  pistola: 10,
+  escopeta: 10,
+  lanzallamas: 10,
+  napalm: 50,
+  rifle: 10,
+  subfusil: 10,
+  francotirador: 10,
+  balas: 100,
+  granadas: 25,
+  chaleco_cuero: 10,
+  chaleco_chapa: 10,
+  chaleco_metal: 10,
+  chaleco_tactico: 10,
+  casco_chapa: 10,
+  casco_metal: 10,
+  casco_tactico: 10,
+  medicina: 25,
+  combustible: 50,
+  hierba: 75,
+  pescado: 75,
+  abrigo: 10,
+  carne: 75,
+  cuero: 50,
+  abono: 50,
+  leche: 25,
+  huevos: 30,
+  kit_barricada_madera: 5,
+  kit_barricada_chatarra: 5,
+  kit_barricada_metal: 5,
+  kit_barricada_hormigon: 5,
+  kit_sacos_arena: 5,
+  kit_torreta_ligera: 5,
+  kit_torreta_pesada: 5,
+  kit_torreta_rotativa: 5,
+  kit_mortero: 5,
+  kit_generador_lena: 5,
+  kit_placa_solar: 5,
+  kit_molino_viento: 5,
+  kit_bateria: 5,
+  kit_lampara: 5,
+};
+
+/** Provisiones con las que llega la colonia: se dejan en el suelo junto al punto de inicio. */
+export const STARTING_SUPPLIES: Partial<Record<ResourceId, number>> = {
+  madera: 60,
+  piedra: 30,
+  chatarra: 20,
+  componentes: 5,
+  patata: 120,
+  medicina: 3,
+};

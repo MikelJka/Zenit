@@ -1,0 +1,57 @@
+name: 'Óxido: probar y publicar'
+
+# Prueba Óxido y publica el sitio de Zenit en GitHub Pages:
+#   https://mikeljka.github.io/zenit/        → portada (web/index.html)
+#   https://mikeljka.github.io/zenit/oxido/  → Óxido
+# GitHub Pages sustituye el sitio entero en cada despliegue, así que se construyen todos los
+# juegos de web/juegos.txt (ver .github/scripts/construir-web.sh). Otro juego que quiera
+# publicarse solo tiene que añadirse a esa lista y tener su propio workflow igual que este.
+on:
+  push:
+    branches: [main]
+    paths: ['oxido/**', 'web/**', '.github/scripts/construir-web.sh', '.github/workflows/oxido-publicar.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un solo despliegue de Pages a la vez para todo Zenit; no se cancelan entre juegos.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar y probar Óxido
+        working-directory: oxido
+        run: |
+          npm install
+          npm test
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - name: Construir el sitio de Zenit
+        run: bash .github/scripts/construir-web.sh
+        env:
+          VITE_COMMIT: ${{ github.sha }}
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

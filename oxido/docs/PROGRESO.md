@@ -2,6 +2,511 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-22 (72) — Óxido se muda a Zenit
+
+- Por decisión de Mikel, Óxido deja `MikelJka/OxidoGame` y pasa a la carpeta `oxido/` de `mikeljka/zenit`, con todo su código, tests, datos y documentación (copiado del commit `e2665a4`; detalles en `oxido/MIGRACION.md`). OxidoGame no se ha tocado.
+- Nueva dirección para jugar: **https://mikeljka.github.io/zenit/oxido/** (la portada de Zenit, en https://mikeljka.github.io/zenit/). Las partidas guardadas en el navegador siguen ahí, porque el dominio es el mismo.
+- El botón 🐞 abre las incidencias en `mikeljka/zenit` con las etiquetas `feedback` y `oxido`. La sesión automática trabaja ahora en Zenit, cada 2 horas.
+- El juego no cambia. Tests con Bun (689) y la prueba completa, en GitHub Actions.
+- Qué probar: abrir la nueva dirección en el móvil y en el PC, cargar la partida y mandar algo de prueba con 🐞.
+- Siguiente: lo que haya en «Pendiente» de `FEEDBACK.md`.
+
+## 2026-10-22 (71) — Primeros pasos
+
+- Tercera de las cuatro propuestas que eligió Mikel (D): una **guía corta y opcional** al empezar partida nueva, con cinco pasos: **talar**, **almacén**, **huerto**, **cama** y **muro**.
+- Una tarjeta (abajo a la izquierda, o donde no tape la hoja abierta) dice el paso («Primeros pasos 2/5 · Marca un almacén») y cómo hacerlo; una **flecha amarilla** que bota señala el botón que hay que tocar: primero ⚒ o 🏗, luego la orden o la pestaña (Muebles, Muros) y por último la construcción. Mientras se marca en el mapa, la flecha se quita.
+- Cada paso cuenta en cuanto existe lo que pide (marcar árboles, una zona de almacén, un huerto, un plano de cama, un plano de cualquier muro), así que se puede hacer en otro orden; al acabar, «✅ ¡Primeros pasos hechos!» unos segundos.
+- **Se puede saltar** con «Saltar guía». Sale con 🏠 Inicio → Nueva partida (casilla nueva «Guía de primeros pasos», marcada por defecto; se recuerda), con ✚ Mapa nuevo (si la casilla está marcada) y la primera vez que se abre el juego. No va en la partida guardada: el avance se recuerda en el navegador con la semilla del mapa.
+- Reglas: `src/sim/tutorial.ts` solo lee la partida (5 tests); textos y pasos en `src/data/tutorial.json`; la tarjeta y la flecha en `src/ui/tutorial.ts`. La prueba de humo saca una captura de la guía.
+- Qué probar: en el móvil y en el PC, 🏠 Inicio → Nueva partida → Empezar, y seguir la flecha hasta el final; en otra partida, «Saltar guía».
+- Qué sigue: la propuesta B, barriles tóxicos y ☢ uranio (por partes).
+- Sin npm en el entorno: tests con Bun (689); los tipos y la build, en GitHub Actions («Probar rama»).
+
+## 2026-10-22 (70) — Gráficos: alta, media o baja
+
+- Segunda de las cuatro propuestas que eligió Mikel (C): en ☰ → «Vista y más», el botón **🖼 Gráficos** cambia entre **alta**, **media** y **baja** (se recuerda en este navegador; no va en la partida guardada). Se aplica al momento, sin recargar.
+- **Alta**: como hasta ahora.
+- **Media**: el mapa de luz a la mitad de resolución y con la mitad de luces, y la mitad de gotas de lluvia, copos, polvo y motas. Mikel: la media no estaba decidida; si la quieres distinta, se cambia en `src/render/graphics.ts`.
+- **Baja**: muebles, talleres, defensas, electricidad, pozo, depuradora, cantera y muelle se guardan a la resolución normal en vez de al doble (menos memoria en la tarjeta gráfica); sin lluvia, nieve, polvo ni motas de partículas (la tormenta y el polvo siguen oscureciendo y tiñendo la pantalla); y sin mapa de luz: de noche, una capa oscura con el halo de cada luz encima, como antes de la sesión 68.
+- Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: en el móvil, ☰ → 🖼 Gráficos hasta «baja», y ver que va más fluido de noche y con tormenta (🪄 modo Dios); volver a «alta».
+- Qué sigue: la propuesta D, «Primeros pasos» (guía corta y opcional al empezar partida nueva).
+- Sin npm en el entorno: tests con Bun (684); los tipos y la build, en GitHub Actions («Probar rama»).
+
+## 2026-10-22 (69) — Cama de hospital
+
+- Primera de las cuatro propuestas que eligió Mikel (A): la **cama de hospital** (🪵15 🔩6 🧵4, 2×1, en 🏗 → Muebles). Se dibuja a doble resolución: armazón de tubo con ruedas y barandillas, sábana con la cruz roja, manivela y gotero.
+- **El herido va antes a ella**: el caído al que llevan a cuestas tras el combate, el herido en pie que guarda cama y quien se va a dormir con heridas o infección eligen una cama de hospital libre antes que una normal, aunque esté más lejos. Los sanos no duermen en ella (si solo hay camas de hospital, duermen en el suelo).
+- **Tumbado en ella** (en el suelo de la cama o durmiendo), sus heridas se cierran en la **mitad de tiempo** y se infectan la **mitad**. Mikel: «un 50 % antes» se ha tomado como la mitad de tiempo; si prefería un 50 % más deprisa, es cambiar `hospitalBed.healFactor` de 2 a 1,5 en `src/data/medicine.json`.
+- Partidas guardadas: sin cambios (es un mueble nuevo).
+- Qué probar: construir una cama normal y una de hospital lejos de ella; herir a un colono con 🪄 modo Dios y ver que, tras curarle, le llevan a la de hospital («… en una cama de hospital para que se recupere»).
+- Qué sigue: la propuesta C, «Gráficos: alta / media / baja» en ☰.
+- Sin npm en el entorno: tests con Bun (684); los tipos y la build, en GitHub Actions («Probar rama»).
+
+## 2026-10-21 (68) — La luz, pulida
+
+- Última parte del salto de calidad del 2D (pedido por Mikel): la **luz** (`src/render/atmosphere.ts`). Con esto, el salto del 2D queda terminado.
+- **Mapa de luz**: la oscuridad de la noche ya no es una capa plana con manchas amarillas encima; cada lámpara, hoguera, estufa o fuego «abre» la oscuridad con su color, así que junto a una luz el suelo, los muebles y los colonos se ven con sus colores de verdad. La luz cae suave y se aplasta como el suelo según la inclinación de la vista; encima queda un halo pequeño en la bombilla o la llama.
+- **Pilotos**: las máquinas que gastan corriente y la reciben (talleres electrificados, radio, torretas, bandejas, nevera…) dejan una lucecita fría a su alrededor de noche; las averiadas, no.
+- **Fogonazos y explosiones** iluminan el suelo de alrededor un instante (se nota mucho de noche).
+- Con **tormenta, lluvia ácida o polvo** el día se oscurece y las luces se notan aunque sea de día.
+- Los **bordes de la pantalla** se oscurecen un poco, más de noche, como en el cine.
+- Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: de noche, una colonia con lámparas, una hoguera y algún taller electrificado; un raid con armas de fuego o una granada de noche; una tormenta de día (con 🪄 modo Dios).
+- Qué sigue: no queda nada aprobado en «Pendiente»; en «Propuestas para Mikel» hay cuatro opciones (cama de hospital, uranio y reactor, calidad gráfica para móviles, primeros pasos) esperando su elección.
+- Sin npm en el entorno: tests con Bun (678); los tipos y la build, en GitHub Actions («Probar rama»).
+
+## 2026-10-21 (67) — Fogonazos, explosiones y fuego con efectos
+
+- Penúltima parte del salto de calidad del 2D (pedido por Mikel): los **efectos** (`src/render/effects.ts`).
+- **Disparos**: fogonazo en estrella en la boca del arma, con su destello de luz (se nota mucho de noche), chispas y una bocanada de polvo; más grande con la escopeta y el francotirador. Las torretas también, y donde falla un disparo se levanta polvo. El **lanzallamas** echa una llamarada hacia delante con brasas.
+- **Golpes**: quien pierde salud de golpe salpica sangre; las arañas y los drones sueltan chispas.
+- **Explosiones** (granadas, minas, mortero, ⛽ que revienta): destello que ilumina alrededor, onda en el suelo, bola de fuego, cascotes que saltan y caen, chispas, humo que se queda un rato y una **mancha quemada** que se borra en unos 45 s.
+- **Fuego**: cada casilla que arde tiene suelo chamuscado, resplandor y tres lenguas de fuego que se mueven cada una a su ritmo (rojo, naranja, amarillo y casi blanco en la base), crece al prender, y suelta brasas que suben y humo.
+- Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: con 🪄 modo Dios, un raid con armas de fuego, una torreta, una granada o el mortero, y un incendio; mejor de noche.
+- Qué sigue: la última parte, pulir la luz.
+- Sin npm en el entorno: tests con Bun (678); los tipos y la build, en GitHub Actions («Probar rama»).
+
+## 2026-10-21 (66) — Pozo, depuradora, cantera y muelle con detalle
+
+- Siguiente parte del salto de calidad del 2D (pedido por Mikel). El pozo, la depuradora, la cantera, el muelle y la trampa de pesca se dibujan a **doble resolución** (`src/render/utilityArt.ts`), como la electricidad.
+- **Pozo**: brocal redondo de piedra con musgo, el agua al fondo con su reflejo, dos postes con tejadillo, el torno con la cuerda y la manivela, y un cubo de chapa en el borde.
+- **Depuradora**: depósito azul remachado sobre un patín, con el tubo de nivel, el filtro de arena con manómetro, la bomba con aletas y piloto verde, el grifo que gotea y el manguito que baja al agua.
+- **Cantera**: tajo en la roca con tres bancadas en escalones y un charco al fondo, grúa de trípode con polea sacando un bloque, bloques cortados apilados, pico, carretilla con cascotes y los estratos de la roca en el frente.
+- **Muelle**: tablones con vetas, clavos y rendijas al agua, larguero de canto y pilotes con su cuerda; las casillas se juntan sin costura. **Trampa de pesca**: nasa de mimbre medio hundida con sus aros, ondas, boya roja y blanca y la cuerda al muelle.
+- Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: construir (con 🪄 modo Dios si hace falta) un pozo, una depuradora junto al agua, una cantera, unas casillas de muelle y una trampa de pesca, e inclinar la vista.
+- Qué sigue: la última parte del salto del 2D, la luz y los efectos.
+- Sin npm en el entorno: tests con Bun (678) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (65) — Electricidad con detalle
+
+- Siguiente parte del salto de calidad del 2D (pedido por Mikel). Los edificios de **electricidad** se dibujan a **doble resolución** (`src/render/powerArt.ts`), como los muebles y las defensas.
+- **Generador de leña**: caldera de hierro remachada sobre una losa, con la portezuela al rojo y su resplandor en el suelo, chimenea con humo, manómetro, volante de inercia con la correa hasta la dinamo y un montón de leña al lado.
+- **Placa solar**: dos paneles en bastidor de aluminio con las celdas en cuadrícula, reflejo del cielo, polvo y una celda rota, patas atornilladas, caja de conexión y su cable.
+- **Molino de viento**: torre de celosía con riostras en cruz, rueda de aspas de chapa como las de las granjas, buje rojo y veleta. **Molino de agua**: caseta de tablones sobre pilotes con tejado de chapa y la ventana encendida, y la rueda de paletas metida en el agua con espuma (se ve bien girado).
+- **Batería**: estante con dos acumuladores, bornes rojo y negro, puente de cobre e indicador de carga. **Lámpara**: farola con brazo curvo, tulipa y halo cálido. **Radio**: transmisor con dial iluminado, mandos, altavoz y micrófono sobre una caja de munición, con la antena y su luz roja.
+- Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: construir (con 🪄 modo Dios si hace falta) un generador, una placa, los dos molinos, una batería, una lámpara y la radio, y girar e inclinar la vista.
+- Qué sigue: el pozo, la depuradora, la cantera y el muelle; después, la luz y los efectos.
+- Sin npm en el entorno: tests con Bun (678) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (64) — Defensas con detalle
+
+- Siguiente parte del salto de calidad del 2D (pedido por Mikel). Las **defensas** se dibujan a **doble resolución** (`src/render/defenseArt.ts`), como los muebles.
+- **Barricadas**: la de madera con postes, largueros y cruz clavada; la de chatarra con chapa ondulada, una puerta de coche con la ventanilla rota, un neumático y un tubo; la de metal con planchas, remaches y mirilla; la de hormigón tipo «New Jersey» con franjas de aviso y la varilla al aire; los **sacos terreros** en tres hileras con costuras y atados.
+- **A ras de suelo**: pinchos de madera (estacas afiladas y atadas) y de metal (erizos de varilla); **alambre de espino** en concertina entre dos estacas; **mina casera** medio enterrada con su espoleta y un hilo; **trampa eléctrica** con rejilla, bobinas de cobre, aviso y chispas; **mortero** con placa base, bípode y caja de granadas.
+- **Torretas**: losa con franjas de aviso, pedestal, corona giratoria y cabeza con sensor; la ligera con un cañón, la pesada con dos y freno de boca, caja de munición y antena, y la rotativa con su haz de cañones y la cinta de balas.
+- Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: poner (con 🪄 modo Dios si hace falta) una barricada de cada material, sacos, alambre, una mina, una trampa, el mortero y las tres torretas, y girar la vista.
+- Qué sigue: los edificios de electricidad (generadores, placas, molino, baterías, lámparas), el pozo, la cantera y el muelle.
+- Sin npm en el entorno: tests con Bun (678) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (63) — Montones del suelo con detalle
+
+- Siguiente parte del salto de calidad del 2D (pedido por Mikel). Los **montones del suelo** se dibujan a **doble resolución** (`src/render/itemArt.ts`) y en **tres tamaños** según lo llenos que están: unos pocos troncos sueltos, media pila o la pila entera.
+- **Materiales**: pila de troncos con la punta cortada y sus anillos; piedras redondeadas; chapas oxidadas con un tubo y un engranaje; cajas de componentes; lingotes de metal; bloques de hormigón con varilla; manojos de fibra y de hierba curativa.
+- **Comida**: cesto de patatas, maíz o setas (con un saco al lado si está lleno); olla de guiso humeante con cuencos; carne sobre una tela; pescado en una tabla; cántaros de leche; huevos en un cesto con paja.
+- **Lo demás**: botiquín con frascos; bidones rojos de ⛽ y latas de napalm; sacos de abono; pieles de cuero; abrigo doblado; caja de munición; carcaj de flechas; granadas; todas las armas y la ropa de protección redibujadas; y los **kits** de defensas y energía como cajas con su franja de color y un dibujo (antes no se veían: solo la sombra). La 💊, el ⛽, la carne, el cuero y el abrigo tampoco tenían dibujo; ahora sí.
+- Lo que lleva un colono a cuestas usa el mismo dibujo, en pequeño. Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: mirar un almacén con varios montones (madera, piedra, comida) e ir viendo cómo crecen; dejar en el suelo una 💊 o un bidón de ⛽.
+- Qué sigue: el resto de edificios (defensas, electricidad, pozo, cantera, muelle).
+- Sin npm en el entorno: tests con Bun (678) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (62) — Muebles y talleres con detalle
+
+- Siguiente parte del salto de calidad del 2D (pedido por Mikel). Los **muebles y talleres** se dibujan a **doble resolución** (`src/render/furnitureArt.ts`), como las personas.
+- **Muebles**: cama con cabecero, patas, almohada y manta con pliegues y un remiendo; cama de prisionero con cadena y grillete; mesa de tablones con jarra y vela; mesa de juego con tapete, cartas y fichas; silla con respaldo; alfombra con cenefa, medallón y flecos; cuadro con paisaje en un caballete; estufa de hierro con tubo y brasas en la rejilla; armario con cuarterones y tiradores; armero con ganchos y candado; nevera esmaltada con junta, tirador y rejilla; estanterías de madera y de metal.
+- **Talleres**: banco de trabajo con tornillo, sierra, martillo, llave, clavos y virutas; cocina de ladrillo con olla humeante, sartén y fuego de leña; horno de fundición con boca al rojo, crisol, chimenea y lingotes; recicladora con tolva llena de chatarra, engranaje, cinta y franjas de aviso; destilería con caldera de cobre, serpentín y bidón; mesa de boticario con mortero, frascos, balanza, hierbas y libro; banco de investigación con microscopio, planos, libros, radio y flexo.
+- Se ven bien con el mueble girado y en las cuatro inclinaciones de la vista. Sin cambios en las reglas ni en la partida guardada.
+- Qué probar: construir una cama, una mesa, un banco de trabajo, una cocina y un horno, y girar la vista.
+- Qué sigue: los montones de objetos del suelo y el resto de edificios (defensas, electricidad, pozo, cantera, muelle).
+
+## 2026-10-21 (61) — Salto de calidad del 2D (primera tanda)
+
+- Pedido por Mikel: que todo se vea más real y vivo; la 3D se descarta.
+- **Personas** a doble resolución y algo más grandes, con animaciones de andar, respirar, trabajar, pelear y caído. Se ven la cara, el peinado, la ropa, el chaleco, el casco y el arma en la mano.
+- **Criaturas y animales** a doble resolución con animación: perros, ciervos, jabalíes, ratas, cabras, vacas, caballos, mulas, gallinas, el bruto, la araña y el dron.
+- **Árboles, matorrales, rocas, chatarra, coches, ruinas, bidones y neumáticos** como sprites con sombra y cuatro variantes.
+- **Luz del día**: amanecer y atardecer cálidos, noche azulada. De noche brillan las lámparas encendidas, las hogueras y estufas con leña y el fuego (parpadea y echa humo).
+- **Tiempo visible**: lluvia (verdosa si es ácida), nieve con la ola de frío o en invierno de noche, polvo en la tormenta de polvo, relámpagos en la tormenta eléctrica y motas de polvo de día.
+- **Suelo con más vida**: manchas secas y húmedas, grietas, matas de hierba, piedrecitas y ondas en la arena.
+- **Sombras** de las construcciones que se mueven con el sol. El pie de las paredes se ve más oscuro.
+- **Desgaste** en muros y edificios: grano, manchas, churretes de suciedad y la base más oscura.
+- **Estaciones a la vista**: árboles y matorrales con brotes, verdes, ocres, cayendo y sin hojas. Cada uno cambia en un día distinto. La nieve cuaja poco a poco en el suelo y encima de árboles, rocas y chatarra, y se funde en primavera (`foliageAt` y `snowCover` en `src/sim/seasons.ts`, números en `seasons.json`).
+- **Agua con vida**: brillos, ondas, peces que saltan y espuma en la orilla.
+- **Muros de obra**: los tramos se unen sin costuras con sus vecinos, puertas y portones. Llevan pilar en los extremos, albardilla y el aparejo de su material (piedra, tablones, troncos, chapas, paneles u hormigón), con 4 variantes.
+- **Buggies** de frente y de espaldas al subir o bajar por el mapa.
+- **Enfoque de cine** al empezar un raid, una manada, un desembarco o un incendio. Se puede apagar en el menú.
+- **Sonido**: ambiente (viento, lluvia, agua, fuego, pájaros y grillos) y efectos (disparos, golpes, explosiones con temblor, herramientas, truenos, alarma y avisos), con ZzFX (MIT) en `src/audio/`. Volumen en el menú.
+- **Temperatura** (pedido por Mikel): grados fuera según la estación, la hora y la ola de frío; dentro según el tejado, las estufas y los nuevos **calefactor** y **aire acondicionado**. La temperatura de estos se elige con −1/+1 °C y solo gastan corriente mientras trabajan. Con más de 30 °C se pasa calor (−5 %) y con más de 38 °C hay golpe de calor. Números en `src/data/climate.json`, puestos por la sesión.
+- Qué probar: dejar pasar un día entero mirando la colonia; una noche con lámparas y hogueras; una tormenta; avanzar hasta el otoño y el invierno; un calefactor en una habitación en invierno y un aire acondicionado en verano; activar el sonido (tocar la pantalla una vez).
+- Qué sigue: muebles y talleres más detallados, objetos del suelo y quitar el código de la vista 3D.
+
+## 2026-10-21 (60) — Equilibrio con partidas simuladas
+
+- Elegido por Mikel. Nueva herramienta `scripts/equilibrio.ts`: juega partidas enteras sin pantalla con un jugador automático. Informe y cambios en `docs/EQUILIBRIO.md`.
+- Cambios: la ola de frío solo en otoño/invierno y desde el día 15 (hipotermia hasta 0,35 de salud); tormenta e incendio desde el día 8 y plaga desde el 6; un golpe no mata a quien está de pie, el sangrado tiene tope y en el suelo va al 40 %; la infección mata al 4.º día y el cuerpo la puede vencer (30 % al día); se empieza con 3 💊; las manadas crecen con los días.
+- Arreglo de rendimiento: con la colonia amurallada, los saqueadores sin camino lo buscaban en cada tic (la partida se volvía muy lenta).
+- Antes: ninguna colonia simulada pasaba del día 18. Ahora: 7 de 8 llegan al día 30.
+- Qué probar: una partida normal hasta el día 20 con muros; un colono caído (da tiempo a curarle).
+
+## 2026-10-21 (59) — Fuego completo y lanzallamas
+
+- Elegido por Mikel (sale de «Aparcado»). El fuego se extiende **según la estación** (verano ×1,5, invierno ×0,5) y **según el viento**: cada día sopla hacia un lado y el fuego corre hacia allí (×2) y le cuesta ir en contra (×0,5). El aviso del incendio dice hacia dónde sopla.
+- **⛈ Tormenta eléctrica** (suceso nuevo): 6 h en las que caen 2–4 rayos que prenden fuego donde caen.
+- **Explosiones** (como una granada, 3×3, y prenden fuego alrededor): los montones de ⛽, 🧴 napalm y granadas que arden, el generador de leña y la destilería si el fuego los destruye, y los vehículos con ⛽ que se rompen (a golpes o quemados: el fuego daña a los vehículos que tiene encima).
+- **🔥 Lanzallamas** (con «Explosivos»; 🔗8 ⚙️3 + 1 tubería en el banco): alcance 4, gasta **🧴 napalm** (2 ⛽ + 1 🌿 → 10 en la destilería) y prende fuego a la casilla del objetivo.
+- Decidido en esta sesión (Mikel puede cambiarlo): todos los números.
+- Qué probar: un incendio en verano con viento; dejar ⛽ cerca del fuego; un lanzallamas contra un raid en zona de matorrales.
+- Siguiente: el equilibrio con partidas simuladas.
+
+## 2026-10-21 (58) — Más barcos y comercio por barco
+
+- Elegido por Mikel. Dos barcos nuevos: **barcaza de carga** (🪵40 🌿10 🔩10, con «Navegación»; lenta, sin blindaje, **600 kg**) y **lancha blindada** (🔗25 🔩20 ⚙️6, con «Motores» y «Blindaje avanzado»; blindaje −50 %, 800 de vida, gasta ⛽).
+- **Comercio por barco** (📜 → 🏳 Facciones → ⛵ Comerciar por barco, en las facciones que no están en guerra): se elige barco, tripulación (alguien se queda), lo que se lleva y qué traer a cambio. Por el río se tarda **la mitad** que andando. Allí venden a **precio de mercado** (+25 % por lo que esa facción suele necesitar) y compran lo pedido con el margen de las caravanas (−15 % si a ellos les sobra). Cada viaje: **+3 de relación** y la base se enriquece. A la vuelta, **10 %** de que los Piratas del Óxido asalten el barco (se llevan el 30 % y la tripulación vuelve herida).
+- Decidido en esta sesión (Mikel puede cambiarlo): todos los números.
+- Qué probar: investigar «Navegación», hacer una barcaza en el río y mandarla a los Granjeros con chatarra a por patatas.
+- Siguiente: el fuego y luego el equilibrio.
+
+## 2026-10-21 (57) — Nevera y comida que se pone mala
+
+- Pedido por Mikel. **La comida se pone mala**: cada día se pierde una parte de cada montón — carne y pescado 20 %, leche 30 %, raciones 10 %, huevos y setas 8 %, patatas 3 %, maíz 2 %. **Con frío** (de noche en invierno o en una ola de frío) no se pierde nada. A las 20:00, el diario dice cuánto se ha echado a perder ese día.
+- **Nevera** (🏗 → Muebles, 🔩20 🔗6 ⚙️3, 2×1, 80 W): guarda **solo comida**, **6 montones por casilla** (hasta 900 raciones de carne en las dos), y **con corriente** lo que hay dentro no se estropea. Se pone un almacén encima para que los colonos la llenen.
+- Decidido en esta sesión (Mikel puede cambiarlo): lo que se pierde de cada cosa, el coste y el consumo.
+- Qué probar: dejar carne fuera y verla bajar; poner una nevera con cable y un almacén encima.
+- Sin npm en el entorno: tests con Bun (671) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (56) — Espantapájaros, compostera, leche y huevos
+
+- Pedido por Mikel. En **Granja**: **espantapájaros** (🪵4 🌿3): las plantas a 5 casillas o menos **no enferman** con las plagas (si todo el huerto está guardado, no hay plaga). **Compostera** (🪵12, con «Agricultura mejorada»): cada mañana deja **2 🟤 abono** a su lado. Lo **abonado** da +25 % de cosecha y ahora además **crece un 25 % más deprisa**.
+- **Leche y huevos**: la **vaca de dos cabezas** domada da **3 🥛 leche** cada día que come; la nueva **🐔 gallina mutada** (fácil de domar, 40 %; no carga) da **2 🥚 huevos**. Se comen tal cual, y en la cocina hay **tortilla** (4 🥚 → 2 raciones).
+- Decidido en esta sesión (Mikel puede cambiarlo): radio, costes y cantidades.
+- Qué probar: poner un espantapájaros junto a un huerto; investigar «Agricultura mejorada» y hacer una compostera; domar una gallina y una vaca y mirar qué dejan cada día.
+- Sin npm en el entorno: tests con Bun (670) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+## 2026-10-21 (56 bis) — Catálogo terminado: propuestas para lo siguiente
+
+- Sin incidencias nuevas en 🐞. Con el abono y la bandeja hidropónica (sesión 55), los **26 proyectos del árbol** desbloquean lo suyo (solo falta el lanzallamas, que va con el fuego, aparcado): quedan terminados el bloque 13 y **todo el catálogo aprobado**.
+- Esta sesión **no ha tocado el juego**: ha puesto al día `ROADMAP.md` (fase 5 y «Caravanas y trueque por valor», que ya estaban hechos) y ha dejado en «Propuestas para Mikel» de `FEEDBACK.md` qué hacer ahora: **A** equilibrio con partidas simuladas (solo informe), **B** arte definitivo en 2D, **C** sacar el fuego de «Aparcado», **D** más barcos y comercio por barco.
+- Siguiente: lo que Mikel elija. Sin respuesta, las sesiones solo arreglarán bugs que lleguen por 🐞.
+
+## 2026-10-21 (55) — Abono y bandeja hidropónica
+
+- Contenido aprobado del catálogo que faltaba (bloques 3 y 5): con **«Agricultura mejorada»**, receta de **🟤 abono** en el banco de trabajo (🍄2 + 🪨1 → 3). Al **sembrar**, si hay abono en el almacén se echa 1 y esa planta da **+25 %** de cosecha (al tocarla pone «abonada»).
+- Con **«Hidropónica»**, la **bandeja hidropónica** (🏗 → Granja, 🔩10 ⚙️2, 1×2, 100 W): cultiva **sola** patatas, maíz o hierba, **×1,5 más rápido** que un huerto y sin fertilidad, si está **bajo techo y con corriente**. Al madurar deja la cosecha a su lado y vuelve a sembrar. Al tocarla se ve el cultivo, el % y por qué no crece; «🌱 Cambiar cultivo» la pasa al siguiente.
+- Decidido en esta sesión (Mikel puede cambiarlo): que el abono se coja solo del almacén al sembrar, y que la bandeja se siembre y coseche sola.
+- Qué probar: investigar «Agricultura mejorada», hacer abono y sembrar; investigar «Hidropónica», poner una bandeja en una habitación con tejado y cable.
+- Sin npm en el entorno: tests con Bun (667) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (54) — Ola de frío
+
+- Último suceso del bloque 9 (aprobado; iba con las estaciones). **🥶 Ola de frío**: durante **48 horas**, en cualquier estación, hace frío **a todas horas** como en una noche de invierno (sin abrigo ni habitación con tejado y estufa encendida: −10 % de ánimo y, con 4 h seguidas, hipotermia) y **no crece nada al aire libre**. Las estufas se encienden también entonces.
+- Decidido en esta sesión (Mikel puede cambiarlo): que dure 48 h y que salga la mitad de veces que la tormenta o el alijo.
+- Con esto quedan terminados los sucesos (bloque 9) y la fase de facciones, mercado y sucesos del catálogo.
+- Qué probar: esperar a una ola de frío (o verla en el diario) y comprobar que quien está fuera sin abrigo pasa frío también de día.
+- Sin npm en el entorno: tests con Bun (664) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (53) — Doma con dificultad, animales nuevos y granja
+
+- Pedido por Mikel. **Cada animal se doma con su dificultad** y carga distinto en las expediciones: 🐐 cabra salvaje (fácil, 30 %, 30 kg), 🫏 mula (fácil, 25 %, 80 kg, se compra), 🐄 vaca de dos cabezas (media, 15 %, 100 kg), 🐎 caballo salvaje (difícil, 6 %, 120 kg; herido ataca), 🦌 ciervo mutado (difícil, 5 %, 50 kg) y 🐗 jabalí (muy difícil, 3 %, 60 kg). Supervivencia sigue sumando un 2 % por punto. Al tocarlo para domarlo se ve lo difícil que es.
+- **El huerto parece un huerto**: tierra labrada con surcos y caballones en filas.
+- Nueva pestaña **«Granja»** en construir: **valla de madera** (🪵2, no la cruza nadie; un corral no es una habitación ni lleva tejado), **puerta de valla** (🪵4: los colonos pasan, los animales no), **poste con cuerda** (🪵3 🌿2: ata a 2 animales de carga, que no se alejan más de 2 casillas) y **establo** (2×2, 🪵30 🌿6: 4 animales duermen dentro de noche y comen la mitad).
+- Decidido en esta sesión (Mikel puede cambiarlo): las probabilidades, las cargas, los costes y lo que dan el poste y el establo.
+- Qué probar: hacer un corral con valla y puerta de valla, domar una cabra y ver que se queda dentro; poner un poste y un establo y tocar el animal (dice dónde está atado).
+- Sin npm en el entorno: tests con Bun (663) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (52) — Animales de carga: domarlos y comprar mulas
+
+- Elegido por Mikel (las dos cosas). **Al tocar un animal**, la marca va cambiando: 🎯 cazar → 🤝 **domar** (ciervos mutados y jabalíes; las ratas, no) → sin marca.
+- **Domar**: va quien tenga «Cazar». Se acerca, le da **2 de comida** del almacén y lo intenta. La probabilidad es del 15 % + 2 % por punto de **Supervivencia** (hasta el 60 %). Al jabalí, si sale mal, puede darle por atacar.
+- Domado es **animal de carga**: no se va del mapa, pasea cerca de la colonia y **come 2 de comida al día** del almacén. Si pasa 2 días sin comer, **se escapa**.
+- Las **caravanas** pueden ser ahora de los Chatarreros, los Granjeros o los Nómadas (las que no están en guerra). Las de los **Granjeros** y los **Nómadas** venden 1–2 **🫏 mulas** (60 chapas, más el margen).
+- En las **expediciones**, cada animal de carga lleva **+80 kg**. Va con ellos y espera fuera de la batalla.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): las probabilidades, lo que comen, cuándo se escapan y el precio de la mula.
+- Qué probar: tocar dos veces un ciervo (🤝 a domar) con comida en el almacén; comprar una mula a una caravana de los Granjeros; llevarla en un ataque.
+- Sin npm en el entorno: tests con Bun (657) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Con esto queda hecho «Llevar recursos a los ataques».
+
+## 2026-10-21 (51) — x1 ante ataques y sucesos, y el tiempo no se para en las batallas
+
+- Pedido por Mikel. Cuando llega un **ataque** (raid, manada, máquinas, un jabalí que se revuelve) o pasa un **suceso** en cualquiera de vuestras colonias, la partida **vuelve a x1** si iba más deprisa. No se para.
+- **Durante una batalla**, el tiempo **sigue corriendo** en la colonia principal y en las ocupadas.
+- Qué probar: poner ⏩⏩ y esperar a un raid o un suceso; mandar una expedición y ver que en casa sigue pasando el tiempo mientras se pelea.
+- Sin npm en el entorno: tests con Bun (654) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (50) — Kits: desmontar defensas y energía
+
+- Elegido por Mikel. Las **barricadas**, los **sacos de arena**, las **torretas** (ligera, pesada y rotativa), el **mortero**, el **generador de leña**, la **placa solar**, el **molino de viento**, la **batería** y la **lámpara** se pueden **desmontar en kit**: al tocarlas sale **📦 Desmontar en kit**, un colono con «Construir» la desmonta y queda el objeto («Kit: Torreta ligera»…), que se guarda en el almacén.
+- Para **montarla** en otro sitio se pone la construcción como siempre: si hay kits libres en el almacén, el botón de 🏗 dice «📦N» y el plano pide **solo el kit** y la **mitad del trabajo**, sin material. Vale aunque no se tenga la investigación.
+- Los kits se pueden llevar en las expediciones (pesan lo que su material, un poco menos). Las caravanas no los venden y no entran en el tributo.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): el peso y el valor de cada kit, y que desmontar no devuelva material (solo el kit).
+- Qué probar: tocar una torreta o una batería, «📦 Desmontar en kit», y luego ponerla en otro sitio desde 🏗.
+- Sin npm en el entorno: tests con Bun (653) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: los animales de carga (domar y comprar).
+
+## 2026-10-21 (49) — Carga de las expediciones y colonias a la vez
+
+- Pedido por Mikel. Al mandar una expedición (⚔️ Atacar su base) se elige también **qué llevan**: comida, armas, munición, medicinas o lo que haya. Va **por peso**: cada colono 35 kg; se ve «🎒 Carga: X de Y kg».
+- Se pueden llevar **vehículos**: el **buggy** (+300 kg, y el viaje dura la mitad), la **balsa** (+120 kg) y la **lancha armada** (+250 kg). Los pesos de cada cosa están en `src/data/weights.ts`.
+- En la batalla, lo que llevan aparece en el suelo junto a la entrada y el buggy aparcado al lado. Al acabar, **lo suyo que quede fuera de la base vuelve con ellos**, y los vehículos vuelven junto a la colonia.
+- **Las colonias corren a la vez** (pedido por Mikel): el tiempo pasa en la principal y en las ocupadas a la vez, se esté viendo la que se esté viendo. Los precios, el crecimiento de las bases y las facciones nuevas los lleva la principal, para que no cuenten dos veces.
+- Mikel ha elegido también los **kits** (desmontar defensas y energía para llevarlas) y los **animales de carga** (domarlos y comprarlos): son las siguientes partes.
+- Qué probar: «⚔️ Atacar su base» con un buggy y comida y munición; ocupar unas ruinas y ver que el día avanza en las dos colonias.
+- Sin npm en el entorno: tests con Bun (651) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+
+## 2026-10-21 (48) — Ocio y calidad de las habitaciones
+
+- Bloque 12. Muebles nuevos en 🏗 → Muebles: **mesa** (🪵8), **silla** (🪵4), **alfombra** (🧵6), **cuadro** (🪵2 🧵2) y **mesa de juego** (🪵15, 2×1).
+- La **calidad** de una habitación con tejado sale de su belleza (suelo, muebles, cada uno con sus puntos, luz), de su **tamaño** (menos de 6 casillas agobia, 16 o más gusta) y de lo tirado. Da de **−5 % a +10 %** de ánimo mientras se está dentro («Habitación fea / normal / bonita»). La limpieza sigue aparte.
+- **Ratos libres**: quien no tiene nada que hacer y pasa junto a una **mesa de juego** o una **hoguera encendida** se distrae. Si lleva medio día sin ninguno, al pasear va solo a una. **Sin ratos libres en 2 días: −8 %** de ánimo.
+- En las partidas guardadas, los 2 días empiezan a contar al cargar.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): los precios de la mesa, la silla, la alfombra y el cuadro, sus puntos de belleza, lo del tamaño y a qué distancia cuenta el rato libre.
+- Qué probar: amueblar un cuarto con tejado y tocarlo para ver su belleza; poner una mesa de juego y mirar el ánimo.
+- Sin npm en el entorno: tests con Bun (649) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Con esto queda hecho todo el catálogo aprobado salvo el fuego aparcado (armas incendiarias y explosiones) y la 3D.
+
+## 2026-10-21 (47) — Animales y caza
+
+- Bloque 10. Cada día llegan por los bordes **🦌 ciervos mutados**, **🐗 jabalíes** y **🐀 ratas gigantes** (8 como mucho). Pasean por el mapa y a los 3 días se van.
+- **Al tocar un animal se marca con 🎯 para cazarlo** (tocarlo otra vez lo desmarca). Va a por él quien tenga el trabajo nuevo **«Cazar»**, en la tabla de trabajos, con el arma que lleve.
+- Cazado deja **🥩 carne** (cruda alimenta como las patatas; en la cocina, «Carne asada»: 4 → 2 🍲) y **🟫 cuero**.
+- El **jabalí herido ataca** al que le hiere. La **rata gigante** va a por la comida que no está dentro de una habitación y se come un poco.
+- El **chaleco de cuero** pide ahora **🟫8 cuero** en vez de fibra y la investigación **«Sastrería»** (como dice el catálogo).
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo):
+  - cuántos animales hay y cuánto se quedan;
+  - su vida y su daño;
+  - la carne y el cuero que da cada uno;
+  - cuánto come una rata;
+  - que se marquen tocándolos (no hay herramienta ⚒ → 🎯, para que vaya igual con dedo y ratón).
+- Qué probar: tocar un ciervo y ver que un colono con «Cazar» y un arco o un arma de fuego va a por él; dejar comida fuera de los muros y ver a las ratas.
+- Sin npm en el entorno: tests con Bun (647, 5 nuevos en `tests/hunting.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: el ocio (bloque 12): mesa de juego, muebles de habitación y ratos libres.
+
+## 2026-10-21 (46) — Estaciones, frío, estufa y abrigo
+
+- Bloque 11. **Estaciones de 10 días**: 🌸 primavera, ☀️ verano, 🍂 otoño y ❄️ invierno. El icono sale junto al día, arriba.
+- En **invierno no crece nada al aire libre**; bajo techo, sí.
+- **De noche en invierno hace frío**: quien no está en una **habitación con tejado y una estufa encendida**, ni lleva **abrigo**, «Pasa frío» (−10 % de ánimo). Con **4 horas** seguidas así, **hipotermia**: −10 % más de ánimo y pierde salud cada hora, sin bajar del 15 %. Al entrar en calor se le pasa.
+- **Estufa** (🪨10 🔩6, con «Calefacción», en 🏗 → Muebles): los colonos le llevan leña. Solo la gasta cuando hace frío, 🪵1 cada 3 h.
+- **Abrigo** (🧵10 en el banco de trabajo, con «Sastrería»): cada colono coge uno libre y lo lleva siempre. Si cae, lo suelta.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): que el frío sea solo de noche en invierno, cuándo empieza la hipotermia y cuánto quita, y que la estufa solo gaste leña cuando hace frío.
+- Qué probar: con 🪄 adelantar al día 31 (invierno) y ver de noche quién pasa frío; investigar «Sastrería» y fabricar abrigos; con «Calefacción», una estufa en un cuarto con tejado.
+- Sin npm en el entorno: tests con Bun (642, 4 nuevos en `tests/seasons.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: la caza (bloque 10) y el ocio (bloque 12).
+
+## 2026-10-21 (45) — Ocupar las ruinas: una colonia más
+
+- Opción 3A de Mikel. Las **🏚 ruinas** de una base destruida salen en **📜 → 🏳 Facciones** con **Ocupar**: se elige quién va (alguien tiene que quedarse) y salen de viaje.
+- Al llegar hacen allí una **colonia nueva**: un mapa con lo que queda de los muros (rotos, con huecos), algo de madera y comida, y los colonos que han ido. Comparte con la principal las facciones, las ruinas y el mercado.
+- En 📜 → 🏳 Facciones sale **🏠 Vuestras colonias** con un botón por colonia para **ir de una a otra**. Solo avanza la que se está viendo; las demás esperan.
+- Se guarda todo en la misma partida: la principal con las ocupadas dentro, desde cualquiera de ellas.
+- Con esto quedan hechas las **bases de las facciones**.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): que solo avance la colonia abierta, el tamaño del mapa nuevo (80×60) y lo que hay al llegar.
+- Qué probar: tras ganar una batalla, «🏚 Ocupar» con un colono, esperar a que llegue y cambiar de colonia con los botones.
+- Sin npm en el entorno: tests con Bun (638) y tipos con `tsc`. El cambio de colonia no se ha podido probar en el navegador desde aquí: la prueba completa, en GitHub Actions.
+- Siguiente: los opcionales aprobados (caza, estaciones y ropa con la temperatura, ocio).
+
+## 2026-10-21 (44) — Facciones nuevas
+
+- Opción 4B de Mikel: si quedan **menos de 3 facciones** (porque habéis destruido alguna base), a los **3–6 días** llega una **nueva** que monta su base en el mapa del mundo. Sale una de esta lista, que no haya estado antes:
+  - 🛣 **Mercenarios de la autopista**: neutrales.
+  - ☢ **Culto del Reactor**: siempre hostiles.
+  - 🐪 **Nómadas del desierto**: neutrales.
+  - ⚙ **Hermandad de la Chatarra**: neutrales.
+- Si caen los Piratas del Óxido, los raids normales pasan a ser de otra facción siempre hostil (el Culto del Reactor, si está). Si no queda ninguna, siguen llegando los restos de los piratas.
+- Las facciones destruidas no vuelven al cargar la partida.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): la lista, sus relaciones al llegar y los días.
+- Qué probar: destruir una base y esperar unos días a la facción nueva (📜 → 🏳 Facciones).
+- Sin npm en el entorno: tests con Bun (637) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: ocupar las ruinas de una base como segunda colonia.
+
+## 2026-10-21 (43) — Atacar la base de una facción
+
+- Segunda parte de las bases (opción 1C). En **📜 → 🏳 Facciones**, cada facción tiene **⚔️ Atacar su base**: se elige quién va y se pulsa **Enviar**.
+  - Los elegidos **salen de la colonia** y viajan los días que diga la tarjeta. Atacarles os pone **en guerra** con ellos.
+  - Mientras están fuera, la tarjeta dice cuánto les falta.
+- Al llegar se abre el **mapa de batalla**: la base a la derecha, con **muros** (de madera en una aldea, de piedra en un pueblo y de hormigón en una fortaleza), **torres** según sus defensas, **defensores** armados según el día (tantos como su gente, hasta 18) y su **botín** dentro. Los colonos entran por la izquierda, **reclutados**.
+  - Arriba sale una barra con los defensores que quedan y **🏳 Retirarse**.
+  - Mientras dura la batalla, la colonia de casa se para.
+- **Victoria** (no queda ningún defensor en pie): la facción **desaparece**, quedan sus **🏚 ruinas** en el mapa del mundo y los colonos vuelven con **lo que había en la base**.
+- **Derrota** o **retirada**: vuelven sin botín, con sus heridas. Los que mueren allí van al cementerio de la colonia.
+- Si se guarda la partida en mitad de una batalla, se guarda la colonia; al cargarla, la expedición vuelve a casa como si se hubiera retirado.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): el tamaño del mapa de batalla, cómo es la base según su nivel, el máximo de defensores, el botín (la mitad de su riqueza y algo por habitante) y la guerra al atacar.
+- Qué probar: en 📜 → 🏳 Facciones, «⚔️ Atacar su base» con dos o tres colonos armados, acelerar hasta que lleguen y pelear (o retirarse).
+- Sin npm en el entorno: tests con Bun (636, 4 nuevos en `tests/expedition.test.ts`) y tipos con `tsc`. El cambio de mapa no se ha podido probar en el navegador desde aquí: la prueba completa, en GitHub Actions.
+- Siguiente: ocupar las ruinas como segunda colonia y las facciones nuevas cuando queden menos de 3.
+
+## 2026-10-21 (42) — Bases de las facciones: el mapa del mundo
+
+- Primera parte de lo que eligió Mikel (1C, 2A+2B, 3A, 4B). En **📜 → 🏳 Facciones** sale un **🗺 mapa del mundo** con vuestra colonia 🏠 en el centro y la **base** de cada facción a unos días de viaje.
+- Cada base tiene **habitantes**, **defensas**, **riqueza** y un **nivel**: aldea, pueblo (14 o más) o fortaleza (26 o más). La tarjeta de cada facción lo dice, con los días de viaje.
+- **Crecen** cada **5 días**: 1–2 habitantes y alguna defensa más, y una persona y una defensa de más por cada 400 chapas de riqueza. Se enriquecen con el **comercio** con vuestra colonia, con el **tributo** que les pagáis y con el **botín** de los saqueadores que se escapan. Al cambiar de nivel sale en el diario.
+- En las partidas guardadas, las bases se ponen al cargar.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): el tamaño del mapa del mundo, las distancias, los números de partida, el ritmo de crecimiento y los niveles (`src/data/worldmap.json`).
+- Qué probar: abrir 📜 → 🏳 Facciones y mirar el mapa y las bases; comerciar mucho con una caravana y ver que la base de los Chatarreros crece más deprisa.
+- Sin npm en el entorno: tests con Bun (632, 3 nuevos en `tests/worldmap.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: atacar una base (expedición y mapa de batalla).
+
+## 2026-10-21 (41) — Tejados y habitaciones
+
+- Pedido por Mikel. Un espacio **cerrado del todo** con paredes de un piso (de madera, piedra, chatarra, metal, hormigón o con aspilleras) y puertas o portones **pide tejado**. Con muros altos no.
+- Los colonos con **«Construir»** lo ponen casilla a casilla, sin material. Se ve una sombra suave donde hay techo. Si se quita una pared y la habitación se abre, **se cae el tejado**.
+- **Bajo techo** no cae la lluvia ácida (ni quema ni estropea lo plantado), y dormir en una cama bajo techo da su ánimo de más.
+- Cada habitación con tejado tiene **belleza** y **limpieza**, que se ven al tocar una de sus casillas («🏠 Habitación con tejado… belleza 61 % · limpieza 100 %»):
+  - Suben con el **suelo** construido, los **muebles** y la **luz**; bajan con lo que está **tirado por el suelo** fuera de estanterías y almacenes.
+  - Mientras un colono está dentro: «Habitación bonita» (+6 %) o «fea» (−4 %), y «limpia» (+2 %) o «sucia» (−5 %).
+- La **temperatura** llegará con las estaciones (bloque 11): el tejado ya está para que guarde mejor el calor.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): que el tejado no gaste material, lo que tarda, cómo se calculan la belleza y la limpieza (no hay suciedad todavía: ensucia no tener suelo y lo tirado) y cuánto ánimo dan.
+- **Bases de las facciones**: Mikel ha elegido (1C, 2A+2B, 3A, 4B). Queda apuntado en «Pendiente» de `FEEDBACK.md` y se hará por partes.
+- Qué probar: cerrar un cuarto con muros de madera y una puerta, esperar a que lo tejen, poner suelo y una cama y tocarlo para ver su belleza y su limpieza.
+- Sin npm en el entorno: tests con Bun (629, 3 nuevos en `tests/roofs.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: las bases de las facciones (primera parte: el mapa del mundo con las bases).
+
+## 2026-10-21 (40) — Incendio grande
+
+- Pedido por Mikel: suceso **🔥 Incendio**. Prende en un sitio al azar con árboles o matorrales, a 35 casillas o más de la colonia, y **se extiende** cada segundo a las casillas de al lado:
+  - Arde lo que tiene combustible: árboles secos, tocones, matorrales, neumáticos, la tierra seca, lo plantado, los montones de madera, fibra o comida y **lo construido con madera**.
+  - El agua, la roca, las zanjas y lo de piedra o metal lo frenan.
+  - Con viento se extiende más; con lluvia, mucho menos.
+- Lo quemado desaparece: los árboles y matorrales se pierden, y lo construido con madera pierde vida hasta romperse. Quien está en una casilla ardiendo **se quema**. La tierra quemada no vuelve a arder en 3 días.
+- Cuando el fuego llega a **25 casillas de la colonia** (o cerca de algo construido), **todos los colonos no reclutados dejan lo que hacen y van a apagarlo**, casilla a casilla (unos 2 s cada una).
+- Las llamas se ven en el mapa (en 2D).
+- El fuego estaba aparcado; esto es solo el incendio que pidió Mikel. Las armas incendiarias y las explosiones que prenden siguen aparcadas.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): todos los números de `src/data/fire.json` (cuánto se extiende cada cosa, cuánto arde, distancias) y que apagarlo no gaste agua.
+- Qué probar: adelantar el tiempo con 🪄 hasta que salga «🔥 ¡Incendio!» (1 de cada 9 sucesos, más o menos) y tocar el aviso para ir al fuego.
+- Sin npm en el entorno: tests con Bun (626, 5 nuevos en `tests/fire.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: los tejados y las habitaciones, que ha pedido Mikel.
+
+## 2026-10-21 (39) — Sucesos terminados y Piratas del Óxido
+
+- **🐛 Plaga**: en un huerto con 4 o más plantas enferma una cuarta parte, que se ve pardusca. Los que tienen «Cultivar» van antes que nada a **arrancarlas**. Si en **un día** queda alguna enferma, el huerto **pierde la mitad** de sus plantas.
+- **🩹 Refugiado herido**: alguien de los Chatarreros o de los Granjeros llega herido y pide que lo curéis (sale arriba como un superviviente). Si lo acogéis y se cura, **se queda** (1 de cada 2 veces) o **vuelve con los suyos**; en los dos casos su facción sube **10**.
+- **Facciones, cambiado por Mikel**:
+  - Los **Chatarreros** y los **Granjeros** empiezan **neutrales (0)** y su relación sube o baja entre **hostiles** (−50 o menos, con raids propios), **neutrales** y **aliados** (60 o más).
+  - Los **Hijos del Óxido** pasan a ser los **☠ Piratas del Óxido**: siempre hostiles, lanzan los raids y su relación no cambia nunca.
+  - En las partidas guardadas se cambian solos.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): la parte que enferma (1/4), que la plaga necesite huertos de 4 plantas o más, y en el refugiado la probabilidad de quedarse y los +10.
+- Qué probar: 📜 → 🏳 Facciones (nombres y relaciones nuevas). Con huertos, esperar a una plaga.
+- Sin npm en el entorno: tests con Bun (621) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: el incendio grande y los tejados, que acaba de pedir Mikel; las bases de las facciones esperan su respuesta.
+
+## 2026-10-21 (38) — Sucesos: avería y lluvia ácida
+
+- **🔧 Avería**: una máquina que gasta corriente (radio, torreta, puerta automática, taller electrificado…) **se para**. Un colono con **«Construir»** le lleva **⚙️1** y la arregla. Al tocarla pone «🔧 averiada».
+- **☔ Lluvia ácida**: dura **6 horas**. Lo plantado al **aire libre** (fuera de una habitación) da un **30 % menos** al cosecharlo. Quien está fuera pierde un 2 % de salud cada hora, sin bajar del 50 %; dentro de una habitación o de un vehículo, nada.
+- Si el suceso que toca no puede pasar (una avería sin máquinas), pasa otro.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): cuánto trabajo lleva el arreglo, cuánto quema la lluvia ácida y que «a cubierto» sea dentro de una habitación (no hay tejados).
+- Qué probar: con una radio o una torreta con corriente, esperar a una avería y ver que un colono la arregla. Con un huerto plantado, esperar a la lluvia ácida.
+- Sin npm en el entorno: tests con Bun (617, 2 nuevos) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: la plaga y el refugiado herido (con ellos acaban los sucesos).
+
+## 2026-10-21 (37) — Sucesos: tormenta de polvo y alijo
+
+- Primera parte del bloque 9: desde el **día 3**, cada **2–4 días** pasa algo.
+- **🌪 Tormenta de polvo**: durante **un día**, las **placas solares no producen** y los **disparos llegan a la mitad de lejos**. Mientras dura, la hora de arriba lleva 🌪.
+- **📦 Alijo**: aparecen recursos por valor de **150 a 400 chapas** en un sitio del mapa al que se llega andando, a 15 casillas o más de la colonia. El aviso lleva al sitio, y los que tienen «Transportar» lo traen.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): cada cuánto (2–4 días, desde el día 3), que los dos salgan igual de a menudo y de qué recursos sale el alijo.
+- Qué probar: adelantar el tiempo con 🪄 y esperar a los avisos. Con placas solares, ver que en la tormenta no dan corriente.
+- Sin npm en el entorno: tests con Bun (615, 3 nuevos en `tests/events.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: la lluvia ácida y la avería; luego la plaga y el refugiado herido.
+
+## 2026-10-21 (36) — El mercado: precios que suben y bajan
+
+- Bloque 8 entero. El **precio** de cada recurso va del **50 % al 200 %** de su valor:
+  - **Baja al venderlo** a las caravanas y **sube al comprarlo**: 0,2 % por chapa, así que vender 50 🪵 la deja un 10 % más barata.
+  - **Se recupera un 10 % al día** hacia su valor.
+  - Cada día cambian 0–2 recursos al azar un 10–30 %, por lo que pasa en el resto del mundo.
+- Cada **caravana** trae, según su facción:
+  - **2–3 necesidades**: las paga un **50 % más** y no las vende.
+  - **2–3 sobrantes** de lo que trae: los rebaja un **30 %**, tanto al comprar como al venderlos.
+  - Sale arriba en 🐫 Comercio y en cada fila («💰 lo necesita», «📦 le sobra»).
+- Con **«Rutas comerciales»**: cada recurso lleva **▲ / ▼** si su precio ha subido o bajado desde ayer, y sin caravana en la colonia se ve **qué necesitará la próxima** y hacia qué día llega.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo):
+  - cuánto mueve cada venta (0,2 % por chapa);
+  - los cambios al azar de cada día;
+  - de qué listas salen las necesidades y sobrantes de los Chatarreros, y también las de los Granjeros, que de momento no traen caravanas;
+  - que lo que necesitan no lo vendan (si no, se podría comprar y revender a la misma caravana).
+- Qué probar: con una caravana, mirar en 📜 → 🐫 Comercio qué necesita y venderle eso. Vender mucho de algo y ver que baja de precio en la siguiente.
+- Sin npm en el entorno: tests con Bun (612, 6 nuevos en `tests/market.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: los **sucesos** (bloque 9), por partes.
+
+## 2026-10-21 (35) — Facciones: la radio (bloque 7 terminado)
+
+- Con **«Radio»** investigada y una **📻 radio de llamada** construida y con corriente, en **📜 → 🏳 Facciones** hay una tarjeta **📻 Radio** con dos botones:
+  - **🐫 Llamar a una caravana**: los Chatarreros mandan una que llega en unas **4 horas**. Como mucho una vez cada **3 días**, no si ya hay una en la colonia y no si su relación es negativa.
+  - **🤝 Pedir ayuda**: solo durante un ataque y si alguien es aliado (60 o más). Vienen enseguida, dentro del límite de una vez cada 10 días.
+- Sin la investigación o sin la radio, la tarjeta dice qué falta.
+- Arreglo pequeño: en 📜 → 🔬 Investigación, los proyectos que ya hacen algo sin desbloquear construcciones («Baterías mejoradas», «Medicina avanzada», «Desguace de máquinas», «Hidráulica», «Radio»…) ya no dicen «Todavía no desbloquea nada».
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): que haga falta la radio de llamada además de la investigación, la espera (4 h), cada cuánto (3 días) y que no se pueda llamar con relación negativa.
+- Qué probar: investigar «Medicina de campo» y «Radio» (🪄 acelera), construir la radio de llamada con corriente y pulsar «Llamar a una caravana».
+- Sin npm en el entorno: tests con Bun (606, 3 nuevos) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Con esto quedan hechas las facciones (bloque 7). Siguiente: el **mercado** (bloque 8).
+
+## 2026-10-21 (34) — Facciones: guerra y tributo
+
+- **Guerra**: una facción con **−50 o menos** manda **sus propios raids además de los normales**: el primero a los 2 días y luego tan a menudo como los normales. Se acaba al subir de −50.
+  - Los **Hijos del Óxido** empiezan en −60, pero sus raids ya son los normales, así que con ellos no cambia nada. La guerra vale para los Chatarreros y los Granjeros.
+  - Sus saqueadores son de su facción: matarlos o capturarlos les baja la relación a ellos.
+- **Tributo**: desde el **día 10**, más o menos **1 de cada 3 raids** de saqueadores empieza con los Hijos del Óxido **pidiendo recursos**: unas **200 chapas** de lo que más vale en la colonia (ni armas ni armaduras).
+  - Sale arriba con **💰 Pagar** y **✖ Negarse**.
+  - Pagar se lleva lo pedido de los montones y ese raid no llega.
+  - Negarse, o no contestar en **12 horas**, baja la relación **20** y el raid llega enseguida.
+  - Si la colonia no tiene 200 chapas en recursos, no piden y atacan sin más.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): con qué frecuencia piden (1 de cada 3 desde el día 10), el plazo (12 h), qué piden (lo de más valor), y que la guerra no afecte a los Hijos del Óxido.
+- Qué probar: a partir del día 10, esperar a que pidan tributo y probar a pagar y a negarse.
+- Sin npm en el entorno: tests con Bun (603, 4 nuevos) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: la radio (con «Radio», en 📜 → 🏳 Facciones, llamar a una caravana o pedir ayuda a los aliados).
+
+## 2026-10-21 (33) — Facciones: la alianza
+
+- Segunda parte de las facciones (bloque 7). Con una facción con relación de **60 o más** (alianza), cuando llega un ataque (raid, manada o máquinas) **mandan 2–4 combatientes**. Lo hacen **una vez cada 10 días** como mucho. El diario avisa: «🤝 … mandan N combatientes para ayudaros».
+- Los aliados llevan **pañuelo y brazalete azules** y armas como las de los saqueadores de ese día. Van a por el atacante más cercano y, cuando no queda ninguno en pie, se vuelven por el borde. Los saqueadores también les atacan; si uno cae herido, **se lo llevan los suyos**.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): ayudan en cualquier ataque, no solo en los raids de saqueadores; su Combate va de 5 a 12; se llevan al que cae en vez de dejarlo en el suelo.
+- Qué probar: regalar a los Chatarreros en una caravana (dar sin pedir nada: +1 cada 20 chapas) hasta llegar a 60 y esperar a un raid. Al tocar a un aliado sale de qué facción es.
+- Sin npm en el entorno: tests con Bun (599, 2 nuevos) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Siguiente: la guerra (con −50 o menos, raids propios además de los normales).
+
+## 2026-10-21 (32) — Fase 6: las facciones y su relación con la colonia
+
+- **Fase 5 cerrada** por decisión de Mikel (2026-10-21, opciones A + B + D). Lo que quedaba espera a otros bloques: la Sastrería y la Calefacción van con las estaciones, las Rutas comerciales con el mercado y el lanzallamas con el fuego. Empieza la **fase 6** por las **facciones** (bloque 7), por partes.
+- Primera parte: en cada partida hay tres facciones, cada una con un **asentamiento de nombre al azar** (sale siempre el mismo con la misma semilla):
+  - 🐫 **Chatarreros**: empiezan con relación 20 y traen las caravanas.
+  - 🌾 **Granjeros del valle**: empiezan con 0.
+  - ☠ **Hijos del Óxido**: empiezan con −60 y son los saqueadores de los raids.
+- La relación va de −100 a 100.
+  - **Sube** al comerciar con una caravana (+2 la primera vez), al darle de más en un trato (cuenta como **regalo**: +1 cada 20 chapas) y al **liberar** a un prisionero suyo cuando sale del mapa (+15).
+  - **Baja** al **matar** a uno de los suyos o al **capturarlo** (−10).
+  - Con 60 o más hay alianza y con −50 o menos, guerra; al cambiar de nivel sale en el diario.
+- Pestaña nueva **📜 → 🏳 Facciones** con cada facción, su asentamiento y su barra de relación. En el móvil, las pestañas de 📜 enseñan solo el icono, salvo la abierta.
+- Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): el regalo es lo que se da de más en un trato con una caravana (o un trato en el que solo se da); «retener» cuenta al capturar.
+- Qué probar: abrir 📜 → 🏳 Facciones; comerciar con una caravana y ver que los Chatarreros suben 2; regalarles algo sin pedir nada; capturar o liberar a un saqueador y mirar a los Hijos del Óxido.
+- Sin npm en el entorno: tests con Bun (597, 6 nuevos en `tests/factions.test.ts`) y tipos con `tsc`; la prueba de humo pasa también por la pestaña nueva. La prueba completa, en GitHub Actions.
+- Siguiente: la alianza (con 60 o más mandan 2–4 combatientes si te atacan, una vez cada 10 días).
+
+## 2026-10-21 (31) — Saqueadores que llegan en balsa por el río
+
+- Con las reglas que eligió Mikel: desde el **día 15**, en **1 de cada 2 raids**, si el río deja remar hasta **15 casillas o menos** de la colonia, parte del grupo llega en **🛶 balsa**. Va **1 balsa por cada 3 saqueadores**, con 2 dentro: uno rema y el otro dispara.
+- Entran por el borde del mapa por el río y **reman hasta la orilla más cercana a la colonia**. Allí **desembarcan y atacan a pie**, y la balsa se queda en la orilla.
+- Al **huir**, los que tienen su balsa a **8 casillas o menos** vuelven a ella y se van remando por el río. Si no queda nadie que pueda volver, la balsa se rompe y deja 🪵8.
+- Un **puente, una plataforma o un muelle** cortan el río: la balsa se para antes y desembarcan allí. Un **puente levadizo bajado** los deja pasar por debajo; uno alzado, no. Así se ha entendido lo que eligió Mikel; si quería lo contrario, se cambia en un momento.
+- Qué probar: en una partida con la colonia cerca de un río, adelantar el tiempo con 🪄 hasta el día 15 o más y esperar a los raids. Más o menos 1 de cada 2 dirá «… por el río en 🛶 balsa».
+- Sin npm en el entorno: tests con Bun (591, 8 nuevos en `tests/raiderRaft.test.ts`) y tipos con `tsc`. La prueba completa, en GitHub Actions.
+- Con esto queda terminada la update del agua. Siguiente: la fase 6, empezando por las facciones (bloque 7).
+
+## 2026-10-21 (30) — El muelle, la pesca y la trampa de pesca
+
+- Mikel contestó las tres propuestas (muelle, saqueadores en balsa y fase 5) y pidió trabajar sin parar hasta las 13:00. Se empieza por el **muelle y la pesca**.
+- Habilidad nueva **Supervivencia** (de 0 a 20) para todos los colonos. En las partidas empezadas, cada colono la saca de la media de su Cultivo y su Combate.
+- Con «Puentes», en 🏗 → Talleres: **muelle** (🪵10, 1×1). Va en agua poco profunda o normal, pegado a la orilla o a otro muelle, y se pisa. Encima no se construye, porque eso ya lo hacen las plataformas.
+- Al tocar el muelle se le encarga **«Pescar»** (hasta tener N 🐟 o un número fijo). Sale **1 🐟 cada 2 h con Supervivencia 0 y cada hora con 20**. Pesca quien tiene «Fabricar».
+- El **🐟 crudo** alimenta como las patatas y sienta peor. En la cocina, **«Pescado asado»**: 4 🐟 → 2 🍲.
+- Qué probar: investigar «Puentes» (🪄 acelera), poner un muelle en la orilla de un río, tocarlo y encargar «Pescar» hasta tener 10. Luego encargar «Pescado asado» en la cocina.
+- Sin npm en el entorno: tests con Bun (583, 7 nuevos en `tests/dock.test.ts`) y tipos con `tsc` (sin errores nuevos). La prueba completa, en GitHub Actions.
+- **Trampa de pesca** (🪵6 🧵2, con «Puentes», en 🏗 → Muebles): va en el agua poco profunda o normal, pegada a un muelle, y cada día a las 6:00 deja 1 🐟 en el muelle. Decidido en esta sesión porque no estaba concretado (Mikel puede cambiarlo): la hora (las 6:00) y que el pescado lo recogen luego los que tienen «Transportar».
+- Qué probar también: poner una trampa de pesca junto al muelle y mirar al día siguiente que ha dejado un 🐟.
+- Siguiente: los saqueadores en balsa (hecho en la entrada 31).
+
 ## 2026-10-21 — Decisiones de Mikel anotadas (sin cambiar el juego)
 
 - Mikel contestó en el chat el muelle y la pesca, los saqueadores en balsa y la fase 5; todo queda en «Pendiente» de `FEEDBACK.md`, sin propuestas abiertas.

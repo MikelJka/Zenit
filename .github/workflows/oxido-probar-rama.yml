@@ -1,0 +1,53 @@
+name: 'Óxido: probar rama'
+
+# Prueba las ramas que tocan Óxido antes de llevarlas a main (las sesiones sin npm local lo usan).
+on:
+  push:
+    branches-ignore: [main, 'capturas*']
+    paths: ['oxido/**', '.github/workflows/oxido-probar-rama.yml']
+  pull_request:
+    paths: ['oxido/**', '.github/workflows/oxido-probar-rama.yml']
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: oxido
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - run: npm test
+      - run: npm run build
+      # Prueba de humo en Chromium sin pantalla: PC y móvil; capturas en «oxido/smoke».
+      - run: npx playwright install --with-deps chromium
+      - run: npm run smoke
+      # Capturas de muestra (colonia avanzada, animales, mapa del mundo, batalla y raid en balsa).
+      - run: node scripts/vitrina.mjs
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capturas-oxido
+          path: oxido/smoke/
+          retention-days: 7
+      # Las capturas también se guardan en la rama «capturas-oxido» (las sesiones las miran desde ahí).
+      - name: Subir capturas a la rama «capturas-oxido»
+        if: always()
+        run: |
+          [ -d smoke ] || exit 0
+          cd smoke
+          git init -q
+          git checkout -q -b capturas-oxido
+          git add .
+          git -c user.name=ci -c user.email=ci@localhost commit -qm "Capturas de Óxido de ${GITHUB_REF_NAME} (${GITHUB_SHA::7})"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" capturas-oxido

@@ -1,0 +1,54 @@
+name: 'Óxido: resumen a Telegram'
+
+# Tras cada subida a main, manda a Telegram la última entrada de oxido/docs/PROGRESO.md
+# (lo que ha hecho la sesión, qué probar y qué sigue). Necesita dos secretos del repositorio:
+# TELEGRAM_BOT_TOKEN (el token que da @BotFather) y, opcional, TELEGRAM_CHAT_ID (tu id de chat).
+# Sin TELEGRAM_CHAT_ID, usa el chat del último mensaje que hayas escrito al bot.
+# Sin el token, no hace nada.
+on:
+  push:
+    branches: [main]
+    paths: ['oxido/docs/PROGRESO.md']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enviar la última entrada del diario
+        env:
+          TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "Falta el secreto TELEGRAM_BOT_TOKEN: no se envía nada."
+            exit 0
+          fi
+          if [ -z "$CHAT" ]; then
+            CHAT=$(curl -sS "https://api.telegram.org/bot${TOKEN}/getUpdates" \
+              | python3 -c "import sys,json; r=json.load(sys.stdin).get('result',[]); ids=[u[k]['chat']['id'] for u in r for k in ('message','my_chat_member') if k in u]; print(ids[-1] if ids else '')")
+          fi
+          if [ -z "$CHAT" ]; then
+            echo "No sé a qué chat mandarlo: escribe algo al bot en Telegram o crea el secreto TELEGRAM_CHAT_ID."
+            exit 1
+          fi
+          echo "Chat: ${CHAT} (guárdalo como secreto TELEGRAM_CHAT_ID: Telegram solo recuerda los mensajes de las últimas 24 h)."
+
+          # Primera entrada «## …» del diario (sin la cabecera del archivo).
+          awk 'NR>3 && /^## /{n++} n==1' oxido/docs/PROGRESO.md | sed 's/\*\*//g; s/`//g' > resumen.txt
+          {
+            echo "🛠 Óxido — nueva versión"
+            echo
+            head -c 3500 resumen.txt
+            echo
+            echo "🎮 https://mikeljka.github.io/zenit/oxido/"
+          } > mensaje.txt
+          curl -sS --fail -X POST "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT}" \
+            --data-urlencode "text@mensaje.txt" \
+            -d "disable_web_page_preview=true" > /dev/null
+          echo "Enviado."
