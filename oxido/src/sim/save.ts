@@ -12,7 +12,7 @@ import { TERRAIN_JOBS, TerrainJob } from './terrain';
 import { RESOURCES, ResourceId } from '../data/resources';
 import { WORK_TYPES, WorkType } from '../data/work';
 import { Colonist, DEFAULT_PRIORITY, STANCES, WorkPriority } from './colonist';
-import { GameMap, inBounds, isPassable } from './map';
+import { fillBarrelStock, GameMap, inBounds, isPassable } from './map';
 import { structureCost } from './structures';
 import type { StoragePriority } from './zones';
 import { ALERT_KINDS, GameSpeed, LogEntry, TICKS_PER_DAY, World } from './world';
@@ -104,6 +104,8 @@ export interface SaveData {
   /** Vehículos (desde el buggy, 2026-10-19). Se guardan parados. */
   vehicles?: { id: number; def: string; x: number; y: number; fuel: number; hp: number; facing?: number }[];
   nextVehicleId?: number;
+  /** Casillas irradiadas por un tiempo por un barril abierto: [casilla, radiación de antes, tick en que se pasa] (desde el 2026-10-22). */
+  hotTiles?: [number, number, number][];
   /** Cadáveres de criaturas (desde 2026-10-19; las anteriores, ninguno). */
   corpses?: { id: number; creature: string; x: number; y: number; diedAt: number }[];
   /** Investigación (desde el 2026-10-19; las partidas de antes no tienen nada investigado). */
@@ -304,6 +306,7 @@ export function serializeWorld(world: World, gameVersion?: string, direct = fals
       ...world.colonists.flatMap((k) => (k.job?.corpse?.body ? [{ ...k.job.corpse.body, x: k.tile.x, y: k.tile.y }] : [])),
     ],
     nextCorpseId: world.nextCorpseId,
+    ...(world.hotTiles.size ? { hotTiles: [...world.hotTiles].map(([i, h]) => [i, h.base, h.until] as [number, number, number]) } : {}),
     grenades: world.grenades.map((g) => ({ from: { ...g.from }, to: { ...g.to }, thrownAt: g.thrownAt, explodeAt: g.explodeAt, by: g.by, ...(g.foe ? { foe: true } : {}), ...(g.shell ? { shell: true } : {}) })),
     research: { current: world.research.current, progress: { ...world.research.progress }, done: [...world.research.done] },
     events: world.eventsEnabled,
@@ -540,6 +543,8 @@ function restoreColonist(s: SavedColonist): Colonist {
 export function loadWorld(input: string | unknown): World {
   const d = parseSave(input);
   const map = restoreMap(d);
+  // Partidas de antes de poder saquear los barriles tóxicos: se les da su ☢.
+  fillBarrelStock(map);
   const world = new World({ seed: map.seed, map });
   world.tick = Math.max(0, Math.floor(num(d.tick, 0)));
   const speed = num(d.speed, 1);
@@ -723,6 +728,13 @@ export function loadWorld(input: string | unknown): World {
     world.corpses.push({ id: num(c.id, 0), creature: c.creature, x, y, diedAt: num(c.diedAt, world.tick) });
   }
   world.nextCorpseId = Math.max(num(d.nextCorpseId, 1), ...world.corpses.map((c) => c.id + 1), 1);
+  // Barriles abiertos: el suelo sigue irradiado hasta su plazo (la radiación de ahora ya va en el mapa).
+  for (const h of Array.isArray(d.hotTiles) ? d.hotTiles : []) {
+    if (!Array.isArray(h)) continue;
+    const i = Math.round(num(h[0], -1));
+    if (i < 0 || i >= world.map.radiation.length) continue;
+    world.hotTiles.set(i, { base: Math.max(0, Math.min(1, num(h[1], 0))), until: num(h[2], world.tick) });
+  }
   world.research = loadResearch(d.research);
   for (const g of d.grenades ?? []) {
     const pt = (p: { x: number; y: number } | undefined) => ({ x: Math.round(num(p?.x, -1)), y: Math.round(num(p?.y, -1)) });

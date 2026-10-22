@@ -23,7 +23,7 @@ function testMap() {
   put(4, 3, Prop.Bush);
   put(5, 5, Prop.Boulder);
   put(6, 5, Prop.CarWreck);
-  put(7, 7, Prop.ToxicBarrel);
+  put(7, 7, Prop.Spring);
   return map;
 }
 
@@ -45,7 +45,7 @@ describe('designaciones', () => {
     const d = new Designations(map);
     d.designateArea({ x0: 0, y0: 0, x1: 19, y1: 19 }, 'talar');
     expect(d.designateArea({ x0: 0, y0: 0, x1: 19, y1: 19 }, 'talar')).toBe(0);
-    expect(d.add(7, 7, 'saquear')).toBe(false); // barril tóxico
+    expect(d.add(7, 7, 'saquear')).toBe(false); // manantial (no se aprovecha)
     expect(d.add(9, 9, 'talar')).toBe(false); // suelo vacío
     expect(canDesignate(map, 4, 3, 'talar')).toBe(true);
     expect(canDesignate(map, 4, 3, 'minar')).toBe(false);

@@ -349,6 +349,20 @@ export function paintItemHi(ctx: CanvasRenderingContext2D, r: ResourceId, level:
       }
       break;
     }
+    case 'uranio': {
+      // Botes de plomo con la tapa amarilla y el símbolo ☢, y un brillo verde.
+      const jars: [number, number][] = [[4, 9], [15, 9], [10, 4]];
+      for (const [x, y] of take(jars, level, [1, 2, 3])) {
+        can(p, x, y, 8, 10, '#5a5e62');
+        p.px(x, y - 1, 8, 2, OL);
+        p.px(x + 1, y - 1, 6, 1, '#e0c020');
+        p.px(x + 2, y + 3, 4, 4, '#e0c020');
+        p.px(x + 3, y + 4, 2, 2, OL);
+        p.px(x + 3, y + 3, 2, 1, OL);
+        p.px(x + 7, y + 2, 1, 6, '#9be04a');
+      }
+      break;
+    }
     case 'napalm': {
       const cans: [number, number][] = [[4, 9], [14, 9], [9, 3]];
       for (const [x, y] of take(cans, level, [1, 2, 3])) {

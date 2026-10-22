@@ -1,0 +1,14 @@
+{
+  "_": "Barriles tóxicos y ☢ uranio (propuesta B, aprobada por Mikel el 2026-10-22). Primera parte: saquear un barril tóxico da ☢ y deja la casilla irradiada unos días. «Unos días» no estaba decidido: se ha tomado `irradiatedDays`; Mikel puede cambiar estos números.",
+  "barrel": {
+    "_": "Saquear un barril tóxico (orden ⚒ Saquear): unidades de ☢ que da y trabajo (el de un montón de chatarra)",
+    "amount": [1, 2],
+    "work": 300
+  },
+  "irradiated": {
+    "_": "La casilla del barril y las de alrededor (a `radius` casillas o menos) quedan irradiadas (radiación `level`, de 0 a 1) durante `irradiatedDays` días; después vuelven a la radiación que tenían",
+    "level": 0.95,
+    "radius": 1,
+    "irradiatedDays": 3
+  }
+}

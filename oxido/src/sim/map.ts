@@ -2,6 +2,7 @@ import { Rng } from './rng';
 import { ValueNoise } from './noise';
 import { AmountRange, HarvestJob, ResourceId } from '../data/resources';
 import { RUBBLE_MEDICINE } from '../data/medicine';
+import { TOXIC_BARREL } from '../data/uranium';
 
 /**
  * Suelo de cada casilla. Es la capa base: pocos tipos, con transiciones suaves al dibujar.
@@ -129,7 +130,11 @@ export const PROP_INFO: Record<Prop, PropInfo> = {
       find: { resource: 'medicina', chance: RUBBLE_MEDICINE.chance, amount: RUBBLE_MEDICINE.amount },
     },
   },
-  [Prop.ToxicBarrel]: { name: 'Barril tóxico', blocks: true, moveCost: 1 },
+  [Prop.ToxicBarrel]: {
+    // Se saquea para sacar ☢ uranio y la casilla queda irradiada unos días (ver `World.harvest`).
+    name: 'Barril tóxico', blocks: true, moveCost: 1,
+    harvest: { job: 'saquear', resource: 'uranio', amount: TOXIC_BARREL.amount, work: TOXIC_BARREL.work, leaves: Prop.None },
+  },
   [Prop.GlowPuddle]: { name: 'Charco radiactivo', blocks: false, moveCost: 1.2 },
   [Prop.Spring]: { name: 'Manantial', blocks: true, moveCost: 1 },
   [Prop.Bones]: { name: 'Huesos', blocks: false, moveCost: 1 },
@@ -374,7 +379,31 @@ export function rollStock(prop: Prop, rng: Rng): number {
 }
 
 function fillStock(map: GameMap, rng: Rng): void {
-  for (let i = 0; i < map.props.length; i++) map.stock[i] = rollStock(map.props[i] as Prop, rng);
+  // Los barriles tóxicos tiran con su propia semilla: así el resto de objetos de un mapa
+  // tiene lo mismo que antes de que los barriles se pudieran saquear.
+  const barrels = new Rng(map.seed ^ 0x2d7f14a3);
+  for (let i = 0; i < map.props.length; i++) {
+    const p = map.props[i] as Prop;
+    map.stock[i] = rollStock(p, p === Prop.ToxicBarrel ? barrels : rng);
+  }
+}
+
+/**
+ * Partidas guardadas antes de que los barriles tóxicos se pudieran saquear: sus barriles tienen
+ * 0 de recurso. Se les da el suyo (con la semilla del mapa, siempre igual). Devuelve cuántos.
+ */
+export function fillBarrelStock(map: GameMap): number {
+  const rng = new Rng(map.seed ^ 0x2d7f14a3);
+  let n = 0;
+  for (let i = 0; i < map.props.length; i++) {
+    if (map.props[i] !== Prop.ToxicBarrel) continue;
+    const roll = rollStock(Prop.ToxicBarrel, rng);
+    if (map.stock[i] === 0) {
+      map.stock[i] = roll;
+      n++;
+    }
+  }
+  return n;
 }
 
 /** Zonas a pie de al menos este tamaño deben poder alcanzarse desde el inicio. */

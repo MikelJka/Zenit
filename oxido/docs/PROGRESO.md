@@ -2,6 +2,18 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-22 (73) — Barriles tóxicos: ☢ uranio
+
+- Primera parte de la propuesta B que eligió Mikel: los **barriles tóxicos** del mapa ya se pueden **saquear** (⚒ Saquear, o tocarlos con un colono elegido), con el mismo trabajo que un montón de chatarra.
+- Cada barril da **1 o 2 ☢ Uranio** (recurso nuevo: montones de 25, vale 15 chapas, pesa 1 kg; aún no lo compran ni venden las caravanas). El barril desaparece.
+- Al abrirlo, **la casilla y las 8 de alrededor quedan irradiadas 3 días** (el suelo se tiñe de verde y cuenta como zona irradiada: el huerto da la mitad y atrae manadas de perros mutantes). Pasado el plazo, el suelo vuelve a como estaba. El diario lo avisa.
+- Mikel: «unos días» y cuánto ☢ da cada barril no estaban decididos; se ha tomado 3 días y 1–2 ☢. Se cambia en `src/data/uranium.json`.
+- Partidas guardadas: los barriles de las partidas de antes reciben su ☢ al cargar; el resto del mapa no cambia.
+- Reglas en `src/sim/radiation.ts` y `src/sim/map.ts` (4 tests nuevos en `tests/uranium.test.ts`).
+- Qué probar: marcar con ⚒ Saquear un barril tóxico (en las zonas de suelo verdoso), ver el ☢ en el almacén y el suelo verde alrededor; a los 3 días, que se pase.
+- Qué sigue: segunda parte, «Energía nuclear» (proyecto de 24 h) y el reactor pequeño.
+- Sin npm en el entorno: tests con Bun (693); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-22 (72) — Óxido se muda a Zenit
 
 - Por decisión de Mikel, Óxido deja `MikelJka/OxidoGame` y pasa a la carpeta `oxido/` de `mikeljka/zenit`, con todo su código, tests, datos y documentación (copiado del commit `e2665a4`; detalles en `oxido/MIGRACION.md`). OxidoGame no se ha tocado.

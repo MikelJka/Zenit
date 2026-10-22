@@ -35,6 +35,8 @@ import { AMMO_CARRY, AMMO_LOW, ammoFor, GRENADE, isAmmo, isGear, isWeapon, WEAPO
 import { ARMOR_IDS, ARMORS, armorProtection, isArmor } from '../data/armor';
 import { FINISH_MOOD } from '../data/morale';
 import { Corpse, updateCorpses } from './corpses';
+import { coolDown, HotTiles, irradiate } from './radiation';
+import { BARREL_IRRADIATION } from '../data/uranium';
 import { Blast, Grenade, grenadesOf, updateGrenades } from './grenades';
 import { updateMortars } from './mortar';
 import { isLitBonfire, updateBonfireCheer, updateBonfires } from './bonfire';
@@ -187,6 +189,8 @@ export class World implements JobContext {
   nextVehicleId = 1;
   /** Cadáveres de criaturas que se pudren en el mapa (bloque 2). */
   readonly corpses: Corpse[] = [];
+  /** Casillas irradiadas por un tiempo (al saquear un barril tóxico): radiación de antes y tick en que se pasa. */
+  readonly hotTiles: HotTiles = new Map();
   /** Investigación: proyecto en marcha, lo hecho y lo terminado. */
   research: ResearchState = newResearch();
   nextCorpseId = 1;
@@ -354,9 +358,15 @@ export class World implements JobContext {
    * Devuelve lo obtenido, o null si no había nada. Lo usarán los trabajos de talar, picar y saquear.
    */
   harvest(x: number, y: number): Partial<Stockpile> | null {
+    const barrel = inBounds(this.map, x, y) && this.map.props[y * this.map.width + x] === Prop.ToxicBarrel;
     const gains = harvestTile(this.map, x, y, this.rng);
     if (gains) {
       this.markChanged(y * this.map.width + x);
+      // Un barril tóxico abierto deja la casilla (y las de al lado) irradiada unos días.
+      if (barrel) {
+        this.markChanged(...irradiate(this.map, this.hotTiles, x, y, this.tick + Math.round(BARREL_IRRADIATION.days * TICKS_PER_DAY)));
+        this.addLog(`☢ Barril tóxico abierto: sale uranio y el suelo de alrededor queda irradiado ${BARREL_IRRADIATION.days} días.`, 'info', undefined, { x, y });
+      }
       this.items.dropAll(x, y, gains);
       // Lo que queda (p. ej. un tocón) no sigue designado: hay que volver a marcarlo.
       this.designations.remove(x, y);
@@ -411,6 +421,8 @@ export class World implements JobContext {
         !this.colonists.some((c) => c.path.some((p) => p.x === x && p.y === y)));
       this.markChanged(...grown);
     }
+    // La radiación de los barriles abiertos se pasa a su plazo.
+    if (this.tick % TICKS_PER_HOUR === 0 && this.hotTiles.size > 0) this.markChanged(...coolDown(this.map, this.hotTiles, this.tick));
     // Fuego: cada segundo arde, se extiende o se apaga.
     if (this.tick % TICKS_PER_SECOND === 0 && this.fires.size > 0) updateFires(this);
     // Cada día, los precios del mercado se acercan a su valor y alguno cambia.
