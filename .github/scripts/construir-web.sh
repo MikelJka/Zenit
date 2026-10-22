@@ -3,7 +3,7 @@
 #   _site/index.html  ← web/index.html (portada con los juegos)
 #   _site/<carpeta>/  ← build de cada juego listado en web/juegos.txt
 # Cada juego debe compilar con «npm run build» a <carpeta>/dist y tener en Vite
-# base: '/zenit/<carpeta>/'.
+# base: './' (rutas relativas).
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 rm -rf _site

@@ -7,7 +7,7 @@ import { mkdirSync, readFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const PORT = 4174;
-const URL = `http://localhost:${PORT}/zenit/oxido/`;
+const URL = `http://localhost:${PORT}/`;
 mkdirSync('smoke', { recursive: true });
 const saves = {
   colonia: readFileSync('scripts/vitrina/colonia.json', 'utf8'),

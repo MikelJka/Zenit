@@ -1,9 +1,10 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 
-// GitHub Pages publica el juego en https://mikeljka.github.io/zenit/oxido/ (sitio de Zenit; cada juego en su subcarpeta)
+// GitHub Pages publica el juego en https://mikeljka.github.io/Zenit/oxido/ (sitio de Zenit; cada juego en su subcarpeta)
 export default defineConfig({
-  base: '/zenit/oxido/',
+  // Rutas relativas: el juego funciona en cualquier subcarpeta (GitHub Pages distingue mayúsculas: /Zenit/ ≠ /zenit/).
+  base: './',
   build: {
     target: 'es2022',
     chunkSizeWarningLimit: 2000,

@@ -2,7 +2,7 @@
 
 Repositorio de **Zenit Studio** (Mikel): **hogar de Óxido** (se mudó aquí el 2026-10-22, con su sesión automática y su publicación), copia de Scrap Empire (que sigue viviendo y publicándose en su propio repositorio) y **hogar de los juegos nuevos**, empezando por Space Harvest.
 
-Web de Zenit (GitHub Pages): https://mikeljka.github.io/zenit/ — cada juego publicado va en su subcarpeta (lista en `web/juegos.txt`, portada en `web/index.html`, construcción en `.github/scripts/construir-web.sh`). Los workflows de cada juego van en `.github/workflows/` con el prefijo del juego y filtro de rutas por su carpeta.
+Web de Zenit (GitHub Pages): https://mikeljka.github.io/Zenit/ — cada juego publicado va en su subcarpeta (lista en `web/juegos.txt`, portada en `web/index.html`, construcción en `.github/scripts/construir-web.sh`). Los workflows de cada juego van en `.github/workflows/` con el prefijo del juego y filtro de rutas por su carpeta.
 
 Foto tomada el 2026-10-21.
 
@@ -11,7 +11,7 @@ Foto tomada el 2026-10-21.
 | Carpeta | Proyecto | Repositorio de origen | Estado |
 |---|---|---|---|
 | `scrap-empire/` | Scrap Empire: Idle Factory (antes Chatarrero), idle de desguace para Android | **Código y documentación completos copiados aquí** (foto del 2026-10-21); el original sigue operativo en `MikelJka/IdleScrapyard` (web: https://mikeljka.github.io/IdleScrapyard/, sesión programada y publicación). Ver `scrap-empire/MIGRACION.md` | En desarrollo; publicado en GitHub Pages |
-| `oxido/` | Óxido, gestión de colonia postapocalíptica (estilo RimWorld) | **Vive aquí, en Zenit** desde el 2026-10-22 (código y documentación completos; web: https://mikeljka.github.io/zenit/oxido/). Viene de `MikelJka/OxidoGame`, que queda sin tocar. Ver `oxido/MIGRACION.md` | En desarrollo; publicado en GitHub Pages de Zenit |
+| `oxido/` | Óxido, gestión de colonia postapocalíptica (estilo RimWorld) | **Vive aquí, en Zenit** desde el 2026-10-22 (código y documentación completos; web: https://mikeljka.github.io/Zenit/oxido/). Viene de `MikelJka/OxidoGame`, que queda sin tocar. Ver `oxido/MIGRACION.md` | En desarrollo; publicado en GitHub Pages de Zenit |
 | `space-harvest/` | Space Harvest, idle de estación espacial: agricultura, minería de planetas y energía solar | **Vive aquí, en Zenit** (monorepo de juegos; queda una copia con el prototipo web en `space-harvest/` de IdleScrapyard) | Documento de diseño completo en borrador (`space-harvest/docs/DISENO.md`); pruebas de gráficos hechas |
 
 Cada carpeta lleva su `CLAUDE.md` (instrucciones de trabajo) y su `docs/` (diseño, feedback, progreso, roadmap). `scrap-empire/` y `oxido/` además llevan todo el código.

@@ -6,7 +6,7 @@ import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const PORT = 4173;
-const URL = `http://localhost:${PORT}/zenit/oxido/?nueva&seed=12345`;
+const URL = `http://localhost:${PORT}/?nueva&seed=12345`;
 mkdirSync('smoke', { recursive: true });
 
 const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'inherit' });

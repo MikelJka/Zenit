@@ -1,8 +1,8 @@
 name: 'Óxido: probar y publicar'
 
 # Prueba Óxido y publica el sitio de Zenit en GitHub Pages:
-#   https://mikeljka.github.io/zenit/        → portada (web/index.html)
-#   https://mikeljka.github.io/zenit/oxido/  → Óxido
+#   https://mikeljka.github.io/Zenit/        → portada (web/index.html)
+#   https://mikeljka.github.io/Zenit/oxido/  → Óxido
 # GitHub Pages sustituye el sitio entero en cada despliegue, así que se construyen todos los
 # juegos de web/juegos.txt (ver .github/scripts/construir-web.sh). Otro juego que quiera
 # publicarse solo tiene que añadirse a esa lista y tener su propio workflow igual que este.

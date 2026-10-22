@@ -8,7 +8,7 @@ Idioma: el código (nombres de variables, funciones, tipos) en inglés; comentar
 
 - TypeScript estricto + Phaser 3 + Vite. Tests con Vitest.
 - Óxido vive en la carpeta `oxido/` del repositorio `mikeljka/zenit` (monorepo de Zenit Studio; se mudó desde `MikelJka/OxidoGame` el 2026-10-22, ver `MIGRACION.md`). No toques las carpetas de los otros juegos.
-- Publicación automática en GitHub Pages al subir a `main` cambios en `oxido/**` (workflow «Óxido: probar y publicar», `.github/workflows/oxido-publicar.yml` en la raíz de Zenit). URL: https://mikeljka.github.io/zenit/oxido/
+- Publicación automática en GitHub Pages al subir a `main` cambios en `oxido/**` (workflow «Óxido: probar y publicar», `.github/workflows/oxido-publicar.yml` en la raíz de Zenit). URL: https://mikeljka.github.io/Zenit/oxido/
 - Los comandos `npm …` se ejecutan dentro de `oxido/`.
 - Sin backend. Todo corre en el navegador. Los compradores, facciones y enemigos "con IA" son agentes simulados dentro del juego, nunca llamadas a servicios externos.
 
