@@ -1,24 +1,30 @@
 # Scrap Empire dentro de Zenit: estado de la mudanza
 
-**Copia completa del código y la documentación de Scrap Empire: Idle Factory** (foto de `main` de `MikelJka/IdleScrapyard` del 2026-10-21, commit `563c6ac`), sin la carpeta `space-harvest/` (que vive en la raíz de Zenit).
+**Traspaso HECHO el 2026-10-22** (decisión de Mikel del 2026-10-22). Scrap Empire: Idle Factory vive, se desarrolla y se publica en la carpeta `scrap-empire/` de `MikelJka/Zenit`. `MikelJka/IdleScrapyard` **no se ha tocado** (ni archivado ni borrado: lo decide Mikel).
 
-## Qué sigue funcionando en el repositorio original (`MikelJka/IdleScrapyard`)
+- **Web nueva:** https://mikeljka.github.io/Zenit/scrap-empire/ (portada de Zenit: https://mikeljka.github.io/Zenit/). El repositorio se llama `Zenit` con mayúscula (comprobado con la API de GitHub), por eso la base de Vite es `/Zenit/scrap-empire/`.
+- **Antigua:** https://mikeljka.github.io/IdleScrapyard/ (sigue con la última versión publicada allí hasta que Mikel decida).
 
-Mientras no se haga el traspaso, **todo lo operativo sigue allí** y esta carpeta es solo una copia de referencia:
+## Qué se hizo
 
-- La web publicada en GitHub Pages (`https://mikeljka.github.io/IdleScrapyard/`) y su flujo «Probar y publicar».
-- La **sesión programada** de desarrollo (cada 2 horas), que trabaja sobre ese repositorio, sus incidencias con la etiqueta `feedback` y las ramas `sesion/*`.
-- Las capturas de las ramas `capturas` y `capturas-pruebas` que lee STONKS, y el APK de prueba de Android.
+- **Código y documentación:** la copia del 2026-10-21 ya era la última: `main` de IdleScrapyard sigue en el commit `563c6ac`, así que no había nada más que traer. El historial de commits sigue en IdleScrapyard.
+- **Flujos** (en `.github/workflows/` de la raíz de Zenit; se borró `scrap-empire/.github/`, que GitHub no ejecutaba):
+  - `scrap-empire-probar-rama.yml` — «Scrap Empire: probar rama»: tests, build, prueba de humo y capturas de las ramas en `capturas-pruebas-scrap-empire` (antes `capturas-pruebas`). Solo se lanza con cambios en `scrap-empire/**`.
+  - `scrap-empire-android.yml` — «Scrap Empire: Android (APK de prueba)»: igual que antes, desde `scrap-empire/`.
+  - `zenit-publicar.yml` — **«Zenit: publicar web»**, flujo común de publicación de todos los juegos (es el antiguo «Óxido: probar y publicar» de la sesión de Óxido, ampliado y renombrado): prueba cada juego de `web/juegos.txt`, construye el sitio con `.github/scripts/construir-web.sh` y lo publica. Además saca las capturas de Scrap Empire de `main` a la rama `capturas-scrap-empire` (antes `capturas`); si esa prueba de humo falla, la web se publica igual para no frenar a Óxido.
+- **Web:** `scrap-empire` añadido a `web/juegos.txt` y enlazado en la portada `web/index.html`. Base de Vite y URL de `scripts/smoke.mjs`, `scripts/perf.mjs` y `scripts/marketing/index.mjs` cambiadas a `/Zenit/scrap-empire/`. El material de prensa (`/press/`) usa rutas relativas y se publica en https://mikeljka.github.io/Zenit/scrap-empire/press/.
+- **Prototipo de gráficos de Space Harvest** (`/prototipos/espacio/` en la web antigua): ya no lo publica Scrap Empire; queda para la carpeta `space-harvest/` si Mikel lo quiere en la web de Zenit.
+- **Partidas guardadas:** siguen en el mismo dominio (`mikeljka.github.io`), así que el navegador las conserva en la URL nueva.
+- **Botón 🐞:** Scrap Empire no tiene botón de feedback dentro del juego (las incidencias se abrían a mano en GitHub). A partir de ahora se abren en `MikelJka/Zenit` con las etiquetas `feedback` y `scrap-empire`. Si Mikel quiere un 🐞 como el de Óxido, que lo pida en «Pendiente».
+- **Sesión programada:** el texto nuevo está en `sesiones-programadas/scrap-empire.md` (cada 2 horas, en horas impares; Óxido va en horas pares).
+- `CLAUDE.md`, `README.md` y docs: referencias a IdleScrapyard y su URL cambiadas a Zenit.
 
-Los flujos de `scrap-empire/.github/workflows/` **no se ejecutan aquí** (GitHub solo lee los de la raíz del repositorio); están como referencia.
+## Qué debe hacer Mikel
 
-## Qué habría que hacer para traspasar de verdad (decisión de Mikel)
-
-1. **Flujos de publicación:** pasar los de `scrap-empire/.github/workflows/` a la raíz de Zenit con `working-directory: scrap-empire` y filtros de rutas (`paths: scrap-empire/**`) para que cada juego tenga el suyo; GitHub Pages solo admite un sitio por repositorio, así que habría que publicar **todos los juegos bajo un mismo sitio** (`/scrap-empire/`, `/space-harvest/`, …) o usar otro alojamiento.
-2. **URL pública:** cambiaría de `https://mikeljka.github.io/IdleScrapyard/` a `https://mikeljka.github.io/Zenit/scrap-empire/` (y la base de Vite, `vite.config.ts`, y las rutas del material de prensa).
-3. **Sesión programada:** reconfigurarla para el repositorio y la carpeta nuevos (la hace Mikel en su configuración); mientras tanto habría que **pausar la del repositorio antiguo** para no trabajar dos veces.
-4. **Incidencias `feedback`, ramas `capturas*` y STONKS:** mover o redirigir (el panel de STONKS lee esas ramas del repositorio antiguo).
-5. **Historial de commits:** esta copia no lo lleva; el original lo conserva (se puede archivar el repositorio antiguo como solo lectura una vez traspasado).
-6. **Android:** el identificador y los flujos de Capacitor no cambian, pero el workflow debe ejecutarse desde la carpeta nueva.
-
-**Recomendación:** dejar el original operativo hasta tener el primer juego nuevo publicado en Zenit y entonces traspasar con un solo cambio coordinado (flujos, sesión programada y URL a la vez).
+1. **Activar GitHub Pages** en Zenit: Settings → Pages → Source: **GitHub Actions** (con el plan gratuito Pages solo funciona si Zenit es público; decisión del 2026-10-22: público mientras dure el desarrollo) (el primer despliegue de Óxido falló con «Ensure GitHub Pages has been enabled»). Después relanzar «Zenit: publicar web» (Actions → Run workflow).
+2. **Etiquetas** en `MikelJka/Zenit`: crear `scrap-empire` (y `feedback` si no existe).
+3. **Incidencias `feedback` abiertas de IdleScrapyard:** esta sesión no tuvo acceso a ese repositorio (no se pudo añadir), así que no se pasaron a «Pendiente» ni se cerraron. Si hay alguna, cópiala a Zenit con las etiquetas `feedback` y `scrap-empire` (la sesión la recogerá) o añade IdleScrapyard a la sesión para que lo haga ella.
+4. **STONKS:** cambiar el módulo «Zenit Studio» para que lea las capturas de `MikelJka/Zenit`, ramas `capturas-scrap-empire` (main) y `capturas-pruebas-scrap-empire` (ramas).
+5. **Rutinas:** apagar la sesión programada antigua de IdleScrapyard si sigue activa (si no, trabajaría dos veces) y comprobar que la nueva usa el texto de `sesiones-programadas/scrap-empire.md`.
+6. **Decidir si archiva IdleScrapyard** (o le pone en el README un enlace a la nueva URL).
+7. **Óxido** (aviso, no es de esta carpeta): Óxido usa la base `/zenit/oxido/` en minúsculas; si su página sale en blanco en https://mikeljka.github.io/Zenit/oxido/, hay que ponerla en `/Zenit/oxido/`.

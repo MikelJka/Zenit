@@ -1,0 +1,81 @@
+name: 'Zenit: publicar web'
+
+# Flujo común de publicación de Zenit (GitHub Pages solo admite un sitio por repositorio).
+# Prueba cada juego de web/juegos.txt y publica el sitio entero:
+#   https://mikeljka.github.io/Zenit/               → portada (web/index.html)
+#   https://mikeljka.github.io/Zenit/<carpeta>/     → cada juego (oxido, scrap-empire…)
+# Para publicar otro juego: añádelo a web/juegos.txt y a la lista «paths» de abajo, pon su base de
+# Vite en '/Zenit/<carpeta>/' y enlázalo en web/index.html. No hace falta otro flujo de publicación.
+# (Sustituye a «Óxido: probar y publicar», oxido-publicar.yml, desde el 2026-10-22.)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'oxido/**'
+      - 'scrap-empire/**'
+      - 'web/**'
+      - '.github/scripts/construir-web.sh'
+      - '.github/workflows/zenit-publicar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Un solo despliegue de Pages a la vez; no se cancelan entre sí.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalar y probar cada juego
+        run: |
+          while read -r juego _; do
+            case "$juego" in ''|'#'*) continue ;; esac
+            echo "::group::Probar $juego"
+            ( cd "$juego" && npm install && npm test )
+            echo "::endgroup::"
+          done < web/juegos.txt
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - name: Construir el sitio de Zenit
+        run: bash .github/scripts/construir-web.sh
+        env:
+          VITE_COMMIT: ${{ github.sha }}
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      # Scrap Empire: capturas de la versión publicada en la rama «capturas-scrap-empire» (las lee STONKS).
+      - name: 'Scrap Empire: prueba de humo y capturas'
+        if: hashFiles('scrap-empire/scripts/smoke.mjs') != ''
+        working-directory: scrap-empire
+        # Si falla, la web se publica igual (para no frenar a los demás juegos); «Scrap Empire: probar rama» ya la exige.
+        continue-on-error: true
+        run: |
+          npx playwright install --with-deps chromium
+          npm run smoke
+          cd smoke
+          git init -q
+          git checkout -q -b capturas-scrap-empire
+          git add .
+          git -c user.name=ci -c user.email=ci@localhost commit -qm "Capturas de Scrap Empire de main (${GITHUB_SHA::7})"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" capturas-scrap-empire
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

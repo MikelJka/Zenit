@@ -1,5 +1,7 @@
 # Sesión programada: desarrollo de IdleScrapyard (cada 2 horas)
 
+> **Antigua (2026-10-22):** Scrap Empire se mudó a Zenit; el texto vigente está en `scrap-empire.md`. Mikel debe apagar esta rutina si sigue activa.
+
 Texto de la rutina tal como está configurada (copiado el 2026-10-21):
 
 ---

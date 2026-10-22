@@ -2,6 +2,13 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-22 — Scrap Empire se muda a Zenit
+
+- El juego vive ahora en la carpeta `scrap-empire/` de `MikelJka/Zenit`. Nueva URL: https://mikeljka.github.io/Zenit/scrap-empire/ (las partidas guardadas se conservan: mismo dominio). Detalle y lista de tareas de Mikel en `MIGRACION.md`.
+- Publicación con el flujo común «Zenit: publicar web» (todos los juegos en un solo sitio); flujos propios «Scrap Empire: probar rama» y «Scrap Empire: Android (APK de prueba)»; capturas en las ramas `capturas-scrap-empire` y `capturas-pruebas-scrap-empire`.
+- No cambia nada del juego. Pendiente de Mikel: activar Pages en Zenit, crear la etiqueta `scrap-empire`, pasar las incidencias de IdleScrapyard (sin acceso desde la sesión), cambiar STONKS y apagar la rutina antigua.
+- Qué probar: abrir la URL nueva en el móvil cuando Pages esté activado.
+
 ## 2026-10-21 — Tope en las huellas de salida
 
 - Cada producto del muelle admite como máximo 500 piezas (`dock.productCap`, valor provisional; el «x» no lo dio Mikel). Con la huella llena las carretillas de esa línea esperan con su tanda, el palé se llena y la línea para; al salir un camión vuelve a producir. En el panel de la línea se ve «piezas/tope».

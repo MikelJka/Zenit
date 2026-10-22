@@ -3,7 +3,8 @@
 #   _site/index.html  ← web/index.html (portada con los juegos)
 #   _site/<carpeta>/  ← build de cada juego listado en web/juegos.txt
 # Cada juego debe compilar con «npm run build» a <carpeta>/dist y tener en Vite
-# base: '/zenit/<carpeta>/'.
+# base: '/Zenit/<carpeta>/' (el repositorio es MikelJka/Zenit, con mayúscula).
+# Lo usa el flujo común «Zenit: publicar web» (.github/workflows/zenit-publicar.yml).
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 rm -rf _site
