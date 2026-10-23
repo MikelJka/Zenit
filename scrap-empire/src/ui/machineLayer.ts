@@ -3,9 +3,11 @@
 // lo que se mueve (prensa, engranaje, chispa, humo y luz) se dibuja aquí por código. Si WebGL no arranca, el mapa sigue en SVG.
 // Segunda parte: el suelo de cada puesto (con su borde de rayas) y sus cintas, con la chatarra que avanza, también van aquí,
 // debajo de todas las máquinas. Tercera parte: el ayudante de cada puesto (piernas fijas y torso que se mueve al trabajar),
-// encima de todas las máquinas.
-import { Application, CanvasSource, Container, Graphics, Sprite, Texture } from 'pixi.js';
-import { iso } from './iso';
+// encima de todas las máquinas. Cuarta parte: el palé de cada línea y las carretillas, encima de los ayudantes
+// (la carretilla, por bloques girados como en el SVG; lo que lleva, con la textura horneada del producto).
+import { Application, CanvasSource, Container, Graphics, GraphicsContext, Sprite, Texture } from 'pixi.js';
+import { iso, rblockFaces } from './iso';
+import { FORKLIFT_SHADOW, forkliftPieces } from './vehicles';
 import type { MachineGeom } from './yard';
 
 /** Recuadro (en píxeles locales de la máquina) que se hornea en la textura, y su resolución. */
@@ -15,6 +17,14 @@ const RES = 5.12;
 /** Recuadro del ayudante (píxeles locales antes de su escala ×1,45): 32 × 64 → 128 × 256 píxeles. */
 const PERSON_BOX = { x: -16, y: -44, w: 32, h: 64 };
 const PERSON_RES = 4;
+/** Recuadro del palé de una línea (ya con su escala ×1,25): 80 × 128 → 256 × 410 píxeles. */
+const PALLET_BOX = { x: -40, y: -96, w: 80, h: 128 };
+const PALLET_RES = 3.2;
+/** Recuadro de un producto (esquina en el origen): 64 × 64 → 256 × 256 píxeles. */
+const PROP_BOX = { x: -32, y: -44, w: 64, h: 64 };
+const PROP_RES = 4;
+/** La carretilla gira en pasos de 10° (como las variantes del SVG). */
+const CART_STEPS = 36;
 const EDGE = 0x2a1d14;
 
 export interface MachineSpot {
@@ -43,6 +53,15 @@ export interface FloorFlow {
   color: string;
 }
 
+/** Carretilla en este fotograma: posición en el mapa (píxeles), hacia dónde mira, de qué línea es y cuántos productos lleva. */
+export interface CartPose {
+  x: number;
+  y: number;
+  ang: number;
+  zone: string;
+  loads: number;
+}
+
 export interface MachineLayer {
   canvas: HTMLCanvasElement;
   /** Pone las máquinas de la línea `i` (o ninguna). `body` da el SVG fijo y la geometría de una máquina de ese nivel. */
@@ -52,6 +71,10 @@ export interface MachineLayer {
   setFloor(i: number, tiles: FloorTile[], flows: FloorFlow[]): void;
   /** Pone el ayudante del puesto `i` (o ninguno). `key` identifica su aspecto; `parts` da su SVG en dos piezas. */
   setWorker(i: number, spot: MachineSpot | null, key: string, parts: () => { base: string; torso: string }): void;
+  /** Pone el palé de la línea `i` (o ninguno). `key` identifica lo que lleva; `svg` lo dibuja. */
+  setPallet(i: number, spot: { x: number; y: number } | null, key: string, svg: () => string): void;
+  /** Las carretillas visibles en este fotograma; `prop` da el SVG del producto de una línea. */
+  setCarts(carts: CartPose[], prop: (zone: string) => string): void;
   animate(i: number, level: number, phase: number, gearAngle: number, inView: boolean): void;
   /** Rebote de subida de nivel (como `.levelup`) con el pie en (px, py). */
   levelUp(i: number, px: number, py: number): void;
@@ -182,6 +205,15 @@ interface LineView {
   flowG: Graphics;
   flows: FloorFlow[];
   worker: { root: Container; torso: Sprite } | null;
+  pallet: Sprite | null;
+}
+
+interface CartView {
+  root: Container;
+  back: Graphics;
+  loads: Sprite[];
+  front: Graphics;
+  key: string;
 }
 
 /** Hornea el SVG fijo de una máquina en una textura (asíncrono: el navegador decodifica la imagen). */
@@ -230,9 +262,13 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   app.stage.addChild(world);
   const ground = new Container();
   world.addChild(ground);
-  // Los ayudantes van encima de todas las máquinas (se añade al mundo después de las líneas).
+  // Los ayudantes van encima de todas las máquinas (se añade al mundo después de las líneas); encima, los palés y las carretillas.
   const people = new Container();
+  const palletsG = new Container();
+  const cartsG = new Container();
   const textures = new Map<string, Promise<Texture>>();
+  /** Las texturas ya horneadas, para ponerlas en el mismo fotograma (sin parpadeo al girar la carretilla). */
+  const ready = new Map<string, Texture>();
   let low = false;
 
   const lines: LineView[] = Array.from({ length: lineCount }, () => {
@@ -241,9 +277,34 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
     const floor = new Graphics();
     const flowG = new Graphics();
     ground.addChild(floor, flowG);
-    return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [], worker: null };
+    return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [], worker: null, pallet: null };
   });
-  world.addChild(people);
+  world.addChild(people, palletsG, cartsG);
+  const cartViews: CartView[] = [];
+  /** Dibujo de la carretilla por ángulo y carga: lo de detrás de la carga y lo de delante (se comparte entre carretillas). */
+  const cartBodies = new Map<string, { back: GraphicsContext; front: GraphicsContext }>();
+  const shadow = new GraphicsContext().ellipse(iso(0, 0)[0], iso(0, 0)[1] + FORKLIFT_SHADOW.dy, FORKLIFT_SHADOW.rx, FORKLIFT_SHADOW.ry).fill({ color: 0x000000, alpha: FORKLIFT_SHADOW.alpha });
+
+  function cartBody(step: number, loaded: boolean): { back: GraphicsContext; front: GraphicsContext } {
+    const key = `${step}|${loaded ? 1 : 0}`;
+    let body = cartBodies.get(key);
+    if (body) return body;
+    const ang = (step * Math.PI * 2) / CART_STEPS;
+    const back = new GraphicsContext();
+    const front = new GraphicsContext();
+    let into = back;
+    for (const piece of forkliftPieces(ang, loaded ? 1 : 0)) {
+      if (piece.kind === 'load') {
+        into = front;
+        continue;
+      }
+      for (const f of rblockFaces(piece.cx, piece.cy, piece.z, piece.l, piece.w, piece.h, ang, piece.color))
+        into.poly(f.pts.flat(), true).fill({ color: num(f.fill) }).stroke({ width: 0.9, color: EDGE, join: 'round' });
+    }
+    body = { back, front };
+    cartBodies.set(key, body);
+    return body;
+  }
 
   /** Sprite con una textura que llega cuando el navegador termina de hornearla. */
   function lateSprite(tex: Promise<Texture>, box: typeof BOX, res: number): Sprite {
@@ -267,7 +328,10 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
     if (!tex) {
       tex = make();
       textures.set(key, tex);
-      tex.catch(() => textures.delete(key));
+      tex.then(
+        (t) => ready.set(key, t),
+        () => textures.delete(key),
+      );
     }
     return tex;
   }
@@ -301,6 +365,72 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
 
   return {
     canvas,
+    setPallet(i, spot, key, svg) {
+      const l = lines[i];
+      l.pallet?.destroy();
+      l.pallet = null;
+      if (!spot) return;
+      const sprite = lateSprite(texture(`pallet-${key}`, () => bake(svg(), PALLET_BOX, PALLET_RES)), PALLET_BOX, PALLET_RES);
+      sprite.position.set(spot.x + PALLET_BOX.x, spot.y + PALLET_BOX.y);
+      palletsG.addChild(sprite);
+      l.pallet = sprite;
+    },
+    setCarts(list, prop) {
+      while (cartViews.length < list.length) {
+        const root = new Container();
+        const back = new Graphics();
+        const front = new Graphics();
+        root.addChild(new Graphics(shadow), back);
+        const loads = [0, 1, 2].map(() => {
+          const sp = new Sprite(Texture.EMPTY);
+          sp.scale.set(1 / PROP_RES);
+          sp.visible = false;
+          root.addChild(sp);
+          return sp;
+        });
+        root.addChild(front);
+        cartsG.addChild(root);
+        cartViews.push({ root, back, loads, front, key: '' });
+      }
+      // Las de delante se dibujan después (como el orden por profundidad del SVG).
+      const order = list.map((c, k) => ({ c, k })).sort((a, b) => a.c.y - b.c.y);
+      cartViews.forEach((v, k) => {
+        const item = order[k];
+        v.root.visible = !!item;
+        if (!item) return;
+        const c = item.c;
+        v.root.position.set(c.x, c.y);
+        const step = ((Math.round((c.ang * CART_STEPS) / (Math.PI * 2)) % CART_STEPS) + CART_STEPS) % CART_STEPS;
+        const key = `${c.zone}|${step}|${c.loads}`;
+        if (key === v.key) return;
+        v.key = key;
+        const body = cartBody(step, c.loads > 0);
+        v.back.context = body.back;
+        v.front.context = body.front;
+        const pieces = c.loads > 0 ? forkliftPieces((step * Math.PI * 2) / CART_STEPS, c.loads) : [];
+        v.loads.forEach((sp, n) => {
+          const piece = pieces.find((p) => p.kind === 'load' && p.k === n);
+          sp.visible = false;
+          if (!piece || piece.kind !== 'load') return;
+          sp.position.set(piece.at[0] + PROP_BOX.x, piece.at[1] + PROP_BOX.y);
+          const done = ready.get(`prop-${c.zone}`);
+          if (done) {
+            sp.texture = done;
+            sp.visible = true;
+            return;
+          }
+          const want = key;
+          texture(`prop-${c.zone}`, () => bake(prop(c.zone), PROP_BOX, PROP_RES)).then(
+            (t) => {
+              if (v.key !== want || sp.destroyed) return;
+              sp.texture = t;
+              sp.visible = true;
+            },
+            () => {},
+          );
+        });
+      });
+    },
     setLine(i, spots, variant, body) {
       const l = lines[i];
       for (const m of l.machines) m.root.destroy({ children: true });

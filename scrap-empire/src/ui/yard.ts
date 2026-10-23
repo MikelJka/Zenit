@@ -30,7 +30,7 @@ import {
 } from './scenery';
 import { TRUCK_SLOTS, agvIso, carIso, forkliftIso, goldenTruckIso, scrapTruckIso, shipTruckIso } from './vehicles';
 import { reducedMotion } from './prefs';
-import { createMachineLayer, type FloorFlow, type FloorTile, type MachineLayer } from './machineLayer';
+import { createMachineLayer, type CartPose, type FloorFlow, type FloorTile, type MachineLayer } from './machineLayer';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -67,6 +67,12 @@ function station(i: number): { x: number; y: number; row: number; col: number } 
 /** Esquinas en pantalla de un rectángulo del suelo (lo mismo que dibuja `tile()`). */
 function tilePts(x: number, y: number, w: number, d: number, z = 0): [number, number][] {
   return [iso(x, y, z), iso(x + w, y, z), iso(x + w, y + d, z), iso(x, y + d, z)];
+}
+
+/** Punto del suelo en píxeles del mapa. */
+function isoXY(x: number, y: number): { x: number; y: number } {
+  const [px, py] = iso(x, y);
+  return { x: px, y: py };
 }
 
 function at(x: number, y: number, z = 0): string {
@@ -740,6 +746,7 @@ export function createYard(container: HTMLElement): Yard {
       l.machines.innerHTML = `<g transform="${at(st.x, st.y)}">${scaffoldSvg(0, 0, SIZE)}</g>`;
       gpu?.setLine(i, [], '', () => ({ svg: '', geom: { h: 0, spark: [0, 0], chimney: [0, 0], lamp: null } }));
       gpu?.setWorker(i, null, '', () => ({ base: '', torso: '' }));
+      gpu?.setPallet(i, null, '', () => '');
       l.press = l.gears = l.fx = l.flows = [];
       l.torso = null;
       l.stat = l.cnt = null;
@@ -1024,7 +1031,12 @@ export function createYard(container: HTMLElement): Yard {
         const hgt = PROP_HEIGHT[l.def.id] ?? 0.3;
         let h = block(0, 0, 0, 0.8, 0.8, 0.12, '#b07a45');
         for (let k = 0; k < stack; k++) h += `<g transform="${at(0.03 + (k % 2) * 0.4, 0.03 + (Math.floor(k / 2) % 2) * 0.4, 0.12 + Math.floor(k / 4) * hgt)}">${propIso(l.def.id)}</g>`;
-        l.pallet.innerHTML = `<g transform="scale(1.25)">${h}</g>`;
+        // En la capa de canvas si está (encima de los ayudantes y debajo de las carretillas); si no, en el SVG.
+        if (gpu) {
+          l.pallet.innerHTML = '';
+          const [px, py] = iso(station(i).x + 2.45, station(i).y + 2.45);
+          gpu.setPallet(i, { x: px, y: py }, `${l.def.id}-${stack}`, () => `<g transform="scale(1.25)">${h}</g>`);
+        } else l.pallet.innerHTML = `<g transform="scale(1.25)">${h}</g>`;
       }
     });
 
@@ -1044,6 +1056,8 @@ export function createYard(container: HTMLElement): Yard {
     // Cada carretilla visible sigue a un viaje concreto de la simulación hasta que termina; libre, espera junto al palé y
     // solo coge viajes recién salidos (si no, en las líneas con muchas carretillas siempre cogería el más viejo y haría bucle en el palé).
     const taken = new Set<object>();
+    // Con la capa de canvas, las carretillas se dibujan allí (encima de los palés) y las del SVG se quedan ocultas.
+    const poses: CartPose[] = [];
     carts.forEach((c, k) => {
       const src = slots[k];
       if (k < nCarts && c.home === src.z.id && c.bound && state.zones[src.z.id].trips.includes(c.bound)) taken.add(c.bound);
@@ -1075,6 +1089,12 @@ export function createYard(container: HTMLElement): Yard {
       const dockMid = MOVE + TURN / 2;
       const midTurn = CYC - TURN / 2;
       const carrying = trip && (u < dockMid || u >= midTurn) ? c.loadN : 0;
+      if (gpu) {
+        poses.push({ ...isoXY(pose.x, pose.y), ang: pose.ang, zone: src.z.id, loads: carrying });
+        c.g.setAttribute('visibility', 'hidden');
+        c.o.depth = -99;
+        return;
+      }
       const key = `${src.z.id}|${Math.round((pose.ang * 18) / Math.PI)}|${carrying}`;
       if (key !== c.key) {
         c.key = key;
@@ -1089,6 +1109,7 @@ export function createYard(container: HTMLElement): Yard {
       c.g.setAttribute('transform', at(pose.x, pose.y));
       c.o.depth = pose.x + pose.y;
     });
+    gpu?.setCarts(poses, propIso);
 
     // Camión de expedición: espera en el muelle mientras se llena, y se va cuando está completo.
     if (prevCooldown >= 0 && state.truckCooldown > prevCooldown + 0.5) {

@@ -7,18 +7,20 @@ interface Part {
   svg: string;
 }
 
-/**
- * Carretilla mirando en la dirección `ang` (radianes sobre el suelo: 0 = +x, π/2 = +y), centrada en el origen.
- * `loads` son productos (ya dibujados con `propIso`) que lleva en las horquillas, de abajo arriba.
- */
-export function forkliftIso(ang: number, loads: string[]): string {
+/** Pieza de la carretilla: un bloque girado, o el hueco de la carga `k` (producto con su esquina en `at`, en píxeles). */
+export type ForkliftPiece =
+  | { kind: 'block'; cx: number; cy: number; z: number; l: number; w: number; h: number; color: string }
+  | { kind: 'load'; k: number; at: [number, number] };
+
+/** Piezas de la carretilla mirando en `ang`, con `loads` productos, ya ordenadas de atrás adelante (SVG y canvas). */
+export function forkliftPieces(ang: number, loads: number): ForkliftPiece[] {
   const c = Math.cos(ang);
   const s = Math.sin(ang);
-  const parts: Part[] = [];
+  const parts: { depth: number; piece: ForkliftPiece }[] = [];
   const part = (u: number, v: number, z: number, l: number, w: number, h: number, color: string) => {
     const cx = u * c - v * s;
     const cy = u * s + v * c;
-    parts.push({ depth: cx + cy + z * 0.05, svg: rblock(cx, cy, z, l, w, h, ang, color) });
+    parts.push({ depth: cx + cy + z * 0.05, piece: { kind: 'block', cx, cy, z, l, w, h, color } });
   };
   part(-0.12, 0, 0.1, 0.62, 0.5, 0.3, '#f4c430');
   part(-0.18, 0, 0.4, 0.3, 0.34, 0.05, '#2a1d14');
@@ -29,15 +31,29 @@ export function forkliftIso(ang: number, loads: string[]): string {
   part(0.52, -0.12, 0.1, 0.5, 0.07, 0.04, '#6a6a6a');
   part(0.52, 0.12, 0.1, 0.5, 0.07, 0.04, '#6a6a6a');
   for (const [wu, wv] of [[-0.3, -0.27], [-0.3, 0.27], [0.1, -0.27], [0.1, 0.27]]) part(wu, wv, 0, 0.2, 0.08, 0.18, '#2a1d14');
-  loads.forEach((svg, k) => {
+  for (let k = 0; k < loads; k++) {
     const cx = 0.5 * c;
     const cy = 0.5 * s;
-    const [sx, sy] = iso(cx - 0.18, cy - 0.18, 0.14 + k * 0.32);
-    parts.push({ depth: cx + cy + 0.4 + k * 0.01, svg: `<g transform="translate(${sx.toFixed(1)} ${sy.toFixed(1)})">${svg}</g>` });
-  });
+    parts.push({ depth: cx + cy + 0.4 + k * 0.01, piece: { kind: 'load', k, at: iso(cx - 0.18, cy - 0.18, 0.14 + k * 0.32) } });
+  }
   parts.sort((a, b) => a.depth - b.depth);
+  return parts.map((p) => p.piece);
+}
+
+/** Sombra de la carretilla (elipse bajo el origen). */
+export const FORKLIFT_SHADOW = { dy: 3, rx: 19, ry: 9, alpha: 0.18 };
+
+/**
+ * Carretilla mirando en la dirección `ang` (radianes sobre el suelo: 0 = +x, π/2 = +y), centrada en el origen.
+ * `loads` son productos (ya dibujados con `propIso`) que lleva en las horquillas, de abajo arriba.
+ */
+export function forkliftIso(ang: number, loads: string[]): string {
+  const body = forkliftPieces(ang, loads.length)
+    .map((p) => (p.kind === 'block' ? rblock(p.cx, p.cy, p.z, p.l, p.w, p.h, ang, p.color) : `<g transform="translate(${p.at[0].toFixed(1)} ${p.at[1].toFixed(1)})">${loads[p.k]}</g>`))
+    .join('');
   const [sx, sy] = iso(0, 0);
-  return `<ellipse cx="${sx}" cy="${sy + 3}" rx="19" ry="9" fill="#000" opacity="0.18"/>${parts.map((p) => p.svg).join('')}`;
+  const sh = FORKLIFT_SHADOW;
+  return `<ellipse cx="${sx}" cy="${sy + sh.dy}" rx="${sh.rx}" ry="${sh.ry}" fill="#000" opacity="${sh.alpha}"/>${body}`;
 }
 
 /** Vehículo guiado automático (AGV): plataforma baja con luz y, si lleva carga, un contenedor de chatarra. Mira en la dirección `ang`. */

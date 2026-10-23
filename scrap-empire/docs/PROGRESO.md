@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Las carretillas y los palés de las líneas se dibujan en canvas (S1, cuarta parte)
+
+- Las carretillas de las líneas pasan a la capa de canvas (PixiJS): la carretilla se dibuja con los mismos bloques girados que en el SVG (en pasos de 10°, como antes) y lo que lleva con la textura horneada del producto de su línea; las de delante tapan a las de detrás.
+- El palé de cada línea también va en canvas (encima del ayudante y debajo de las carretillas, para que la carretilla que espera siga delante de su palé).
+- Mismo aspecto que en SVG (comprobado: el SVG de la carretilla sale idéntico tras compartir su geometría con el canvas); con `?svg=1`, o si WebGL no arranca, todo sigue en SVG.
+- Pequeña diferencia: carretillas y palés quedan siempre por debajo de los camiones, la pila y las huellas del muelle (en su recorrido no se cruzan).
+- Qué probar: ver cómo cargan, giran en el muelle y vuelven con varias líneas abiertas, y mover el mapa en el móvil con `?fps=1`, comparando con `?svg=1`.
+- Sigue: S1, quinta parte (camiones y vehículos en canvas) o pasar a S2 si Mikel lo ve suficiente.
+
 ## 2026-10-23 — Los ayudantes de los puestos se dibujan en canvas (S1, tercera parte)
 
 - El ayudante de cada puesto (Grúa, Pistón, Bujía…) pasa a la capa de canvas (PixiJS), encima de las máquinas: piernas y sombra en una textura y torso con la cabeza en otra, horneadas desde el mismo SVG; el torso sube y baja al trabajar, como antes.

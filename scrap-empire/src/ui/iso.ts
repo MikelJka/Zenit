@@ -38,16 +38,15 @@ export function block(x: number, y: number, z: number, w: number, d: number, h: 
   return blockP(iso, x, y, z, w, d, h, color, opts);
 }
 
-/** Bloque girado un ángulo cualquiera sobre el suelo, centrado en (cx, cy); `len` va en la dirección `ang`. */
-export function rblock(cx: number, cy: number, z: number, len: number, wid: number, h: number, ang: number, color: string, opts: { edge?: boolean } = {}): string {
-  const e = opts.edge === false ? '' : EDGE;
+/** Caras visibles de un bloque girado (puntos en píxeles y color ya sombreado), de atrás adelante: lo usan el SVG y el canvas. */
+export function rblockFaces(cx: number, cy: number, z: number, len: number, wid: number, h: number, ang: number, color: string): { pts: [number, number][]; fill: string }[] {
   const c = Math.cos(ang);
   const s = Math.sin(ang);
   const pt = (u: number, v: number): [number, number] => [cx + u * c - v * s, cy + u * s + v * c];
   const hl = len / 2;
   const hw = wid / 2;
   const ring = [pt(-hl, -hw), pt(hl, -hw), pt(hl, hw), pt(-hl, hw)];
-  let out = '';
+  const out: { pts: [number, number][]; fill: string }[] = [];
   for (let i = 0; i < 4; i++) {
     const a = ring[i];
     const b = ring[(i + 1) % 4];
@@ -56,10 +55,18 @@ export function rblock(cx: number, cy: number, z: number, len: number, wid: numb
     const n = Math.hypot(nx, ny);
     if ((nx + ny) / n <= 0.02) continue;
     const f = 0.74 + (0.08 * (nx - ny)) / n;
-    out += `<polygon points="${pts([iso(a[0], a[1], z), iso(b[0], b[1], z), iso(b[0], b[1], z + h), iso(a[0], a[1], z + h)])}" fill="${shade(color, f)}" ${e}/>`;
+    out.push({ pts: [iso(a[0], a[1], z), iso(b[0], b[1], z), iso(b[0], b[1], z + h), iso(a[0], a[1], z + h)], fill: shade(color, f) });
   }
-  out += `<polygon points="${pts(ring.map(([x, y]) => iso(x, y, z + h)))}" fill="${shade(color, 1.12)}" ${e}/>`;
+  out.push({ pts: ring.map(([x, y]) => iso(x, y, z + h)), fill: shade(color, 1.12) });
   return out;
+}
+
+/** Bloque girado un ángulo cualquiera sobre el suelo, centrado en (cx, cy); `len` va en la dirección `ang`. */
+export function rblock(cx: number, cy: number, z: number, len: number, wid: number, h: number, ang: number, color: string, opts: { edge?: boolean } = {}): string {
+  const e = opts.edge === false ? '' : EDGE;
+  return rblockFaces(cx, cy, z, len, wid, h, ang, color)
+    .map((f) => `<polygon points="${pts(f.pts)}" fill="${f.fill}" ${e}/>`)
+    .join('');
 }
 
 /** Cilindro de pie (silos, chimeneas, depósitos). */
