@@ -8,7 +8,7 @@ Terminado: se abre en el móvil a 60 fps, con menú de inicio y mapa de la estac
 
 - [x] Esqueleto Vite + TypeScript + Vitest + PixiJS en `space-harvest/`, con `Rng`, reloj, guardado con versión y registro de módulos
 - [ ] Publicación de prueba (GitHub Pages) y prueba de humo con capturas
-- [ ] Textos es/en y ajustes (sonido, idioma, calidad, reducir movimiento)
+- [x] Textos es/en y ajustes (sonido, idioma, calidad, reducir movimiento) — datos y lógica; falta la pantalla de ajustes con el menú
 - [ ] Menú de inicio con logo animado y estación al fondo
 - [ ] Mapa de la estación con paralaje, luces y cámara que se arrastra y se pellizca
 - [ ] Script de rendimiento (CPU ×4) y de equilibrio (dos jugadores simulados)

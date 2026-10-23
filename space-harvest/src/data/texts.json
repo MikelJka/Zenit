@@ -1,0 +1,34 @@
+{
+  "es": {
+    "game.title": "Space Harvest",
+    "menu.play": "Jugar",
+    "menu.settings": "Ajustes",
+    "settings.title": "Ajustes",
+    "settings.sound": "Sonido",
+    "settings.language": "Idioma",
+    "settings.quality": "Calidad",
+    "settings.reduceMotion": "Reducir movimiento",
+    "quality.low": "Baja",
+    "quality.medium": "Media",
+    "quality.high": "Alta",
+    "common.on": "Activado",
+    "common.off": "Desactivado",
+    "common.back": "Volver"
+  },
+  "en": {
+    "game.title": "Space Harvest",
+    "menu.play": "Play",
+    "menu.settings": "Settings",
+    "settings.title": "Settings",
+    "settings.sound": "Sound",
+    "settings.language": "Language",
+    "settings.quality": "Quality",
+    "settings.reduceMotion": "Reduce motion",
+    "quality.low": "Low",
+    "quality.medium": "Medium",
+    "quality.high": "High",
+    "common.on": "On",
+    "common.off": "Off",
+    "common.back": "Back"
+  }
+}

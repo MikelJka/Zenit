@@ -2,6 +2,12 @@
 
 Diario del juego espacial, la entrada más reciente arriba. Antes vivía en el diario de Scrap Empire (IdleScrapyard); se separó el 2026-10-21.
 
+## 2026-10-23 — Hito 0, parte 2: textos es/en y ajustes
+
+- `src/data/texts.json` con los textos en español e inglés y `src/ui/i18n.ts` (función `t`, idioma del navegador, prueba de que no falta ningún texto). `src/ui/settings.ts`: ajustes (sonido, idioma, calidad, reducir movimiento) guardados en el navegador; lo inválido toma el valor por defecto y «reducir movimiento» parte de la preferencia del sistema.
+- `npm test` (10 pruebas) y `npm run build` pasan. Aún no se ven en pantalla: la pantalla de ajustes llegará con el menú de inicio.
+- Sigue: publicación de prueba (GitHub Pages).
+
 ## 2026-10-23 — Hito 0, parte 1: esqueleto del proyecto
 
 - Nuevo esqueleto Vite + TypeScript estricto + Vitest + PixiJS en `space-harvest/`: `src/sim/core/` (`Rng` con semilla, `Clock` de pasos fijos, contrato `SimModule`), `src/sim/registry.ts` (registro de módulos, guardado con versión por módulo, ganancias con el juego cerrado) y una pantalla de prueba en `src/main.ts`.
