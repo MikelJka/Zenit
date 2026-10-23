@@ -1,13 +1,13 @@
 {
-  "_": "Comida que se pone mala (pedido de Mikel del 2026-10-21, con la nevera): parte de cada montón que se pierde al día si no está en una nevera con corriente. Con frío (de noche en invierno o con una ola de frío) no se pierde nada. Las cantidades las ha puesto la sesión del 2026-10-21.",
-  "perDay": {
-    "carne": 0.2,
-    "pescado": 0.2,
-    "leche": 0.3,
-    "comida": 0.1,
-    "huevos": 0.08,
-    "setas": 0.08,
-    "patata": 0.03,
-    "maiz": 0.02
+  "_": "Caducidad de la comida (decisión de Mikel del 2026-10-23, opción B cambiada por él): cada unidad tiene su fecha de caducidad desde que se obtiene y, al llegar, se estropea entera de golpe. En una nevera con corriente o con frío el tiempo no corre. Días de duración: Mikel eligió 2 para carne, pescado y leche y 7 para lo demás, y pidió ajustarlo para que no se queden sin comida (ajustado en el chat del 2026-10-23).",
+  "days": {
+    "carne": 2,
+    "pescado": 2,
+    "leche": 2,
+    "comida": 4,
+    "huevos": 7,
+    "setas": 7,
+    "patata": 20,
+    "maiz": 30
   }
 }

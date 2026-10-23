@@ -12,6 +12,7 @@ import type { TerrainJob } from './terrain';
 import { defaultNeeds, Needs } from './needs';
 import type { Infection, Wound } from './health';
 import type { Corpse } from './corpses';
+import type { Lot } from './items';
 import { Rng } from './rng';
 
 export type ColonistActivity = 'idle' | 'wandering' | 'moving' | 'toJob' | 'working' | 'toNeed' | 'eating' | 'sleeping';
@@ -98,6 +99,8 @@ export interface HaulInfo {
 export interface Carried {
   resource: ResourceId;
   amount: number;
+  /** Comida que caduca: sus lotes (lo que le queda a cada uno). */
+  lots?: Lot[];
 }
 
 export interface Colonist {

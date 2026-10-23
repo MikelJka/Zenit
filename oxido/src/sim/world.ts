@@ -17,7 +17,7 @@ import { factionDef, RELATION } from '../data/factions';
 import { countReachable, GameMap, generateMap, inBounds, isPassable, TRENCH_FLOODED, isWater, Prop, PROP_INFO, Terrain, TERRAIN_INFO, tileMoveCost } from './map';
 import { findPath, isWalkable, Point } from './pathfinding';
 import { Rng } from './rng';
-import { GroundItems } from './items';
+import { GroundItems, takeLots } from './items';
 import { Designations } from './designations';
 import { canWorkFrom, findJob, findJobAt, needsUrgentCare, researchBenchReady, stationWantsWork, JOB_PATH_NODES, JobContext, pathToNearest, reservePlan, Reservations, workSpeed } from './jobs';
 import { harvestAt, harvestTile, Stockpile } from './resources';
@@ -605,7 +605,7 @@ export class World implements JobContext {
       this.reservations.releaseAll(c.id);
       const i = this.others.indexOf(c);
       if (i >= 0) this.others.splice(i, 1);
-      if (c.carrying) this.items.drop(c.tile.x, c.tile.y, c.carrying.resource, c.carrying.amount);
+      if (c.carrying) this.items.drop(c.tile.x, c.tile.y, c.carrying.resource, c.carrying.amount, c.carrying.lots);
       // Las máquinas (bloque 6) sueltan chatarra y componentes; las demás criaturas dejan su cadáver.
       if (c.creature && CREATURES[c.creature].machine) {
         const scrap = this.rng.int(MACHINES.scrap[0], MACHINES.scrap[1]);
@@ -1428,7 +1428,7 @@ export class World implements JobContext {
   dropJob(c: Colonist): void {
     this.reservations.releaseAll(c.id);
     if (c.carrying) {
-      this.items.drop(c.tile.x, c.tile.y, c.carrying.resource, c.carrying.amount);
+      this.items.drop(c.tile.x, c.tile.y, c.carrying.resource, c.carrying.amount, c.carrying.lots);
       c.carrying = null;
     }
     if (!c.job) return;
@@ -2285,7 +2285,7 @@ export class World implements JobContext {
         this.dropJob(c);
         return;
       }
-      c.carrying = { resource: got.resource, amount: got.amount };
+      c.carrying = got.lots ? { resource: got.resource, amount: got.amount, lots: got.lots } : { resource: got.resource, amount: got.amount };
       h.picked = true;
       this.reservations.release(h.from.x, h.from.y, c.id, 'pickup');
       // Al almacén se entra; a un plano se le lleva el material desde el lado.
@@ -2313,11 +2313,13 @@ export class World implements JobContext {
       let left = load.amount;
       if (h.toBlueprint) {
         const s = this.jobStructure(j);
-        if (s) left -= this.structures.deliver(s, load.resource, left);
+        const given = s ? this.structures.deliver(s, load.resource, left) : 0;
+        left -= given;
+        if (load.lots) takeLots(load.lots, given, 0); // lo entregado sale de sus lotes
       } else {
-        left = this.items.addAt(h.to.x, h.to.y, load.resource, left);
+        left = this.items.addAt(h.to.x, h.to.y, load.resource, left, load.lots);
       }
-      c.carrying = left > 0 ? { resource: load.resource, amount: left } : null;
+      c.carrying = left > 0 ? { ...load, amount: left } : null;
       if (left > 0 && h.toBlueprint && this.nextSharedBlueprint(c)) return;
     }
     this.dropJob(c); // si sobra algo, lo deja en el suelo donde está

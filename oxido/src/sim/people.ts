@@ -31,6 +31,7 @@ import { giftPoints } from './factions';
 import { enrage, makeAnimal, tameAnimal, updateAnimal } from './animals';
 import { enrichBase } from './worldmap';
 import { ignite } from './fire';
+import { takeLots } from './items';
 export { canTalk, TALK_HOURS } from './jobs';
 
 /** Ticks entre golpes. */
@@ -1660,6 +1661,7 @@ export function makeDeal(w: World, trader: Colonist, deal: TradeDeal): string | 
       if (c.carrying?.resource !== r) continue;
       const got = Math.min(left, c.carrying.amount);
       c.carrying.amount -= got;
+      if (c.carrying.lots) takeLots(c.carrying.lots, got, 0);
       if (c.carrying.amount <= 0) c.carrying = null;
       left -= got;
     }

@@ -39,6 +39,7 @@ Terminado: marco árboles y los colonos los talan y guardan la madera solos.
 - [x] Inventario de la colonia y objetos en el suelo
 - [x] Herramienta de designación: talar, minar, saquear (arrastrar un área; en móvil, modo selección)
 - [x] Órdenes «🎯 Cazar» y «🤝 Domar» por arrastre sobre los animales; «Quitar órdenes» les quita la marca (#1 del 🐞)
+- [ ] Caducidad de la comida por lotes (#1 del 🐞): cada unidad caduca de golpe; nevera con corriente y frío la paran (hecho: montones del suelo y lo que llevan los colonos; falta: vehículos, animales de carga, caravanas y expediciones)
 - [x] Sistema de trabajos: cola, reserva de tareas, prioridades por colono
 - [x] Zonas de almacén (con filtro de recursos y prioridad) y transporte
 - [x] Panel de prioridades de trabajo

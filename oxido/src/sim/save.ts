@@ -26,6 +26,7 @@ import { restoreWeather } from './events';
 import { restoreFires } from './fire';
 import { restoreRoofs } from './roofs';
 import { cleanLoot } from './expedition';
+import type { Lot } from './items';
 import { GRENADE, isWeapon } from '../data/weapons';
 import { ARMORS, isArmor } from '../data/armor';
 
@@ -56,7 +57,8 @@ export interface SaveData {
     f32: Partial<Record<F32Field, string>>;
   };
   colonists: SavedColonist[];
-  items: { x: number; y: number; resource: string; amount: number }[];
+  /** `lots`: en la comida que caduca, [unidades, horas que le quedan] de cada lote. */
+  items: { x: number; y: number; resource: string; amount: number; lots?: [number, number][] }[];
   designations: { x: number; y: number; job: string }[];
   zones: { id: number; name: string; priority: number; accepts: Record<string, boolean>; tiles: number[]; furniture?: number }[];
   structures: { def: string; x: number; y: number; built: boolean; delivered: Record<string, number>; progress: number; hp: number; demolish?: boolean; bill?: { recipe: string; target: number; paused: boolean; mode?: string }; rot?: number; raised?: boolean; wantUp?: boolean; autoRaised?: boolean; stored?: number; fuel?: number; crop?: string; growth?: number; target?: number; electric?: boolean; upgrade?: { delivered: Record<string, number>; progress: number }; repair?: { need: Record<string, number>; work: number; delivered: Record<string, number>; progress: number }; fromKit?: boolean; pack?: boolean; moveTo?: { x: number; y: number; rot: number } }[];
@@ -131,7 +133,7 @@ interface SavedColonist {
   tile: { x: number; y: number };
   facing: number;
   priorities: Record<string, number>;
-  carrying: { resource: string; amount: number } | null;
+  carrying: { resource: string; amount: number; lots?: { n: number; h: number }[] } | null;
   drafted?: boolean;
   needs?: { food: number; rest: number; sleptIn: string | null; water?: number; badWaterUntil?: number; lastMeal?: string | null; inLight?: boolean; finishedUntil?: number; sawFinishUntil?: number; sawCorpseUntil?: number; fireUntil?: number; funAt?: number };
   health?: number;
@@ -197,7 +199,7 @@ function savePawn(c: Colonist): SavedColonist {
     facing: c.facing,
     priorities: { ...c.priorities },
     // Los trabajos en curso no se guardan: al cargar, cada colono busca uno nuevo.
-    carrying: c.carrying ? { ...c.carrying } : null,
+    carrying: c.carrying ? { ...c.carrying, ...(c.carrying.lots ? { lots: c.carrying.lots.map((l) => ({ ...l })) } : {}) } : null,
     drafted: c.drafted,
     needs: { ...c.needs },
     health: c.health,
@@ -311,7 +313,7 @@ export function serializeWorld(world: World, gameVersion?: string, direct = fals
     research: { current: world.research.current, progress: { ...world.research.progress }, done: [...world.research.done] },
     events: world.eventsEnabled,
     difficulty: { ...world.difficulty },
-    items: world.items.list().map((s) => ({ x: s.x, y: s.y, resource: s.resource, amount: s.amount })),
+    items: world.items.list().map((s) => ({ x: s.x, y: s.y, resource: s.resource, amount: s.amount, ...(s.lots ? { lots: s.lots.map((l): [number, number] => [l.n, l.h]) } : {}) })),
     designations: world.designations.list().map((d) => ({ ...d })),
     zones: world.zones.all().map((z) => ({ id: z.id, name: z.name, priority: z.priority, accepts: { ...z.accepts }, tiles: [...z.tiles], ...(z.furniture !== undefined ? { furniture: z.furniture } : {}) })),
     farms: world.farms.all().map((z) => ({ id: z.id, name: z.name, crop: z.crop.id, tiles: [...z.tiles] })),
@@ -751,13 +753,16 @@ export function loadWorld(input: string | unknown): World {
   for (const it of d.items ?? []) {
     if (!isResource(it.resource)) continue;
     // En su casilla; si ya no cabe ahí (p. ej. ahora hay un muro), al lado.
-    const left = world.items.addAt(it.x, it.y, it.resource, num(it.amount, 0));
-    if (left > 0) world.items.drop(it.x, it.y, it.resource, left);
+    // Partidas de antes de la caducidad: sin lotes, la comida empieza con la duración entera.
+    const lots = readLots(it.lots);
+    const left = world.items.addAt(it.x, it.y, it.resource, num(it.amount, 0), lots);
+    if (left > 0) world.items.drop(it.x, it.y, it.resource, left, lots);
   }
   // Lo que llevaban encima se deja en el suelo, a sus pies.
   for (const sc of d.colonists ?? []) {
     const r = sc.carrying?.resource;
-    if (r && isResource(r)) world.items.drop(sc.tile.x, sc.tile.y, r, num(sc.carrying!.amount, 0));
+    const back = sc.carrying?.lots?.map((l) => [l?.n, l?.h]) as unknown;
+    if (r && isResource(r)) world.items.drop(sc.tile.x, sc.tile.y, r, num(sc.carrying!.amount, 0), readLots(back));
   }
   for (const des of d.designations ?? []) {
     if (des.job === 'talar' || des.job === 'minar' || des.job === 'saquear') world.designations.add(des.x, des.y, des.job);
@@ -800,4 +805,17 @@ export function loadWorld(input: string | unknown): World {
     o.world.market = world.market;
   }
   return world;
+}
+
+/** Lotes de comida guardados como [unidades, horas]; lo que no se entienda se descarta. */
+function readLots(raw: unknown): Lot[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const out: Lot[] = [];
+  for (const l of raw) {
+    if (!Array.isArray(l)) continue;
+    const n = Math.floor(Number(l[0]));
+    const h = Number(l[1]);
+    if (Number.isFinite(n) && n > 0 && Number.isFinite(h) && h > 0) out.push({ n, h });
+  }
+  return out.sort((a, b) => a.h - b.h);
 }

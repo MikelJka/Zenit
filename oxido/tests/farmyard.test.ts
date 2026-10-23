@@ -212,21 +212,22 @@ describe('nevera y comida que se pone mala', () => {
     expect(inFridge(w, 10, 10)).toBe(false);
     fridge.powered = true;
     expect(inFridge(w, 10, 10)).toBe(true);
-    for (let h = 0; h < 24; h++) spoilHour(w);
+    // La carne dura 2 días: fuera de la nevera, al pasar 47 h sigue entera y a las 48 h se estropea toda.
+    for (let h = 0; h < 47; h++) spoilHour(w);
+    expect(w.items.at(3, 3)!.amount).toBe(60);
+    spoilHour(w);
+    expect(w.items.at(3, 3)).toBeUndefined();
+    // En la nevera con corriente el tiempo no corre.
     expect(w.items.at(10, 10)!.amount).toBe(100);
-    const left = w.items.at(3, 3)!.amount;
-    // −20 % al día (unos 11 de 60).
-    expect(left).toBeLessThan(55);
-    expect(left).toBeGreaterThan(40);
-    // El maíz aguanta mucho más.
+    // El maíz aguanta 30 días.
     w.items.drop(5, 5, 'maiz', 50);
-    for (let h = 0; h < 24; h++) spoilHour(w);
-    expect(w.items.at(5, 5)!.amount).toBeGreaterThanOrEqual(47);
-    // En una ola de frío, nada.
+    for (let h = 0; h < 48; h++) spoilHour(w);
+    expect(w.items.at(5, 5)!.amount).toBe(50);
+    // En una ola de frío, tampoco corre.
+    w.items.drop(3, 3, 'carne', 10);
     const { startEvent } = await import('../src/sim/events');
     startEvent(w, 'ola_frio');
-    const before = w.items.at(3, 3)!.amount;
-    for (let h = 0; h < 24; h++) spoilHour(w);
-    expect(w.items.at(3, 3)!.amount).toBe(before);
+    for (let h = 0; h < 72; h++) spoilHour(w);
+    expect(w.items.at(3, 3)!.amount).toBe(10);
   });
 });

@@ -2,6 +2,18 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (82) — La comida caduca por lotes (primera parte)
+
+- Quinta de las decisiones de Mikel (#1 del 🐞, caducidad cambiada por él). Parte 1 de 2.
+  - Cada unidad de comida tiene su caducidad desde que se obtiene: carne, pescado y leche, 2 días; comida cocinada, 4; huevos y setas, 7; patata, 20; maíz, 30. Mientras no llega está fresca; al llegar, ese lote se estropea **entero de golpe** (antes se perdía un poco cada día).
+  - Los montones guardan cada lote con lo que le queda; al juntar montones se suman y se come y se coge primero lo que caduca antes. Lo que acarrea un colono conserva su fecha.
+  - En una nevera con corriente o con frío no corren las horas. Al tocar un montón: «Carne ×20 (caduca en 1 d 5 h)».
+  - Partidas guardadas: la comida que ya había empieza con la duración entera.
+- Reglas en `src/sim/items.ts` (lotes: `takeLots`, `mergeLots`, `age`) y `src/sim/spoilage.ts`; números en `src/data/spoilage.json`. 5 tests nuevos en `tests/foodLots.test.ts` y el de la nevera, adaptado.
+- Qué probar: cazar o pescar, dejar la carne fuera y mirar el montón: a los 2 días desaparece de golpe; en la nevera con corriente no baja la cuenta.
+- Qué sigue: parte 2, que conserven la fecha la comida de vehículos, animales de carga, caravanas y expediciones.
+- Sin npm en el entorno: tests con Bun (733); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 (81) — Botones «🎯 Cazar» y «🤝 Domar» en Órdenes
 
 - Cuarta de las cinco decisiones de Mikel (#1 del 🐞, opción B).
