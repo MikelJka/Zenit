@@ -4,10 +4,11 @@ Escribe aquí lo que quieras, o usa el botón 🐞 del juego: abre una incidenci
 
 ## Pendiente
 
-- [ ] **Óxido en Google Play: prueba gratis hasta el día 15 y desbloqueo de 2,99 €** (decidido por Mikel en el chat del 2026-10-23: bloqueo en el **día 15** (primero dijo el 10 y lo cambió),  precio **2,99 €**, pago único; mejor que meter anuncios). Por partes, una por sesión:
-  - [ ] Regla del bloqueo en `src/sim/` (número en JSON): al empezar el día 15 la partida se pausa y sale una pantalla «Fin de la prueba gratis» con el botón de desbloquear; la partida queda guardada y sigue igual tras pagar. Sin anuncios.
+- [ ] **Óxido en Google Play: prueba gratis hasta el día 10 y desbloqueo de 2,99 €** (decidido por Mikel en el chat del 2026-10-23: bloqueo en el **día 10** (pasó por el 15 y volvió al 10, justo después del primer raid),  precio **2,99 €**, pago único; mejor que meter anuncios). Por partes, una por sesión:
+  - [ ] Regla del bloqueo en `src/sim/` (número en JSON): al empezar el día 10 la partida se pausa y sale una pantalla «Fin de la prueba gratis» con el botón de desbloquear; la partida queda guardada y sigue igual tras pagar. Sin anuncios.
   - [ ] Empaquetar Óxido para Android con Capacitor (como Scrap Empire, `.github/workflows/scrap-empire-android.yml`) y la compra única con Play Billing (plugin libre y gratuito), con una versión «de mentira» para la web y los tests.
-  - [ ] Ficha de la tienda que diga claro «Prueba gratis hasta el día 15; desbloqueo único de 2,99 €».
+  - [ ] Ficha de la tienda que diga claro «Prueba gratis hasta el día 10; desbloqueo único de 2,99 €».
+  - **La web** (decidido por Mikel el 2026-10-23): se cierra al público y queda solo como entorno de desarrollo y pruebas para Mikel, **sin el corte del día 10** (el corte va solo en la versión de Android). Al salir en Play, Óxido deja de anunciarse en la portada de Zenit.
   - Lo que hace Mikel: crear la cuenta de desarrollador de Play (25 $, la misma que la de Scrap Empire) y conseguir 12 testers durante 14 días para la prueba cerrada.
 
 - [ ] **🐞 del 2026-10-23 (Mikel, partida en el móvil, semilla 538395)**. Números de las incidencias de `mikeljka/zenit` (se escriben «Z#N» para no confundirlos con los antiguos de OxidoGame). Los bugs, primero y uno por sesión:
@@ -85,10 +86,7 @@ Lo que Mikel ha pedido dejar para más adelante. No se trabaja en ello salvo par
 
 Lo que una sesión quiere meter y necesita su visto bueno (responde por el chat o con 🐞).
 
-- **¿Qué pasa con la web gratis de GitHub Pages cuando Óxido esté en Play?** (2026-10-23). Si la web sigue siendo el juego entero gratis, casi nadie pagará en Android. Opciones:
-  - **A.** La web también se corta en el día 15 y enseña «Sigue en Google Play» (sin cobrar en la web).
-  - **B.** La web se queda entera y gratis como escaparate (se acepta vender menos).
-  - **C.** Se quita la web de Óxido al salir en Play y en la portada de Zenit queda solo el enlace a la tienda.
+(Ninguna abierta.)
 
 ## Hecho
 
