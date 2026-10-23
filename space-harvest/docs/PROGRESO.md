@@ -2,6 +2,13 @@
 
 Diario del juego espacial, la entrada más reciente arriba. Antes vivía en el diario de Scrap Empire (IdleScrapyard); se separó el 2026-10-21.
 
+## 2026-10-23 — Hito 0, parte 3: publicación de prueba
+
+- Space Harvest entra en el flujo común «Zenit: publicar web» (`web/juegos.txt`, rutas del flujo y base de Vite `/Zenit/space-harvest/`). El sitio se construye en local sin errores. Al fusionar en `main` se publicará en `https://mikeljka.github.io/Zenit/space-harvest/` (ahora solo el punto azul de prueba).
+- No lo he enlazado en la portada `web/index.html` para no enseñar un juego vacío; se añade el enlace cuando haya menú.
+- Qué probar: tras fusionar en `main`, abrir esa dirección en el móvil.
+- Sigue: prueba de humo con capturas, scripts de rendimiento y equilibrio.
+
 ## 2026-10-23 — Hito 0, parte 2: textos es/en y ajustes
 
 - `src/data/texts.json` con los textos en español e inglés y `src/ui/i18n.ts` (función `t`, idioma del navegador, prueba de que no falta ningún texto). `src/ui/settings.ts`: ajustes (sonido, idioma, calidad, reducir movimiento) guardados en el navegador; lo inválido toma el valor por defecto y «reducir movimiento» parte de la preferencia del sistema.

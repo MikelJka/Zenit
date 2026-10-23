@@ -7,7 +7,7 @@ Cada hito acaba **jugable y publicado** en una versión web de prueba, con la si
 Terminado: se abre en el móvil a 60 fps, con menú de inicio y mapa de la estación con paralaje.
 
 - [x] Esqueleto Vite + TypeScript + Vitest + PixiJS en `space-harvest/`, con `Rng`, reloj, guardado con versión y registro de módulos
-- [ ] Publicación de prueba (GitHub Pages) y prueba de humo con capturas
+- [ ] Publicación de prueba (GitHub Pages) y prueba de humo con capturas — publicación añadida al flujo común; falta la prueba de humo con capturas
 - [x] Textos es/en y ajustes (sonido, idioma, calidad, reducir movimiento) — datos y lógica; falta la pantalla de ajustes con el menú
 - [ ] Menú de inicio con logo animado y estación al fondo
 - [ ] Mapa de la estación con paralaje, luces y cámara que se arrastra y se pellizca
