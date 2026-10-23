@@ -74,7 +74,7 @@ Terminado: el juego está en la prueba cerrada de Google Play con anuncios de pr
 - [ ] Empaquetar con Capacitor y generar el archivo para Google Play en GitHub Actions (**hecho: Capacitor y workflow que genera un APK de prueba**, `docs/ANDROID.md`; falta la clave de firma y el AAB)
 - [x] Anuncios y compras decididos (empujón, camión dorado, pase a 2,99 €)
 - [ ] Anuncios reales con AdMob y compra del pase con Google Play Billing
-- [ ] Consentimiento de anuncios (UE) y política de privacidad (S3, 2026-10-23: con Google UMP y AdMob en modo de prueba) (**hecha la política de privacidad en la web, 2026-10-23, enlazada desde Ajustes; falta el contacto, Parte 29**)
+- [ ] Consentimiento de anuncios (UE) y política de privacidad (S3, 2026-10-23: con Google UMP y AdMob en modo de prueba) (**hecha la política de privacidad en la web, 2026-10-23, enlazada desde Ajustes; falta el contacto, Parte 29**) (**hecho el consentimiento UE con Google UMP y AdMob con los identificadores de prueba de Google en la app de Android, 2026-10-23**; faltan los identificadores reales de Mikel)
 - [x] Textos en inglés
 - [ ] Ficha de la tienda (**hecho: textos, icono, capturas, gráfico y vídeo en `docs/FICHA_TIENDA.md` y `/press/`**; falta política de privacidad y clasificación)
 

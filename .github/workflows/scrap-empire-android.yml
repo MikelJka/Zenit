@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: ['sesion/**']
-    paths: ['scrap-empire/capacitor.config.json', 'scrap-empire/package.json', '.github/workflows/scrap-empire-android.yml']
+    paths: ['scrap-empire/capacitor.config.json', 'scrap-empire/package.json', 'scrap-empire/src/ui/ads.ts', 'scrap-empire/src/data/ads.json', '.github/workflows/scrap-empire-android.yml']
 
 defaults:
   run:
@@ -29,6 +29,11 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
       - run: CAPACITOR=1 npm run build
       - run: npx cap add android
+      - name: Identificador de la app de AdMob en el manifiesto (sin él la app se cierra al abrir)
+        run: |
+          APP_ID=$(node -p "require('./src/data/ads.json').androidAppId")
+          sed -i "s#</application>#    <meta-data android:name=\"com.google.android.gms.ads.APPLICATION_ID\" android:value=\"$APP_ID\"/>\n    </application>#" android/app/src/main/AndroidManifest.xml
+          grep -n "APPLICATION_ID" android/app/src/main/AndroidManifest.xml
       - run: npx cap sync android
       - run: ./gradlew assembleDebug
         working-directory: scrap-empire/android

@@ -2,6 +2,16 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Anuncios de AdMob y consentimiento UE en la app de Android (S3, segunda parte)
+
+- Sin incidencias nuevas. Sigue S3 (preparar Google Play): consentimiento UE con Google UMP y AdMob en modo de prueba.
+- En la app de Android, ver un anuncio (empujón ×2, camión dorado, duplicar lo ganado fuera, cambiar objetivo…) ya enseña un anuncio bonificado de AdMob de prueba; solo da el premio si se ve hasta el final. Si no hay anuncio, avisa «No hay anuncio disponible ahora» y no da nada.
+- Al abrir la app se pregunta el consentimiento de anuncios de la UE (formulario de Google UMP; en modo de prueba hace como si estuvieras en la UE). En ⚙ sale «Consentimiento de anuncios» para cambiarlo.
+- En la web no cambia nada: siguen los anuncios de mentira de 2 s. Con el Pase, los premios siguen sin anuncio.
+- Plugin `@capacitor-community/admob` (MIT, en CREDITOS.md); identificadores de prueba de Google en `src/data/ads.json`; el flujo de Android añade el `APPLICATION_ID` al manifiesto.
+- Qué probar: descargar el APK de prueba (Actions → «Scrap Empire: Android» → artefacto `scrap-empire-debug-apk`), abrirlo, aceptar o rechazar el consentimiento y ver un anuncio de prueba de Google desde el empujón.
+- Falta de Mikel: crear la app en AdMob con su bloque bonificado y el mensaje RGPD (pasos en `docs/ANDROID.md`), y responder la Parte 29. Sigue: S4 (prestigio).
+
 ## 2026-10-23 — Política de privacidad en la web (S3, primera parte)
 
 - Sin incidencias nuevas. Siguiente en «Pendiente»: S3, preparar Google Play. Primera parte: la política de privacidad.

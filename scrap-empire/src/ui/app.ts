@@ -43,7 +43,7 @@ import type { DailyGoal } from '../sim/dailyCore';
 import { HELPER_LOOKS } from './look';
 import { FORKLIFT, helperFace, esc, inlineIcon, productIcon, truck, uiIcon, type UiIconName } from './icons';
 import { createYard, machineGrade } from './yard';
-import { buyPass, showRewardedAd } from './ads';
+import { adPrivacyOptionsAvailable, buyPass, initAds, showAdPrivacyOptions, showRewardedAd } from './ads';
 import { doubleOfflineEarnings, pack, recoverLostTime, unpack } from '../sim/offline';
 import { fromCode, toCode } from '../sim/transfer';
 import { achievementName, getLang, helperBio, helperName, setLang, t, zoneName, zoneProduct, type Lang } from './texts';
@@ -176,6 +176,9 @@ export function startApp(root: HTMLElement): void {
         <div id="privacy" class="opt" hidden>
           <a href="${import.meta.env.BASE_URL}privacidad.html#${getLang()}" target="_blank" rel="noopener">${t('settings.privacy')}</a>
         </div>
+        <div id="ad-privacy" class="opt" hidden>
+          <button id="ad-privacy-btn" type="button">${t('settings.adPrivacy')}</button>
+        </div>
       </section>
       <button id="bug-btn" type="button" aria-label="${t('bug.title')}">${uiIcon('bug')}</button>
     </main>`;
@@ -300,6 +303,7 @@ export function startApp(root: HTMLElement): void {
     $('sheet').hidden = sel === null;
     $('transfer').hidden = sel !== 'settings';
     $('privacy').hidden = sel !== 'settings';
+    $('ad-privacy').hidden = sel !== 'settings' || !adPrivacyOptionsAvailable();
     $('lang').hidden = sel !== 'settings';
     $('quality').hidden = sel !== 'settings';
     $('music').hidden = sel !== 'settings';
@@ -328,6 +332,9 @@ export function startApp(root: HTMLElement): void {
     if (tut === 1 && sel === 'crusher' && panel !== sel) setTut(2);
     openPanel(panel === sel ? null : sel);
   });
+  $('ad-privacy-btn').addEventListener('click', () => void showAdPrivacyOptions());
+  // En la app: AdMob y consentimiento de anuncios de la UE (en la web no hace nada).
+  void initAds();
   $('lang').addEventListener('click', (e) => {
     const next = (e.target as HTMLElement).closest<HTMLElement>('button[data-lang]')?.dataset.lang as Lang | undefined;
     if (!next || next === getLang()) return;

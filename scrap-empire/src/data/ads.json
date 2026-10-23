@@ -1,0 +1,6 @@
+{
+  "_nota": "Identificadores de PRUEBA públicos de Google (no generan dinero). Mikel creará los reales en AdMob; al cambiarlos, poner testing a false y cambiar también el APPLICATION_ID del flujo de Android.",
+  "testing": true,
+  "androidAppId": "ca-app-pub-3940256099942544~3347511713",
+  "androidRewardedId": "ca-app-pub-3940256099942544/5224354917"
+}
