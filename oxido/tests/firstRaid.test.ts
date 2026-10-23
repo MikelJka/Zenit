@@ -86,4 +86,31 @@ describe('primer raid (#2 del 🐞)', () => {
     old.tick = 20 * TICKS_PER_DAY;
     expect(loadWorld(JSON.stringify(old)).schedule.firstRaidDone).toBe(true);
   });
+
+  it('Z#10: una partida antigua (espera de 5 días) que ya tuvo su primer raid no enseña la cuenta atrás del siguiente', () => {
+    const w = new World({ seed: 11, width: 50, height: 50, difficulty: { level: 'normal', graceDays: 5 } });
+    w.schedule.nextWanderer = w.schedule.nextTrader = Number.MAX_SAFE_INTEGER;
+    // Día 6: el raid de la espera antigua ya llegó y el siguiente está a 5 días.
+    w.tick = 5 * TICKS_PER_DAY + 3 * 60;
+    w.schedule.nextRaid = 10 * TICKS_PER_DAY;
+    const old = JSON.parse(JSON.stringify(serializeWorld(w)));
+    // Guardada otra vez con la versión del primer raid pequeño, que la daba por «no llegado».
+    old.schedule.firstRaidDone = false;
+    old.schedule.firstRaidWarned = false;
+    const back = loadWorld(JSON.stringify(old));
+    expect(back.day).toBe(6);
+    expect(back.schedule.firstRaidDone).toBe(true);
+    expect(firstRaidCountdown(back)).toBeNull();
+    // Sin las marcas, igual.
+    delete old.schedule.firstRaidDone;
+    expect(loadWorld(JSON.stringify(old)).schedule.firstRaidDone).toBe(true);
+  });
+
+  it('Z#10: una partida nueva guardada antes del primer raid lo sigue esperando con la cuenta bien', () => {
+    const w = quietWorld();
+    while (w.day < 6) w.tick += 60;
+    const back = loadWorld(JSON.stringify(serializeWorld(w)));
+    expect(back.schedule.firstRaidDone).toBe(false);
+    expect(firstRaidCountdown(back)).toBe(2);
+  });
 });

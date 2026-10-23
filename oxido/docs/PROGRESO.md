@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (85) — La cuenta atrás del primer raid ya no se equivoca ni tapa los recursos
+
+- Sin incidencias nuevas del 🐞.
+- Arreglado Z#10 («en el día 6 sale Primer raid en 5 días» y el aviso tapa la madera): la partida era de antes del primer raid pequeño (espera antigua de 5 días). Su primer raid ya había llegado, pero al cargarla se daba por pendiente porque solo se miraba el día, así que la cuenta atrás apuntaba al siguiente raid normal (y ese habría salido pequeño). Ahora, al cargar, cuenta como llegado si ya pasó su hora o si el siguiente raid ya está programado para después; arregla también las partidas que se guardaron otra vez con el fallo (`firstRaidAlreadyPassed` en `src/sim/save.ts`).
+- La cuenta atrás va ahora debajo de los recursos (dentro de la columna de la izquierda) en vez de encima.
+- Tests nuevos en `tests/firstRaid.test.ts` (partida antigua en el día 6 y partida nueva guardada en el día 6, que sigue diciendo «en 2 días»).
+- Qué probar: cargar la partida de la semilla 538395: no debe salir la cuenta atrás; en una partida nueva, desde el día 3 sale «⚔️ Primer raid en N días» debajo de la madera y los demás recursos.
+- Qué sigue: Z#15 (nombres de colonos repetidos y que se ven mal con más de 5).
+
 ## 2026-10-23 (84) — El banco de trabajo se abre aunque haya un colono elegido
 
 - Nueve incidencias nuevas del 🐞 (Z#7 a Z#15) pasadas a «Pendiente» de `FEEDBACK.md`, los bugs primero.

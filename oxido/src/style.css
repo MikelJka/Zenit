@@ -893,5 +893,6 @@ button.primary { background: var(--accent); color: var(--bg); border-color: var(
 @keyframes tu-bounce-up { 50% { transform: translateY(6px); } }
 
 /* Cuenta atrás del primer raid (#2 del 🐞): a la izquierda, bajo la barra de arriba. */
-#raid-countdown { position: fixed; z-index: 6; top: calc(58px + env(safe-area-inset-top)); left: 8px; padding: 4px 10px; font-size: 13px; color: #f0c8a0; border-color: #a04030; pointer-events: none; white-space: nowrap; }
+/* Va dentro de #info-stack, debajo de los recursos, para no taparlos (Z#10). */
+#raid-countdown { padding: 4px 10px; font-size: 13px; color: #f0c8a0; border-color: #a04030; pointer-events: none; white-space: nowrap; }
 #raid-countdown[hidden] { display: none; }
