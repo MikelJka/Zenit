@@ -4,6 +4,17 @@ Escribe aquí lo que quieras, o usa el botón 🐞 del juego: abre una incidenci
 
 ## Pendiente
 
+- [ ] **🐞 del 2026-10-23 (Mikel, partida en el móvil, semilla 538395)**. Números de las incidencias de `mikeljka/zenit` (se escriben «Z#N» para no confundirlos con los antiguos de OxidoGame). Los bugs, primero y uno por sesión:
+  - [x] **Z#14 (bug) Banco de trabajo**: tras fabricar cuchillos no deja fabricar otra cosa. *Hecho (sesión 84, 2026-10-23)*: la simulación cambiaba bien de receta (comprobado con tests, también con estanterías, armero y a mitad de tanda); el fallo era al tocar: en el móvil, con un colono elegido (p. ej. tras «reclutar y devolverlo al trabajo» de la guía), tocar el banco solo decía «No se puede caminar ahí» y no abría su panel. Ahora, con un colono elegido, tocar un taller, un mueble con panel o una nevera/estantería suelta al colono y abre su panel. Si con el panel abierto seguía sin dejar elegir otra receta, que Mikel lo cuente con 🐞.
+  - [ ] **Z#10 (bug) Cuenta atrás del primer raid**: en una partida en el día 6 sale «Primer raid en 5 días»; además el aviso tapa las cantidades de madera y otros recursos de arriba.
+  - [ ] **Z#15 (bug) Nombres de los colonos**: se repiten, y en el móvil se ven mal con más de 5 colonos.
+  - [ ] **Z#7 (bug) Luz de noche**: se ve iluminación en dos puntos sin saber de dónde viene (captura en la incidencia).
+  - [ ] **Z#13 Solo la vista con el norte arriba**: quitar los demás giros de la vista y centrarse en que así se vea perfecto: que se entiendan bien rampas y acantilados y lo que hay detrás de una construcción. Primero quitar los giros; lo demás, por partes.
+  - [ ] **Z#8 Kits con el nombre del objeto**: que no ponga «Kit …» sino el nombre del objeto (aunque esté desmontado), y que en los filtros del almacén no salga uno por objeto, sino agrupados.
+  - [ ] **Z#9 Menús de construcción nuevos**: más intuitivos, agrupados y con ilustraciones. (Cómo agrupar: si hay que decidirlo, propuesta con opciones antes.)
+  - [ ] **Z#12 Sitio de trabajo de cada puesto**: cada puesto (cocina, banco de investigación…) tiene la casilla desde la que se trabaja; tiene que estar libre para trabajar y se resalta al elegir el puesto. Se podrán poner sillas en ese sitio para que los colonos trabajen mejor. (Cuánto mejor y qué silla: propuesta con opciones antes.)
+  - [ ] **Z#11 Más animaciones y sonidos**: p. ej. puertas que se abren y cocinar; más sonidos distintos.
+
 - [x] **Primeros pasos contados por la radio y más largos** (2026-10-23, pedido por Mikel en el chat; eligió «Voz por la radio» y los cuatro bloques de pasos nuevos). *Hecho (sesión 83, 2026-10-23)*: lo cuenta **Nora, de Radio Óxido**: la tarjeta lleva una radio en pixel art que se enciende al hablar, un chasquido de radio y el texto que sale letra a letra (tocándolo sale entero). Empieza con un saludo («Te recibo ▸») y acaba con una despedida. De 5 a **14 pasos**: talar, almacén, huerto, **pozo**, **cocina**, cama, muro, **banco de trabajo**, **encargar un arma**, **banco de investigación**, **elegir proyecto**, **barricada**, **reclutar** y **devolverlo al trabajo**. El nombre de la locutora y los textos los ha puesto la sesión (Mikel puede cambiarlos en `src/data/tutorial.json`).
 
 - [ ] **Decisiones de Mikel del 2026-10-23 sobre el 🐞 del 2026-10-22** (respondió en el chat a las cinco propuestas). Una por sesión, en este orden:

@@ -1371,14 +1371,7 @@ export class WorldScene extends Phaser.Scene {
     // Con el dedo no hay botón derecho: tocar el suelo sigue mandando a los elegidos.
     if (opts.mouse && !opts.right && this.selectedId !== null) this.select(null);
     if (this.selectedId === null) {
-      // Sin colono elegido, tocar un almacén abre su panel (filtro y prioridad).
-      const z = t ? this.world.zones.at(t.x, t.y) : undefined;
-      const f = t ? this.world.farms.at(t.x, t.y) : undefined;
-      const st = t ? this.world.structures.at(t.x, t.y) : undefined;
-      this.selectZone(z ? z.id : null);
-      this.selectFarm(f ? f.id : null);
-      this.selectStation(st && st.built && st.def.category === 'taller' ? st : null);
-      this.selectPiece(st && st.built && (st.def.movable || st.def.drawbridge || st.def.hydroponics || kitOf(st.def)) && st.def.category !== 'taller' ? st : null);
+      this.openPlaceAt(t);
       return;
     }
     const tile = t;
@@ -1395,6 +1388,14 @@ export class WorldScene extends Phaser.Scene {
       }
     }
     if (!isWalkable(this.map, tx, ty)) {
+      // Zenit #14: en el móvil, con un colono elegido, tocar un taller o un mueble no abría su panel
+      // (solo salía este aviso) y no había forma de cambiar lo que fabrica. Ahora se suelta al colono
+      // y se abre el panel, como al tocarlo sin nadie elegido.
+      if (this.hasPlacePanel(tile)) {
+        this.select(null);
+        this.openPlaceAt(tile);
+        return;
+      }
       this.game.events.emit('toast', 'No se puede caminar ahí');
       return;
     }
@@ -1403,6 +1404,29 @@ export class WorldScene extends Phaser.Scene {
     } else {
       this.game.events.emit('toast', 'No hay camino hasta ahí');
     }
+  }
+
+  /** Abre el panel de lo que hay en la casilla (almacén, huerto, taller o mueble) y cierra los demás. */
+  private openPlaceAt(t: { x: number; y: number } | null): void {
+    const z = t ? this.world.zones.at(t.x, t.y) : undefined;
+    const f = t ? this.world.farms.at(t.x, t.y) : undefined;
+    const st = t ? this.world.structures.at(t.x, t.y) : undefined;
+    this.selectZone(z ? z.id : null);
+    this.selectFarm(f ? f.id : null);
+    this.selectStation(st && st.built && st.def.category === 'taller' ? st : null);
+    this.selectPiece(st && this.isPiece(st) ? st : null);
+  }
+
+  /** Mueble con panel propio («Mover», puente levadizo, bandeja hidropónica, kit). */
+  private isPiece(st: Structure): boolean {
+    return st.built && !!(st.def.movable || st.def.drawbridge || st.def.hydroponics || kitOf(st.def)) && st.def.category !== 'taller';
+  }
+
+  /** En la casilla hay un taller, un mueble con panel o el inventario de un mueble. */
+  private hasPlacePanel(t: { x: number; y: number }): boolean {
+    const st = this.world.structures.at(t.x, t.y);
+    if (st && st.built && (st.def.category === 'taller' || this.isPiece(st))) return true;
+    return this.world.zones.at(t.x, t.y)?.furniture !== undefined;
   }
 
   private flashTarget(tx: number, ty: number): void {

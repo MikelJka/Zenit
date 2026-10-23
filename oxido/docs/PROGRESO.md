@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (84) — El banco de trabajo se abre aunque haya un colono elegido
+
+- Nueve incidencias nuevas del 🐞 (Z#7 a Z#15) pasadas a «Pendiente» de `FEEDBACK.md`, los bugs primero.
+- Arreglado Z#14 («fabriqué cuchillos y ahora no me deja fabricar otra cosa»): en el móvil, con un colono elegido, tocar el banco de trabajo solo decía «No se puede caminar ahí» y no abría su panel, así que no se podía cambiar la receta. Ahora suelta al colono y abre el panel del taller, del mueble o del inventario de la nevera/estantería. Si el taller tiene trabajo pendiente, tocarlo con un solo colono elegido sigue siendo «hazlo ya».
+- La simulación cambiaba bien de receta: test nuevo `tests/workbenchSwitch.test.ts` (cuchillos y luego palos, también con estantería y armero).
+- Qué probar: elegir un colono, tocar el banco de trabajo (sin trabajo pendiente) y ver que se abre su panel y se puede elegir otra receta.
+- Qué sigue: Z#10 (la cuenta atrás del primer raid y que tapa los recursos).
+
 ## 2026-10-23 (83) — Los primeros pasos los cuenta Nora por la radio
 
 - Pedido por Mikel en el chat: que alguien explique la guía y que sea más larga. Eligió «Voz por la radio» y añadir comida y agua, armas, investigación y defensa.
