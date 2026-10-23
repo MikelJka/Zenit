@@ -2,6 +2,18 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (75) — Los muebles de guardar llevan su inventario
+
+- Arreglo del 🐞 #4 de Mikel: los **almacenes ya no se dibujan encima de objetos** (muebles, talleres, defensas, muros, puertas… y sus planos) y, si se construye o se pone el plano de algo dentro de un almacén, **esa casilla sale del almacén**.
+- La **nevera**, las **estanterías**, el **armario** y el **armero** tienen su propio **inventario**: ya no hace falta poner un almacén encima. Al tocarlos se abre la hoja con lo que hay guardado, la prioridad y el filtro (no se puede borrar). Empieza con prioridad **alta**; la nevera solo acepta comida y el armero, armas y munición. Los colonos los llenan solos.
+- Partidas guardadas: el almacén que hubiera encima de un mueble se recorta y el mueble pasa a tener su inventario.
+- Las otras cinco incidencias del 🐞 (#1, #2, #3, #5 y #6) están en `FEEDBACK.md`: los bugs #1 (botón de cazar) y #6 (trato con un comerciante), en «Pendiente»; #1 (comida), #2, #3 y #5 necesitan números: **propuestas con opciones** para Mikel.
+- Las incidencias del 🐞 llegaban sin las etiquetas `feedback` y `oxido` porque no existían en Zenit (GitHub las quita del enlace): se han creado al etiquetar estas seis, así que las próximas ya llegan bien.
+- Reglas en `src/sim/zones.ts` y `World.syncFurniture` (6 tests nuevos en `tests/storageFurniture.test.ts`).
+- Qué probar: construir una nevera con corriente y dejar carne suelta: la llevan dentro sin dibujar almacén; tocar la nevera y ver «📦 Nevera» con lo guardado; dibujar un almacén encima de una cama y ver que la cama se queda fuera.
+- Qué sigue: el botón de cazar (#1) y el trato con el comerciante (#6); lo demás espera la respuesta de Mikel.
+- Sin npm en el entorno: tests con Bun (704); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 (74) — Reactor pequeño y «Energía nuclear»
 
 - Segunda y última parte de la propuesta B que eligió Mikel: proyecto de investigación **«Energía nuclear»** (24 h) en 📜 → 🔬 Investigación.

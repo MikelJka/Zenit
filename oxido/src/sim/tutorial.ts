@@ -7,7 +7,7 @@ import type { World } from './world';
 /** El paso ya está hecho en esta partida (algo de lo que pide existe ahora mismo). */
 export function tutorialCheckDone(world: World, check: TutorialCheck): boolean {
   if (check.designation && world.designations.list().some((d) => d.job === check.designation)) return true;
-  if (check.storageZone && world.zones.all().length > 0) return true;
+  if (check.storageZone && world.zones.all().some((z) => z.furniture === undefined)) return true;
   if (check.growZone && world.farms.all().length > 0) return true;
   if (check.buildings || check.category) {
     for (const s of world.structures.all()) {

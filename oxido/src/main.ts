@@ -1115,6 +1115,8 @@ game.events.on('zone-select', (z: StorageZone | null) => {
   }
   lastZone = z.id;
   const accepted = RESOURCES.filter((r) => z.accepts[r]).length;
+  // El inventario de un mueble (nevera, estantería…) va con él: no se borra desde aquí.
+  $('zp-delete').hidden = z.furniture !== undefined;
   $('zp-name').textContent = `📦 ${z.name}`;
   $('zp-sub').textContent = `${z.tiles.size} casillas · prioridad ${STORAGE_PRIORITY_NAMES[z.priority].toLowerCase()} · guarda ${accepted === RESOURCES.length ? 'de todo' : `${accepted} de ${RESOURCES.length}`}`;
   $('zp-priority').replaceChildren(

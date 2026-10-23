@@ -14,6 +14,9 @@ export const STORAGE_PRIORITY_NAMES: Record<StoragePriority, string> = {
   4: 'Crítica',
 };
 
+/** Prioridad con la que empieza el inventario de un mueble de guardar (se cambia al tocarlo). */
+export const FURNITURE_PRIORITY: StoragePriority = 3;
+
 export interface StorageZone {
   id: number;
   name: string;
@@ -22,6 +25,11 @@ export interface StorageZone {
   accepts: Record<ResourceId, boolean>;
   /** Casillas (índices del mapa). */
   tiles: Set<number>;
+  /**
+   * Si es el inventario de un mueble de guardar (nevera, estantería, armario, armero): el id de
+   * esa construcción. Lo pone y lo quita el mundo (`syncFurniture`), no se dibuja a mano.
+   */
+  furniture?: number;
 }
 
 /** Se puede incluir la casilla en una zona: se pisa y no es agua. */
@@ -34,6 +42,11 @@ export class StorageZones {
   private zones = new Map<number, StorageZone>();
   /** Zona de cada casilla (0 = ninguna). */
   private zoneOf: Int32Array;
+  /**
+   * Casillas con un objeto encima (un mueble, un muro, un plano…): ahí no se dibuja almacén y, si se
+   * pone uno, la casilla sale de la zona. Lo fija el mundo; sin él, no se excluye nada.
+   */
+  occupied?: (x: number, y: number) => boolean;
   private nextId = 1;
   /** Aumenta con cada cambio: el dibujado y el transporte lo usan para saber cuándo recalcular. */
   version = 0;
@@ -109,7 +122,7 @@ export class StorageZones {
     let removed = 0;
     this.forRect(r, (i) => {
       const id = this.zoneOf[i];
-      if (!id) return;
+      if (!id || this.zones.get(id)?.furniture !== undefined) return; // el inventario de un mueble no se quita a mano
       this.zoneOf[i] = 0;
       const zone = this.zones.get(id)!;
       zone.tiles.delete(i);
@@ -123,7 +136,7 @@ export class StorageZones {
   /** Borra una zona entera. */
   delete(id: number): boolean {
     const zone = this.zones.get(id);
-    if (!zone) return false;
+    if (!zone || zone.furniture !== undefined) return false;
     for (const i of zone.tiles) this.zoneOf[i] = 0;
     this.zones.delete(id);
     this.version++;
@@ -131,12 +144,13 @@ export class StorageZones {
   }
 
   /** Vuelve a poner una zona guardada (al cargar una partida). Se saltan las casillas no válidas u ocupadas. */
-  restore(z: { id: number; name: string; priority: StoragePriority; accepts: Partial<Record<ResourceId, boolean>>; tiles: number[] }): void {
+  restore(z: { id: number; name: string; priority: StoragePriority; accepts: Partial<Record<ResourceId, boolean>>; tiles: number[]; furniture?: number }): void {
     const accepts = Object.fromEntries(RESOURCES.map((r) => [r, z.accepts[r] ?? true])) as Record<ResourceId, boolean>;
     const zone: StorageZone = { id: z.id, name: z.name, priority: z.priority, accepts, tiles: new Set() };
+    if (z.furniture !== undefined) zone.furniture = z.furniture;
     for (const i of z.tiles) {
       if (i < 0 || i >= this.zoneOf.length || this.zoneOf[i]) continue;
-      if (!canZone(this.map, i % this.map.width, Math.floor(i / this.map.width))) continue;
+      if (z.furniture === undefined && !this.usable(i)) continue;
       zone.tiles.add(i);
       this.zoneOf[i] = z.id;
     }
@@ -165,7 +179,7 @@ export class StorageZones {
     let removed = 0;
     for (const zone of [...this.zones.values()]) {
       for (const i of [...zone.tiles]) {
-        if (!canZone(this.map, i % this.map.width, Math.floor(i / this.map.width))) {
+        if (zone.furniture === undefined && !this.usable(i)) {
           zone.tiles.delete(i);
           this.zoneOf[i] = 0;
           removed++;
@@ -188,8 +202,73 @@ export class StorageZones {
   private freeTiles(r: TileRect, exclude?: (x: number, y: number) => boolean): number[] {
     const out: number[] = [];
     this.forRect(r, (i, x, y) => {
-      if (!this.zoneOf[i] && canZone(this.map, x, y) && !exclude?.(x, y)) out.push(i);
+      if (!this.zoneOf[i] && this.usable(i) && !exclude?.(x, y)) out.push(i);
     });
     return out;
+  }
+
+  /** Una casilla vale para un almacén dibujado: se pisa, no es agua y no tiene un objeto encima. */
+  private usable(i: number): boolean {
+    const x = i % this.map.width;
+    const y = Math.floor(i / this.map.width);
+    return canZone(this.map, x, y) && !this.occupied?.(x, y);
+  }
+
+  /** El inventario de un mueble de guardar (o undefined). */
+  ofFurniture(structureId: number): StorageZone | undefined {
+    for (const z of this.zones.values()) if (z.furniture === structureId) return z;
+    return undefined;
+  }
+
+  /**
+   * Pone el inventario de un mueble en sus casillas (quitándolas de cualquier almacén dibujado).
+   * Si ya existía, conserva su prioridad y su filtro. Devuelve la zona.
+   */
+  setFurniture(structureId: number, name: string, tiles: number[], priority: StoragePriority, accepts: (r: ResourceId) => boolean): StorageZone {
+    let zone = this.ofFurniture(structureId);
+    if (!zone) {
+      zone = {
+        id: this.nextId++,
+        name,
+        priority,
+        accepts: Object.fromEntries(RESOURCES.map((r) => [r, accepts(r)])) as Record<ResourceId, boolean>,
+        tiles: new Set(),
+        furniture: structureId,
+      };
+      this.zones.set(zone.id, zone);
+      this.version++;
+    }
+    const want = new Set(tiles);
+    for (const i of [...zone.tiles]) {
+      if (want.has(i)) continue;
+      zone.tiles.delete(i);
+      this.zoneOf[i] = 0;
+      this.version++;
+    }
+    for (const i of want) {
+      if (this.zoneOf[i] === zone.id) continue;
+      const other = this.zones.get(this.zoneOf[i]);
+      if (other) {
+        other.tiles.delete(i);
+        if (other.tiles.size === 0) this.zones.delete(other.id);
+      }
+      zone.tiles.add(i);
+      this.zoneOf[i] = zone.id;
+      this.version++;
+    }
+    return zone;
+  }
+
+  /** Quita los inventarios de muebles que ya no están (o no están terminados). Devuelve cuántos. */
+  dropFurniture(keep: (structureId: number) => boolean): number {
+    let n = 0;
+    for (const z of [...this.zones.values()]) {
+      if (z.furniture === undefined || keep(z.furniture)) continue;
+      for (const i of z.tiles) this.zoneOf[i] = 0;
+      this.zones.delete(z.id);
+      n++;
+    }
+    if (n > 0) this.version++;
+    return n;
   }
 }

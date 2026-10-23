@@ -21,7 +21,7 @@ import { GroundItems } from './items';
 import { Designations } from './designations';
 import { canWorkFrom, findJob, findJobAt, needsUrgentCare, researchBenchReady, stationWantsWork, JOB_PATH_NODES, JobContext, pathToNearest, reservePlan, Reservations, workSpeed } from './jobs';
 import { harvestAt, harvestTile, Stockpile } from './resources';
-import { StorageZones } from './zones';
+import { FURNITURE_PRIORITY, StorageZones } from './zones';
 import { ZoneClearing } from './clearing';
 import { fertilityAt, GrowZones } from './farming';
 import { regrowNature } from './nature';
@@ -314,6 +314,8 @@ export class World implements JobContext {
     this.designations = new Designations(this.map);
     this.reservations = new Reservations(this.map);
     this.zones = new StorageZones(this.map);
+    // Encima de un objeto (mueble, muro, plano…) no se dibuja almacén (#4).
+    this.zones.occupied = (x, y) => !!this.structures?.mainAt(x, y);
     this.structures = new Structures(this.map);
     this.farms = new GrowZones(this.map);
     this.terrain = new TerrainOrders(this.map);
@@ -409,6 +411,8 @@ export class World implements JobContext {
   /** Un tick de simulación. */
   step(): void {
     this.tick++;
+    // Muebles de guardar: cada uno lleva su inventario, y lo que se construye encima de un almacén lo recorta.
+    if (this.structures.version !== this.furnitureSync) this.syncFurniture();
     // Foso con agua: si han cambiado las zanjas o lo investigado, se mira qué zanjas se inundan.
     const floodKey = `${this.terrainVersion}:${this.research.done.length}`;
     if (floodKey !== this.floodKey) this.refreshFlooding();
@@ -2194,6 +2198,30 @@ export class World implements JobContext {
     const n = this.farms.extend(id, r, (x, y) => this.zones.at(x, y) !== undefined);
     if (this.farms.get(id)) this.markClearing(r, 'huerto', id);
     return n;
+  }
+
+  /** Versión de las construcciones con la que se pusieron por última vez los inventarios de los muebles. */
+  private furnitureSync = -1;
+
+  /**
+   * Cada mueble de guardar terminado (nevera, estantería, armario, armero) tiene su inventario: un
+   * almacén propio en sus casillas, con prioridad alta y el filtro de lo que cabe en él, que se
+   * cambia al tocarlo (#4). Las casillas de los almacenes dibujados que quedan bajo un objeto salen de ellos.
+   */
+  syncFurniture(): void {
+    this.furnitureSync = this.structures.version;
+    const w = this.map.width;
+    const keep = new Set<number>();
+    for (const s of this.structures.all()) {
+      if (!s.built || !s.def.storage) continue;
+      keep.add(s.id);
+      const accepts = (r: ResourceId) =>
+        s.def.storageFor === 'comida' ? FOOD_RESOURCES.includes(r) : s.def.storageFor === 'armas' ? isGear(r) : true;
+      const tiles = this.structures.tilesOf(s).map((t) => t.y * w + t.x);
+      this.zones.setFurniture(s.id, s.def.name, tiles, FURNITURE_PRIORITY, accepts);
+    }
+    this.zones.dropFurniture((id) => keep.has(id));
+    this.zones.prune();
   }
 
   /** Crea un almacén (sin pisar huertos). */

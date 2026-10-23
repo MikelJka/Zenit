@@ -58,7 +58,7 @@ export interface SaveData {
   colonists: SavedColonist[];
   items: { x: number; y: number; resource: string; amount: number }[];
   designations: { x: number; y: number; job: string }[];
-  zones: { id: number; name: string; priority: number; accepts: Record<string, boolean>; tiles: number[] }[];
+  zones: { id: number; name: string; priority: number; accepts: Record<string, boolean>; tiles: number[]; furniture?: number }[];
   structures: { def: string; x: number; y: number; built: boolean; delivered: Record<string, number>; progress: number; hp: number; demolish?: boolean; bill?: { recipe: string; target: number; paused: boolean; mode?: string }; rot?: number; raised?: boolean; wantUp?: boolean; autoRaised?: boolean; stored?: number; fuel?: number; crop?: string; growth?: number; target?: number; electric?: boolean; upgrade?: { delivered: Record<string, number>; progress: number }; repair?: { need: Record<string, number>; work: number; delivered: Record<string, number>; progress: number }; fromKit?: boolean; pack?: boolean; moveTo?: { x: number; y: number; rot: number } }[];
   /** Obras de terreno pendientes (desde que existen). */
   terrain?: { x: number; y: number; job: string }[];
@@ -313,7 +313,7 @@ export function serializeWorld(world: World, gameVersion?: string, direct = fals
     difficulty: { ...world.difficulty },
     items: world.items.list().map((s) => ({ x: s.x, y: s.y, resource: s.resource, amount: s.amount })),
     designations: world.designations.list().map((d) => ({ ...d })),
-    zones: world.zones.all().map((z) => ({ id: z.id, name: z.name, priority: z.priority, accepts: { ...z.accepts }, tiles: [...z.tiles] })),
+    zones: world.zones.all().map((z) => ({ id: z.id, name: z.name, priority: z.priority, accepts: { ...z.accepts }, tiles: [...z.tiles], ...(z.furniture !== undefined ? { furniture: z.furniture } : {}) })),
     farms: world.farms.all().map((z) => ({ id: z.id, name: z.name, crop: z.crop.id, tiles: [...z.tiles] })),
     plants: world.farms.plantList().map(({ x, y, plant }) => ({ i: y * m.width + x, crop: plant.crop.id, growth: plant.growth, ...(plant.harm ? { harm: plant.harm } : {}), ...(plant.sick ? { sick: true } : {}), ...(plant.fertilized ? { fertilized: true } : {}) })),
     clearing: world.clearing.list(),
@@ -764,7 +764,8 @@ export function loadWorld(input: string | unknown): World {
     const priority = (p >= 1 && p <= 4 ? Math.round(p) : 2) as StoragePriority;
     const accepts: Partial<Record<ResourceId, boolean>> = {};
     for (const [r, v] of Object.entries(z.accepts ?? {})) if (isResource(r)) accepts[r] = !!v;
-    world.zones.restore({ id: num(z.id, 1), name: String(z.name ?? 'Almacén'), priority, accepts, tiles: z.tiles ?? [] });
+    const furniture = typeof z.furniture === 'number' ? z.furniture : undefined;
+    world.zones.restore({ id: num(z.id, 1), name: String(z.name ?? 'Almacén'), priority, accepts, tiles: z.tiles ?? [], furniture });
   }
   for (const o of d.terrain ?? []) {
     if ((TERRAIN_JOBS as readonly string[]).includes(o.job)) {

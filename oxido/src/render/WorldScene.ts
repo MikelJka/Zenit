@@ -1934,9 +1934,9 @@ export class WorldScene extends Phaser.Scene {
         case 'rampa':
         case 'zanja':
         case 'rellenar': return terrainBlocker(this.map, x, y, mode, !!st.at(x, y)) === null;
-        case 'almacen': return canZone(this.map, x, y) && !this.world.zones.at(x, y) && !this.world.farms.at(x, y);
+        case 'almacen': return canZone(this.map, x, y) && !this.world.structures.mainAt(x, y) && !this.world.zones.at(x, y) && !this.world.farms.at(x, y);
         case 'cultivo': return canZone(this.map, x, y) && fertilityAt(this.map, x, y) > 0 && !this.world.zones.at(x, y) && !this.world.farms.at(x, y);
-        case 'quitarAlmacen': return this.world.zones.at(x, y) !== undefined || this.world.farms.at(x, y) !== undefined;
+        case 'quitarAlmacen': return (this.world.zones.at(x, y) !== undefined && this.world.zones.at(x, y)?.furniture === undefined) || this.world.farms.at(x, y) !== undefined;
         case 'construir': return (this.buildShape === 'relleno' || edge) && st.canPlace(x, y, buildingDef(this.buildDefId));
         case 'quitarPlano': return st.at(x, y) !== undefined;
         case 'mover': return false;
@@ -2146,6 +2146,8 @@ export class WorldScene extends Phaser.Scene {
     }
     for (const z of zones.all()) {
       const sel = z.id === this.selectedZoneId;
+      // El inventario de un mueble no se pinta en el suelo; solo se marca al tocarlo.
+      if (z.furniture !== undefined && !sel) continue;
       g.fillStyle(ZONE_COLORS[z.priority], sel ? 0.4 : 0.22);
       for (const i of z.tiles) this.fillTile(g, i % this.map.width, Math.floor(i / this.map.width), 0.5);
       // Borde donde la casilla vecina no es de la misma zona.
