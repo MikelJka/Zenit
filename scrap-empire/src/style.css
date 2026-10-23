@@ -265,3 +265,18 @@ button:focus-visible { outline: 3px solid #ffd76a; outline-offset: 2px; }
 /* Mapa en capas: SVG de fondo, canvas de las máquinas (PixiJS) y SVG de delante, que recibe los toques. */
 #scene-wrap > .yard, #scene-wrap > .machine-layer { position: absolute; left: 0; top: 0; }
 .yard-back, .machine-layer { pointer-events: none; }
+
+/* Botón 🐞 (S2): abajo a la izquierda; se esconde con la hoja abierta. */
+#bug-btn { position: absolute; left: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 3; width: 44px; height: 44px; padding: 0; background: rgba(42, 29, 20, 0.85); border: 2px solid #5f4a33; border-radius: 50%; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35); cursor: pointer; }
+#bug-btn .uiicon { width: 24px; height: 24px; }
+#sheet:not([hidden]) ~ #bug-btn { display: none; }
+#fps { left: 62px; }
+#bug { display: flex; flex-direction: column; gap: 8px; margin: 0 4px 8px; color: var(--ink); }
+#bug[hidden] { display: none; }
+#bug small { color: var(--muted); }
+#bug .bug-kind { display: flex; gap: 8px; }
+#bug button { flex: 1; min-height: 44px; font: inherit; font-weight: 800; color: #2a1d14; background: #e6c98a; border: 2px solid #fff1a8; border-radius: 12px; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4); cursor: pointer; }
+#bug .bug-kind button[aria-pressed="false"] { opacity: 0.55; }
+#bug button[type="submit"] { background: linear-gradient(180deg, #ffd76a, #f2a20f); }
+#bug textarea { min-height: 96px; padding: 8px 10px; font: inherit; font-size: 15px; color: var(--ink); background: #3a2d20; border: 2px solid #5f4a33; border-radius: 12px; resize: vertical; }
+#tip:not(.tut) { padding: 0 58px; }

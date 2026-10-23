@@ -3,6 +3,7 @@ import {
   ECONOMY,
   ROUTES,
   ZONES,
+  SAVE_VERSION,
   captainPay,
   warehouseBonus,
   warehouseCapacity,
@@ -50,6 +51,8 @@ import { store } from './storage';
 import { showTitle } from './title';
 import { applyAccessibility, isBigText, isHighContrast, reducedMotion, setBigText, setHighContrast, setReducedMotion } from './prefs';
 import { buzz, isMuted, isMusicOn, isSfxOn, isVibeOn, play, setMuted, setMusicOn, setSfxOn, setVibeOn, syncMusic } from './sound';
+import { installErrorCapture, capturedErrors } from './bugReport';
+import { feedbackIssueUrl, type FeedbackKind } from '../sim/feedback';
 import { cleanNick, getNick, rankingEnabled, setNick, submitScore, topScores } from './ranking';
 
 const AUTOSAVE_MS = 10_000;
@@ -125,6 +128,12 @@ export function startApp(root: HTMLElement): void {
         <div id="shop"></div>
         <div id="panel-more"></div>
         <div id="ranking" hidden></div>
+        <form id="bug" hidden>
+          <small>${t('bug.help')}</small>
+          <div class="bug-kind"><button type="button" data-kind="bug" aria-pressed="true">${t('bug.kindBug')}</button><button type="button" data-kind="request">${t('bug.kindRequest')}</button></div>
+          <textarea id="bug-text" rows="4" maxlength="3000" placeholder="${t('bug.placeholder')}"></textarea>
+          <button type="submit">${t('bug.send')}</button>
+        </form>
         <div id="goals" hidden></div>
         <div id="achieve" hidden></div>
         <div id="lang" hidden>
@@ -165,6 +174,7 @@ export function startApp(root: HTMLElement): void {
           <div><button id="copy-code" type="button">${t('transfer.copy')}</button><button id="paste-code" type="button">${t('transfer.paste')}</button></div>
         </div>
       </section>
+      <button id="bug-btn" type="button" aria-label="${t('bug.title')}">${uiIcon('bug')}</button>
     </main>`;
   const $ = (id: string) => root.querySelector<HTMLElement>('#' + id)!;
   if (result.simulatedSeconds > 60) {
@@ -274,6 +284,7 @@ export function startApp(root: HTMLElement): void {
   const panelTitle = (sel: string): string => {
     if (sel === 'settings') return t('settings.title');
     if (sel === 'ranking') return t('ranking.title');
+    if (sel === 'bug') return t('bug.title');
     if (sel === 'goals') return t('goals.title');
     if (sel === 'dock') return t('panel.dock');
     if (sel === 'trucks') return t('panel.trucks');
@@ -295,9 +306,10 @@ export function startApp(root: HTMLElement): void {
     $('contrast').hidden = sel !== 'settings';
     $('achieve').hidden = sel !== 'settings';
     $('ranking').hidden = sel !== 'ranking';
+    $('bug').hidden = sel !== 'bug';
     $('goals').hidden = sel !== 'goals';
     lastGoals = '';
-    const global = sel === 'settings' || sel === 'ranking' || sel === 'goals';
+    const global = sel === 'settings' || sel === 'ranking' || sel === 'goals' || sel === 'bug';
     $('panel-info').hidden = global;
     $('shop').hidden = global;
     $('panel-more').hidden = global;
@@ -357,6 +369,44 @@ export function startApp(root: HTMLElement): void {
   });
   $('settings').addEventListener('click', () => openPanel(panel === 'settings' ? null : 'settings'));
   $('ranking-btn').addEventListener('click', () => openPanel(panel === 'ranking' ? null : 'ranking'));
+  // Botón 🐞 (S2): abre en GitHub una incidencia de Zenit con etiquetas feedback y scrap-empire y los datos de la partida.
+  installErrorCapture();
+  let bugKind: FeedbackKind = 'bug';
+  $('bug-btn').addEventListener('click', () => {
+    play('tap');
+    openPanel(panel === 'bug' ? null : 'bug');
+  });
+  $('bug').addEventListener('click', (e) => {
+    const kind = (e.target as HTMLElement).closest<HTMLElement>('button[data-kind]')?.dataset.kind as FeedbackKind | undefined;
+    if (!kind) return;
+    bugKind = kind;
+    $('bug').querySelectorAll<HTMLElement>('button[data-kind]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === kind)));
+  });
+  $('bug').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const box = $('bug-text') as HTMLTextAreaElement;
+    const text = box.value.trim();
+    if (!text) return box.focus();
+    writeSave(state);
+    const url = feedbackIssueUrl(bugKind, text, {
+      at: new Date().toISOString(),
+      url: location.href,
+      userAgent: navigator.userAgent,
+      viewport: `${window.innerWidth}×${window.innerHeight} @${window.devicePixelRatio}x`,
+      lang: getLang(),
+      saveVersion: SAVE_VERSION,
+      playSeconds: state.time,
+      dollars: state.dollars,
+      totalEarned: state.totalEarned,
+      zonesOpen: ZONES.filter((z) => state.zones[z.id]?.unlocked).map((z) => z.id),
+      hasPass: state.hasPass,
+      errors: capturedErrors(),
+    });
+    window.open(url, '_blank', 'noopener');
+    box.value = '';
+    openPanel(null);
+    toast(t('bug.sent'));
+  });
 
   function drawAchievements(): void {
     const h = Math.floor(state.time / 3600);

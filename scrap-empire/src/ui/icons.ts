@@ -90,7 +90,7 @@ export const FORKLIFT = `<g>
 
 
 /** Iconos de la interfaz (barra de arriba y botones de extras), 24×24, con relieve y contorno propios. */
-export type UiIconName = 'trophy' | 'gear' | 'sound-on' | 'sound-off' | 'timer' | 'ad' | 'hourglass' | 'gift' | 'star' | 'target' | 'finger' | 'coin' | 'cart' | 'check' | 'warning' | 'medal';
+export type UiIconName = 'trophy' | 'gear' | 'sound-on' | 'sound-off' | 'timer' | 'ad' | 'hourglass' | 'gift' | 'star' | 'target' | 'finger' | 'coin' | 'cart' | 'check' | 'warning' | 'medal' | 'bug';
 
 /** Icono pequeño que va delante de un texto (el texto se escapa). */
 export function inlineIcon(name: UiIconName, text: string): string {
@@ -107,6 +107,9 @@ export function uiIcon(name: UiIconName): string {
   switch (name) {
     case 'trophy':
       body = `<path d="M7 4h10v5a5 5 0 0 1-10 0Z" fill="#f2c14e" ${o}/><path d="M7 6H4q0 5 4 5.5M17 6h3q0 5-4 5.5" fill="none" ${o}/><path d="M12 14v3M8 20h8l-1-3H9Z" fill="#d99a1f" ${o}/><path d="M9.5 6v3" stroke="#fff3c4" stroke-width="1.4" stroke-linecap="round"/>`;
+      break;
+    case 'bug':
+      body = `<path d="M9 7.5a3 3 0 0 1 6 0" fill="#7a4a2a" ${o}/><ellipse cx="12" cy="14" rx="5.2" ry="6.2" fill="#e0584a" ${o}/><path d="M12 8v12M6.8 12H3.5M17.2 12h3.3M7 16.5l-3 2M17 16.5l3 2M7.6 9.5 5 7.5M16.4 9.5 19 7.5" fill="none" ${o}/><circle cx="9.7" cy="12.5" r="1" fill="#2a1d14"/><circle cx="14.3" cy="15.5" r="1" fill="#2a1d14"/>`;
       break;
     case 'gear':
       body = `<path d="M12 3l1.6 2.2 2.7-.6.9 2.6 2.6.9-.6 2.7L21 12l-2.2 1.6.6 2.7-2.6.9-.9 2.6-2.7-.6L12 21l-1.6-2.2-2.7.6-.9-2.6-2.6-.9.6-2.7L3 12l2.2-1.6-.6-2.7 2.6-.9.9-2.6 2.7.6Z" fill="#b9c2c9" ${o}/><circle cx="12" cy="12" r="3.2" fill="#4d6070" ${o}/>`;

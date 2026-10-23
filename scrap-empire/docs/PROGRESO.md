@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Botón 🐞 para mandar fallos y peticiones (S2)
+
+- Nuevo botón redondo con un bicho abajo a la izquierda (se esconde con una hoja abierta). Abre «Enviar fallo o petición»: se elige «Fallo» o «Petición», se escribe qué pasa y «Enviar en GitHub» abre el formulario de nueva incidencia de `MikelJka/Zenit` ya rellenado, con las etiquetas `feedback` y `scrap-empire`.
+- La incidencia lleva los datos de la partida: tiempo jugado, dinero y total ganado, zonas abiertas, Pase, idioma, versión de guardado, URL, pantalla, navegador y los últimos errores de la sesión (excepciones y promesas rechazadas, solo en memoria). Si el enlace sale muy largo se recortan los errores y, si hace falta, el texto.
+- Textos en español e inglés; pruebas del formato del enlace en `tests/feedback.test.ts` (lógica en `src/sim/feedback.ts`).
+- S1 (mapa en canvas) se da por terminada: lo que queda en SVG (3 AGV, la pila y el decorado) apenas pesa.
+- Qué probar: tocar el bicho en el móvil, mandar un fallo de prueba y comprobar que en GitHub salen las dos etiquetas y los datos (hay que estar con la sesión de GitHub iniciada y pulsar «Create»).
+- Sigue: S3 (preparar Google Play: política de privacidad, consentimiento UE y AdMob en modo de prueba).
+
 ## 2026-10-23 — El camión de expedición y los coches de delante se dibujan en canvas (S1, quinta parte)
 
 - El camión de expedición del muelle pasa a la capa de canvas (PixiJS): chasis y caja horneados desde el mismo SVG en dos piezas (lo de detrás de la carga y lo de delante) y, en medio, los productos de la caja con la textura del producto que ya usan las carretillas; se llena, sale y vuelve como antes.
