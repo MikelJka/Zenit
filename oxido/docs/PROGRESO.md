@@ -2,6 +2,16 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (81) — Botones «🎯 Cazar» y «🤝 Domar» en Órdenes
+
+- Cuarta de las cinco decisiones de Mikel (#1 del 🐞, opción B).
+  - En ⚒ Órdenes → Recoger hay dos botones nuevos: **🎯 Cazar** y **🤝 Domar**. Se arrastra (o se toca una casilla) sobre los animales y se marcan todos los del recuadro; la vista previa colorea las casillas con animales que se marcarían.
+  - «Domar» solo marca a los que se dejan domar; la marca nueva sustituye a la otra. **✖ Quitar órdenes** también quita estas marcas. Tocar un animal fuera de las órdenes sigue funcionando como antes.
+- Reglas en `src/sim/animals.ts` (`markAnimalsArea`, `unmarkAnimalsArea`, `wouldMarkAnimal`); botones en `index.html`, arrastre en `src/render/WorldScene.ts`. 4 tests nuevos en `tests/animalOrders.test.ts`.
+- Qué probar: ⚒ Órdenes → 🎯 Cazar y arrastrar sobre una manada; salen las dianas y van los cazadores. Con 🤝 Domar, solo los domables llevan corazón.
+- Qué sigue: #1 caducidad de la comida por lotes (grande: irá por partes).
+- Sin npm en el entorno: tests con Bun (728); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 (80) — Los colonos duermen de noche y menos horas
 
 - Tercera de las cinco decisiones de Mikel (#5 del 🐞, opción B).

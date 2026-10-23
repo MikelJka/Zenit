@@ -9,6 +9,7 @@ import Phaser from 'phaser';
 import { GameMap, describeTile, inBounds, isWater, Prop } from '../sim/map';
 import { activityLabel, Colonist, groupSummary, type Stance } from '../sim/colonist';
 import { TURRET_SHOT_TICKS } from '../sim/people';
+import { animalsOnMap, hasAnimalMark, markAnimalsArea, unmarkAnimalsArea, wouldMarkAnimal } from '../sim/animals';
 import { BLAST_TICKS } from '../sim/grenades';
 import { mortarShots } from '../sim/mortar';
 import { isWalkable } from '../sim/pathfinding';
@@ -64,10 +65,10 @@ const ZONE_DEPTH = -0.5;
  * Modo de órdenes: designar un trabajo, quitar designaciones, marcar o quitar almacenes,
  * colocar planos (la construcción elegida está en `buildDefId`) o quitarlos. null = ninguno.
  */
-export type DesignMode = HarvestJob | TerrainJob | 'cancelar' | 'almacen' | 'cultivo' | 'quitarAlmacen' | 'construir' | 'quitarPlano' | 'seleccionar' | 'mover' | null;
+export type DesignMode = HarvestJob | TerrainJob | 'cazar' | 'domar' | 'cancelar' | 'almacen' | 'cultivo' | 'quitarAlmacen' | 'construir' | 'quitarPlano' | 'seleccionar' | 'mover' | null;
 
 /** Color de cada trabajo y modo en las marcas y en la vista previa del área. */
-export const DESIGN_COLORS: Record<WorkType | TerrainJob | 'cancelar' | 'almacen' | 'cultivo' | 'quitarAlmacen' | 'quitarPlano' | 'seleccionar' | 'mover', number> = {
+export const DESIGN_COLORS: Record<WorkType | TerrainJob | 'domar' | 'cancelar' | 'almacen' | 'cultivo' | 'quitarAlmacen' | 'quitarPlano' | 'seleccionar' | 'mover', number> = {
   seleccionar: 0xf0d7b0,
   mover: 0x6fa8dc,
   rebajar: 0xc09060,
@@ -77,6 +78,7 @@ export const DESIGN_COLORS: Record<WorkType | TerrainJob | 'cancelar' | 'almacen
   rellenar: 0xc09060,
   cultivar: 0x8fc060,
   cazar: 0xc07040,
+  domar: 0x6ab04c,
   cultivo: 0x8fc060,
   terreno: 0xc09060,
   fabricar: 0xd0a060,
@@ -1882,8 +1884,11 @@ export class WorldScene extends Phaser.Scene {
     } else if (mode === 'rebajar' || mode === 'elevar' || mode === 'rampa' || mode === 'zanja' || mode === 'rellenar') {
       const n = this.world.terrain.addArea(r, mode, (x, y) => !!this.world.structures.at(x, y));
       toast(n > 0 ? `${TERRAIN_JOB_NAMES[mode]}: ${n} ${n === 1 ? 'casilla' : 'casillas'}` : mode === 'rampa' ? 'Ahí no hay acantilados' : mode === 'rellenar' ? 'Ahí no hay zanjas' : 'Ahí no se puede (agua, construcción, objeto, acantilado o nivel límite)');
+    } else if (mode === 'cazar' || mode === 'domar') {
+      const n = markAnimalsArea(animalsOnMap(this.world), r, mode);
+      toast(n > 0 ? `${mode === 'cazar' ? '🎯 A cazar' : '🤝 A domar'}: ${n} ${n === 1 ? 'animal' : 'animales'} · irá quien tenga «Cazar»${mode === 'domar' ? ', con comida' : ''}` : mode === 'cazar' ? 'Ahí no hay animales salvajes sin marcar' : 'Ahí no hay animales que se dejen domar sin marcar');
     } else if (mode === 'cancelar') {
-      const n = d.cancelArea(r) + this.world.terrain.removeArea(r);
+      const n = d.cancelArea(r) + this.world.terrain.removeArea(r) + unmarkAnimalsArea(animalsOnMap(this.world), r);
       toast(n > 0 ? `${n} ${n === 1 ? 'orden quitada' : 'órdenes quitadas'}` : 'No había órdenes ahí');
     } else {
       const n = d.designateArea(r, mode);
@@ -1955,7 +1960,9 @@ export class WorldScene extends Phaser.Scene {
     const d = this.world.designations;
     const st = this.world.structures;
       switch (mode) {
-        case 'cancelar': return d.at(x, y) !== undefined || this.world.terrain.at(x, y) !== undefined;
+        case 'cancelar': return d.at(x, y) !== undefined || this.world.terrain.at(x, y) !== undefined || this.animalAt(x, y, hasAnimalMark);
+        case 'cazar':
+        case 'domar': return this.animalAt(x, y, (a) => wouldMarkAnimal(a, mode));
         case 'rebajar':
         case 'elevar':
         case 'rampa':
@@ -1970,6 +1977,11 @@ export class WorldScene extends Phaser.Scene {
         case 'seleccionar': return this.world.pawns().some((c) => c.tile.x === x && c.tile.y === y);
         default: return canDesignate(this.map, x, y, mode);
       }
+  }
+
+  /** ¿Hay en la casilla algún animal que cumpla esto? (vista previa de cazar, domar y quitar). */
+  private animalAt(x: number, y: number, fn: (a: Colonist) => boolean): boolean {
+    return animalsOnMap(this.world).some((a) => a.tile.x === x && a.tile.y === y && fn(a));
   }
 
   /** Rehace las marcas de las casillas designadas si han cambiado. */

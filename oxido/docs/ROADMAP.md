@@ -38,6 +38,7 @@ Terminado: marco árboles y los colonos los talan y guardan la madera solos.
 - [x] Recursos en el mapa: árboles muertos (madera), rocas (piedra), chatarra en ruinas
 - [x] Inventario de la colonia y objetos en el suelo
 - [x] Herramienta de designación: talar, minar, saquear (arrastrar un área; en móvil, modo selección)
+- [x] Órdenes «🎯 Cazar» y «🤝 Domar» por arrastre sobre los animales; «Quitar órdenes» les quita la marca (#1 del 🐞)
 - [x] Sistema de trabajos: cola, reserva de tareas, prioridades por colono
 - [x] Zonas de almacén (con filtro de recursos y prioridad) y transporte
 - [x] Panel de prioridades de trabajo

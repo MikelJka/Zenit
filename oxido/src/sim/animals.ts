@@ -149,6 +149,65 @@ export function cycleAnimalMark(a: Colonist): 'cazar' | 'domar' | null {
   return null;
 }
 
+/** Marca de las herramientas «🎯 Cazar» y «🤝 Domar» de ⚒ Órdenes. */
+export type AnimalMark = 'cazar' | 'domar';
+
+/** Casillas de un arrastre (como `TileRect`, en cualquier orden de esquinas). */
+interface AnimalRect {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+}
+
+function inAnimalRect(a: Colonist, r: AnimalRect): boolean {
+  const x = a.tile.x, y = a.tile.y;
+  return x >= Math.min(r.x0, r.x1) && x <= Math.max(r.x0, r.x1) && y >= Math.min(r.y0, r.y1) && y <= Math.max(r.y0, r.y1);
+}
+
+/** ¿Se le puede poner esta marca? Solo animales salvajes; para domar, además, que se dejen. */
+export function canMarkAnimal(a: Colonist, mark: AnimalMark): boolean {
+  if (a.tamed || a.role !== 'animal' || !a.creature || !CREATURES[a.creature].animal) return false;
+  return mark === 'cazar' || !!CREATURES[a.creature].tamable;
+}
+
+/** ¿Lo marcaría (o le cambiaría la marca) la herramienta? Los que ya la tienen, no. */
+export function wouldMarkAnimal(a: Colonist, mark: AnimalMark): boolean {
+  return canMarkAnimal(a, mark) && !(mark === 'cazar' ? a.huntMarked : a.tameMarked);
+}
+
+/**
+ * Arrastre de «🎯 Cazar» o «🤝 Domar»: marca a todos los animales del recuadro (la marca nueva
+ * sustituye a la otra). Devuelve cuántos han quedado marcados de nuevo.
+ */
+export function markAnimalsArea(animals: Colonist[], r: AnimalRect, mark: AnimalMark): number {
+  let n = 0;
+  for (const a of animals) {
+    if (!inAnimalRect(a, r) || !wouldMarkAnimal(a, mark)) continue;
+    a.huntMarked = mark === 'cazar';
+    a.tameMarked = mark === 'domar';
+    n++;
+  }
+  return n;
+}
+
+/** ¿Tiene marca de cazar o domar que «Quitar órdenes» le quitaría? */
+export function hasAnimalMark(a: Colonist): boolean {
+  return !a.tamed && (!!a.huntMarked || !!a.tameMarked);
+}
+
+/** «Quitar órdenes»: quita la marca de cazar o domar a los animales del recuadro. Devuelve cuántos. */
+export function unmarkAnimalsArea(animals: Colonist[], r: AnimalRect): number {
+  let n = 0;
+  for (const a of animals) {
+    if (!inAnimalRect(a, r) || !hasAnimalMark(a)) continue;
+    a.huntMarked = false;
+    a.tameMarked = false;
+    n++;
+  }
+  return n;
+}
+
 /** Saca comida de los montones de la colonia (lo que haya). true si había bastante. */
 export function takeFood(w: World, n: number): boolean {
   const stacks = w.items.list().filter((s) => FOOD_RESOURCES.includes(s.resource));
