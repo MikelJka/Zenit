@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Política de privacidad en la web (S3, primera parte)
+
+- Sin incidencias nuevas. Siguiente en «Pendiente»: S3, preparar Google Play. Primera parte: la política de privacidad.
+- Nueva página `privacidad.html` (español e inglés), publicada en https://mikeljka.github.io/Zenit/scrap-empire/privacidad.html y enlazada desde Ajustes («Política de privacidad»). Cuenta lo que hace hoy el juego: partida y ajustes solo en el dispositivo; ranking opcional en Firebase (apodo, total e identificador anónimo); anuncios voluntarios con AdMob y consentimiento en la UE (en Android); compras por Google Play; el botón 🐞 solo envía si publicas tú en GitHub.
+- Falta el contacto de privacidad y las edades del juego: nueva **Parte 29** en FEEDBACK.md (PP y PE).
+- Qué probar: ⚙ → «Política de privacidad» abre la página en el idioma del juego.
+- Sigue: consentimiento UE con Google UMP y AdMob en modo de prueba (S3); #16 tercera parte si en el móvil sigue yendo justo.
+
 ## 2026-10-23 — Arrastrar el mapa ya no lo repinta entero (#16, segunda parte)
 
 - Mikel, probando la primera parte: sin tocar va a unos 30 fps, pero al arrastrar con zoom baja a ~10.

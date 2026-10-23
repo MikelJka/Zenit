@@ -32,4 +32,4 @@ Ciclo de día y noche con el reloj real, un desguace isométrico alegre y progre
 - Gráfico de función 1024×500: `shots/feature-graphic-1024x500.jpg`.
 - Capturas 1080×1920 con rótulo, en es y en: `shots/{es,en}-01…06-*.jpg`.
 - Vídeo vertical de unos 27 s (sin sonido): `video/trailer-{es,en}.mp4`. Play pide un enlace de YouTube: hay que subirlo desde la cuenta de Zenit Studio.
-- Pendiente de decidir con Mikel: política de privacidad y clasificación por edades (Fase 3).
+- Política de privacidad: https://mikeljka.github.io/Zenit/scrap-empire/privacidad.html (hecha el 2026-10-23; falta el contacto). Pendiente de decidir con Mikel: contacto y clasificación por edades (Parte 29 de FEEDBACK.md).

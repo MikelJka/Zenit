@@ -130,6 +130,7 @@ svg.spk .spark { opacity: 1; }
 #shop .empty { color: var(--muted); text-align: center; }
 #sheet { max-height: 70%; overflow-y: auto; }
 #lang[hidden], #quality[hidden], #transfer[hidden], .opt[hidden] { display: none; }
+#privacy a { color: #ffd76a; font-weight: 800; min-height: 44px; display: flex; align-items: center; }
 #sheet { max-height: 56%; }
 
 #ranking-btn { pointer-events: auto; min-width: 44px; min-height: 44px; margin: -6px 0; font-size: 20px; background: none; border: 0; cursor: pointer; }

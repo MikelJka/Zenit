@@ -173,6 +173,9 @@ export function startApp(root: HTMLElement): void {
           <small>${t('transfer.help')}</small>
           <div><button id="copy-code" type="button">${t('transfer.copy')}</button><button id="paste-code" type="button">${t('transfer.paste')}</button></div>
         </div>
+        <div id="privacy" class="opt" hidden>
+          <a href="${import.meta.env.BASE_URL}privacidad.html#${getLang()}" target="_blank" rel="noopener">${t('settings.privacy')}</a>
+        </div>
       </section>
       <button id="bug-btn" type="button" aria-label="${t('bug.title')}">${uiIcon('bug')}</button>
     </main>`;
@@ -296,6 +299,7 @@ export function startApp(root: HTMLElement): void {
     lastShop = lastInfo = lastMore = '';
     $('sheet').hidden = sel === null;
     $('transfer').hidden = sel !== 'settings';
+    $('privacy').hidden = sel !== 'settings';
     $('lang').hidden = sel !== 'settings';
     $('quality').hidden = sel !== 'settings';
     $('music').hidden = sel !== 'settings';
