@@ -1,4 +1,10 @@
-# Sesión programada: desarrollo de Space Harvest (borrador, aún no creada)
+# Sesión programada: desarrollo de Space Harvest (lista para crear)
+
+**Configuración para la rutina** (se crea en la cuenta de Mikel; desde una sesión de código solo se pueden crear tareas que mueren con la sesión):
+
+- Repositorio: `MikelJka/Zenit`, rama `main` (el texto de abajo dice commit a la rama de trabajo de la sesión).
+- Frecuencia: cada 2 horas, en minuto 17 de las horas impares (cron `17 1-23/2 * * *`), para no coincidir con Scrap Empire.
+- Texto: todo lo que hay debajo de la línea `---`.
 
 Texto preparado para cuando Mikel cree la rutina (en su configuración). Se crea cuando el Hito 0 esté en «Pendiente» de `space-harvest/docs/FEEDBACK.md` (ya lo está). Frecuencia sugerida: cada 2 horas, desfasada una hora de la de Scrap Empire para no coincidir.
 

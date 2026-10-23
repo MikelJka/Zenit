@@ -5,7 +5,7 @@ Estas sesiones **se configuran en la cuenta de Mikel** (rutinas de Claude Code),
 | Sesión | Repositorio | Frecuencia | Texto |
 |---|---|---|---|
 | Desarrollo de Scrap Empire (IdleScrapyard) | `MikelJka/IdleScrapyard` (el original sigue operativo; ver `scrap-empire/MIGRACION.md`) | Cada 2 horas | `idlescrapyard.md` |
-| Desarrollo de Space Harvest | `MikelJka/Zenit`, carpeta `space-harvest/` | **Aún no creada**: se crea cuando el Hito 0 esté en «Pendiente» | `space-harvest.md` (borrador preparado) |
+| Desarrollo de Space Harvest | `MikelJka/Zenit`, carpeta `space-harvest/` | **Aún no creada en la cuenta** (el Hito 0 ya está en «Pendiente»); configuración y texto listos en `space-harvest.md` | `space-harvest.md` (borrador preparado) |
 | Desarrollo de Óxido | `MikelJka/OxidoGame` | (la configura Mikel) | **Falta**: el texto no estaba disponible al hacer esta copia; Mikel puede pegarlo aquí como `oxido.md` |
 
 ## Cómo funcionan (resumen común)
