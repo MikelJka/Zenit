@@ -2,6 +2,16 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — El juego trabaja menos en el móvil (#16, primera parte)
+
+- Petición de Mikel desde el botón 🐞 (#16, Android 10, 4 zonas): «Optimiza el juego para que vaya mejor».
+- En pantallas táctiles todo el bucle va a 30 fotogramas por segundo: antes la escena ya iba a 30, pero la simulación, el contador de dinero y la barra de arriba se rehacían a 60. Ahora el móvil hace la mitad de trabajo entre medias; los toques se atienden igual.
+- El contador de dinero, los ingresos por segundo y el rótulo de la pila solo se tocan cuando cambia el texto (el de la pila se rehacía entero en cada fotograma).
+- El parpadeo de las chispas cambiaba una clase en todo el mapa 7 veces por segundo (el navegador recalculaba el estilo de miles de piezas); ahora solo se hace si quedan chispas en el SVG, y con la capa de canvas no queda ninguna.
+- En «Calidad baja» (sola si va a menos de ~22 fps, o fijada en ajustes) la capa de canvas se pinta a resolución 1 en vez de 2: menos de la mitad de píxeles.
+- Qué probar: en el móvil, con `?fps=1`, mover el mapa y comparar con antes; probar también «Calidad baja» en ajustes (se verá algo menos nítido lo del canvas).
+- Sigue: segunda parte de #16 (los AGV, la pila y el decorado animado a canvas).
+
 ## 2026-10-23 — Botón 🐞 para mandar fallos y peticiones (S2)
 
 - Nuevo botón redondo con un bicho abajo a la izquierda (se esconde con una hoja abierta). Abre «Enviar fallo o petición»: se elige «Fallo» o «Petición», se escribe qué pasa y «Enviar en GitHub» abre el formulario de nueva incidencia de `MikelJka/Zenit` ya rellenado, con las etiquetas `feedback` y `scrap-empire`.

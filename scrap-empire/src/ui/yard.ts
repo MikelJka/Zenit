@@ -835,6 +835,11 @@ export function createYard(container: HTMLElement): Yard {
   let seaStart = -1e9;
   let railStart = -1e9;
   let lastHourCheck = -1;
+  let lastSparkCheck = -1;
+  let sparksInSvg = true;
+  let spkOn = false;
+  let pileShown = '';
+  let pileText: SVGTextElement | null = null;
   let lastBadgeCheck = -1;
   let lastEarned = -1;
   let mainLevel = 0;
@@ -914,8 +919,18 @@ export function createYard(container: HTMLElement): Yard {
     const shipX = sa < 0 || sa >= 14 ? 0 : sa < 6 ? (sa / 6) ** 2 * 60 : sa < 8 ? 400 : -60 + (1 - (1 - (sa - 8) / 6) ** 2) * 60;
     ship.setAttribute('transform', at(shipX, 0));
     // Cielo: nubes y pájaros.
-    svg.classList.toggle('spk', Math.floor(t / 0.14) % 2 === 1);
-    svgBack.classList.toggle('spk', Math.floor(t / 0.14) % 2 === 1);
+    // Cambiar la clase del svg obliga a recalcular los estilos de todo el mapa: solo se hace si quedan chispas en el SVG
+    // (con la capa de canvas, las chispas de las máquinas van allí y en el SVG no queda ninguna).
+    if (nowMs - lastSparkCheck > 2000) {
+      lastSparkCheck = nowMs;
+      sparksInSvg = svg.querySelector('.spark') !== null || svgBack.querySelector('.spark') !== null;
+    }
+    const spk = sparksInSvg && Math.floor(t / 0.14) % 2 === 1;
+    if (spk !== spkOn) {
+      spkOn = spk;
+      svg.classList.toggle('spk', spk);
+      svgBack.classList.toggle('spk', spk);
+    }
     cloudEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((t * 2.5 + i * 700) % 2800) - 1200).toFixed(1)} ${HORIZON - 190 - i * 38})`));
     birdEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((t * (16 + i * 3) + i * 520) % 2600) - 1100).toFixed(1)} ${(HORIZON - 120 - i * 34 + Math.sin(t * 1.3 + i) * 10).toFixed(1)})`));
     mainLevel += ((working ? 1 : 0) - mainLevel) * Math.min(1, dtv * (working ? 6 : 1.4));
@@ -926,7 +941,16 @@ export function createYard(container: HTMLElement): Yard {
     const s = 0.85 + Math.min(0.3, Math.log10(1 + state.scrap) / 10);
     pileBody.setAttribute('transform', `scale(${s.toFixed(3)})`);
     const [plx, ply] = iso(PILE.x + 1.8, PILE.y + 2.6, 0);
-    pileLabel.innerHTML = `<text x="${plx}" y="${ply}" text-anchor="middle" font-size="11" font-weight="900" fill="#fff6e0" stroke="#2a1d14" stroke-width="3" paint-order="stroke">${state.scrap >= 1 ? tr('map.scrapPile', { n: fmtShort(state.scrap) }) : `+${fmtShort(scrapPerSecond(state))}/s`}</text>`;
+    // El rótulo solo se toca si cambia el texto (antes se rehacía en cada fotograma).
+    const pileTxt = state.scrap >= 1 ? tr('map.scrapPile', { n: fmtShort(state.scrap) }) : `+${fmtShort(scrapPerSecond(state))}/s`;
+    if (pileTxt !== pileShown) {
+      if (!pileText) {
+        pileLabel.innerHTML = `<text x="${plx}" y="${ply}" text-anchor="middle" font-size="11" font-weight="900" fill="#fff6e0" stroke="#2a1d14" stroke-width="3" paint-order="stroke"></text>`;
+        pileText = pileLabel.querySelector('text');
+      }
+      pileShown = pileTxt;
+      if (pileText) pileText.textContent = pileTxt;
+    }
     hint.setAttribute('visibility', state.scrapTrucks === 0 ? 'visible' : 'hidden');
 
     // Camiones de chatarra: llegan por detrás, maniobran hasta la pila, vuelcan la caja y se van vacíos.

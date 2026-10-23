@@ -633,6 +633,8 @@ export function startApp(root: HTMLElement): void {
   // Cifra de dólares que cuenta hacia arriba (o hacia abajo al comprar) en vez de saltar.
   let shownDollars = state.dollars;
   let lastRenderAt = performance.now();
+  let lastDollarsTxt = '';
+  let lastRateTxt = '';
   const calmMotion = reducedMotion();
   /** Pequeño rebote de la cifra de dólares (al comprar o cobrar). */
   function bumpDollars(): void {
@@ -697,11 +699,20 @@ export function startApp(root: HTMLElement): void {
       $('extras').innerHTML = extras;
       lastExtras = extras;
     }
-    $('dollars').textContent = fmt(shownDollars);
-    $('rate').textContent = t('incomeRate', { n: fmt(incomePerSecond(state)) });
+    // Los textos de arriba solo se tocan si cambian (cada cambio obliga al navegador a recolocar la barra).
+    const dollarsTxt = fmt(shownDollars);
+    if (dollarsTxt !== lastDollarsTxt) {
+      lastDollarsTxt = dollarsTxt;
+      $('dollars').textContent = dollarsTxt;
+    }
+    const incomeTxt = t('incomeRate', { n: fmt(incomePerSecond(state)) });
+    if (incomeTxt !== lastRateTxt) {
+      lastRateTxt = incomeTxt;
+      $('rate').textContent = incomeTxt;
+    }
     // En pantallas táctiles (o si va justo) la escena se redibuja a 30 por segundo: se mueve igual y se pinta la mitad.
     const sceneNow = performance.now();
-    if (sceneNow - lastSceneAt >= sceneEveryMs) {
+    if (sceneNow - lastSceneAt >= sceneEveryMs - 4) {
       lastSceneAt = sceneNow;
       scene.update(state);
     }
@@ -893,6 +904,8 @@ export function startApp(root: HTMLElement): void {
   let fpsAt = performance.now();
   let worst = 0;
   let prevFrame = fpsAt;
+  let prevTick = last;
+  let lastWork = -1e9;
   const loop = (now: number) => {
     if (showFps) {
       frames++;
@@ -907,7 +920,8 @@ export function startApp(root: HTMLElement): void {
         fpsAt = now;
       }
     }
-    frameMs = frameMs * 0.9 + Math.min(200, now - last) * 0.1;
+    frameMs = frameMs * 0.9 + Math.min(200, now - prevTick) * 0.1;
+    prevTick = now;
     if (frameMs > 22) sceneEveryMs = Math.max(sceneEveryMs, 32);
     if (frameMs > 45 || lowForced) sceneEveryMs = Math.max(sceneEveryMs, 50);
     if (!lowQuality) {
@@ -917,6 +931,13 @@ export function startApp(root: HTMLElement): void {
         applyQuality();
       }
     }
+    // En táctiles (o si va justo) todo el bucle va al ritmo de la escena: entre medias no se toca nada (ni el
+    // contador de dinero), y el móvil trabaja la mitad. Los toques se atienden igual (van por sus eventos).
+    if (now - lastWork < sceneEveryMs - 4) {
+      requestAnimationFrame(loop);
+      return;
+    }
+    lastWork = now;
     advance(state, Math.min((now - last) / 1000, 1));
     last = now;
     if (now - lastSave > AUTOSAVE_MS && !importing) {

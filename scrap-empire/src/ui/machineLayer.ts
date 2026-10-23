@@ -259,13 +259,15 @@ function bake(svg: string, box = BOX, res = RES): Promise<Texture> {
 export async function createMachineLayer(lineCount: number): Promise<MachineLayer | null> {
   if (new URLSearchParams(location.search).has('svg')) return null; // ?svg=1: el mapa entero en SVG, para comparar.
   const app = new Application();
+  // Resolución del lienzo: hasta 2 (más no se nota en el móvil); en «Calidad baja», 1 (la mitad o menos de píxeles que pintar).
+  const baseRes = Math.min(2, window.devicePixelRatio || 1);
   try {
     await app.init({
       width: 380,
       height: 640,
       backgroundAlpha: 0,
       antialias: true,
-      resolution: Math.min(2, window.devicePixelRatio || 1),
+      resolution: baseRes,
       autoDensity: true,
       autoStart: false,
       preference: 'webgl',
@@ -592,6 +594,7 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       lines[i].enter = performance.now() / 1000;
     },
     setLowQuality(v) {
+      if (v !== low) app.renderer.resize(size[0], size[1], v ? Math.min(1, baseRes) : baseRes);
       low = v;
     },
     setView(x0, y0, scale, w, h) {
