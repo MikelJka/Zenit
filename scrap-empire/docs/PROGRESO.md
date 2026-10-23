@@ -2,6 +2,16 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Las máquinas se dibujan en canvas (S1, primera parte)
+
+- Nuevo `src/ui/machineLayer.ts` con PixiJS 8 (MIT, en `CREDITOS.md`): el mapa son ahora dos SVG con una capa de canvas en medio. Detrás, cielo, suelo y nave; en el canvas, las máquinas de las líneas; delante, pila, trabajadores, palés, carretillas, vehículos, noche y rótulos (recibe los toques).
+- Cada máquina se hornea una vez desde su mismo SVG en una textura de 512×512 (por producto, tramo y grado) y lo que se mueve (prensa, engranaje, chispas, humo y luz que parpadea) se anima por código; también el rebote de subir de nivel y la entrada al abrir zona. Con «Calidad baja» no hay humo ni chispas, como antes.
+- Si WebGL no arranca, o con `?svg=1` en la URL (para comparar), todo sigue en SVG como antes.
+- Pequeña diferencia: las máquinas quedan siempre por debajo de trabajadores y carretillas; los brillos de los grados 4-6 no titilan.
+- `package-lock.json` sin actualizar (la sesión no tiene acceso a npm); los flujos usan `npm install`, que añade `pixi.js`.
+- Qué probar: mover el mapa en el móvil con muchas máquinas y mirar el contador `?fps=1` (comparar con `?svg=1`).
+- Sigue: S1, segunda parte (suelo de los puestos y cintas en canvas).
+
 ## 2026-10-23 — Mikel elige la Parte 27
 
 - Mikel aprueba las cuatro opciones en este orden: S1 mapa en canvas con PixiJS, S2 botón 🐞, S3 preparar Google Play, S4 prestigio. Pasadas a «Pendiente» de FEEDBACK.md, a «Decidido» de DISENO.md y al ROADMAP.

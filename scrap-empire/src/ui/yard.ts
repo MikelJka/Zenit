@@ -30,6 +30,7 @@ import {
 } from './scenery';
 import { TRUCK_SLOTS, agvIso, carIso, forkliftIso, goldenTruckIso, scrapTruckIso, shipTruckIso } from './vehicles';
 import { reducedMotion } from './prefs';
+import { createMachineLayer, type MachineLayer } from './machineLayer';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -139,8 +140,25 @@ function gradeExtras(h: number, roof: string, grade: number): string {
   return s;
 }
 
-/** Máquina de una zona: cambia con su nivel (0 oxidada, 1 pintada, 2 con panel y luz, 3+ de lujo dorada) y se transforma cada 5 niveles. */
-function machineIso(id: string, level: number): string {
+/** Geometría de las partes que se mueven de una máquina (la capa de canvas las dibuja aparte). */
+export interface MachineGeom {
+  h: number;
+  /** Punto de la chispa, de la chimenea (humo) y de la luz (o null), en píxeles locales de la máquina. */
+  spark: [number, number];
+  chimney: [number, number];
+  lamp: [number, number] | null;
+}
+
+/** Variante de dibujo de la máquina: solo cambia con el tramo (0-3) y el grado (cada 5 niveles). */
+export function machineVariant(level: number): string {
+  return `${Math.min(3, level)}-${machineGrade(level)}`;
+}
+
+/**
+ * Parte fija de una máquina (sin prensa, engranaje, chispa ni humo) y la geometría de lo que se mueve.
+ * `blinkLamp`: la luz lleva la clase que la hace parpadear (en canvas parpadea por código).
+ */
+export function machineBody(id: string, level: number, blinkLamp = true): { svg: string; plate: string; geom: MachineGeom } {
   const look = ZONE_LOOKS[id] ?? { wall: '#999', roof: '#555' };
   const tier = Math.min(3, level);
   const grade = machineGrade(level);
@@ -156,28 +174,39 @@ function machineIso(id: string, level: number): string {
     s += block(0, 1.1, 0.06, 0.95, 0.02, 0.12, '#f4c430', { edge: false });
     s += block(0.7, 0.7, h, 0.16, 0.16, 0.5, shade(look.roof, 1));
   }
+  let lamp: [number, number] | null = null;
   if (tier >= 2) {
     s += block(0.1, 1.1, 0.3, 0.4, 0.12, 0.35, '#3b4a5a');
     const [lx, ly] = iso(0.3, 0.3, h + 0.05);
-    s += `<circle class="lamp" cx="${lx.toFixed(1)}" cy="${(ly - 3).toFixed(1)}" r="3.2" fill="#7ee081" stroke="#2a1d14" stroke-width="0.8"/>`;
+    lamp = [lx, ly - 3];
+    s += `<circle${blinkLamp ? ' class="lamp"' : ''} cx="${lx.toFixed(1)}" cy="${(ly - 3).toFixed(1)}" r="3.2" fill="#7ee081" stroke="#2a1d14" stroke-width="0.8"/>`;
   }
   if (tier >= 3) {
     s += block(-0.02, -0.02, h, 0.99, 1.14, 0.05, '#f2b705');
     s += block(0.1, 0.1, h + 0.05, 0.14, 0.14, 0.45, '#f2b705');
   }
   s += gradeExtras(h, look.roof, grade);
+  const geom: MachineGeom = { h, spark: iso(0.47, -0.04, h - 0.15), chimney: iso(0.78, 0.8, h + (tier === 0 ? 0.35 : 0.5)), lamp };
+  // Placa con el producto en la cara frontal.
+  const [px, py] = iso(0.62, 1.1, h * 0.5);
+  const plate = `<g transform="translate(${px.toFixed(1)} ${py.toFixed(1)}) scale(0.62)"><rect x="-11" y="-10" width="22" height="20" rx="3" fill="#fff3dc" stroke="#2a1d14"/>${productIcon(id)}</g>`;
+  return { svg: `<ellipse cx="${iso(0.5, 0.55)[0]}" cy="${iso(0.5, 0.55)[1] + 3}" rx="30" ry="13" fill="#000" opacity="0.15"/>${s}`, plate, geom };
+}
+
+/** Máquina de una zona en SVG: cambia con su nivel (0 oxidada, 1 pintada, 2 con panel y luz, 3+ de lujo dorada) y se transforma cada 5 niveles. */
+function machineIso(id: string, level: number): string {
+  const { svg, plate, geom } = machineBody(id, level);
+  const { h } = geom;
+  let s = svg;
   // Partes que se mueven cuando la línea trabaja: prensa, engranaje, chispas y humo de la chimenea.
   s += `<g class="press">${block(0.12, 0.22, h, 0.5, 0.45, 0.16, '#3b3b3b')}</g>`;
-  const [spx, spy] = iso(0.47, -0.04, h - 0.15);
+  const [spx, spy] = geom.spark;
   s += `<g class="fx"><circle class="spark" cx="${spx.toFixed(1)}" cy="${spy.toFixed(1)}" r="3.4" fill="#ffe37a"/>`;
   const gz = h * 0.5;
   s += `<g transform="matrix(-28 14 0 -20 26.6 13.3)"><g transform="translate(0.55 ${gz.toFixed(2)})"><g class="gear" fill="#3b3b3b" stroke="#2a1d14" stroke-width="0.03"><circle r="0.13"/>${[0, 45, 90, 135].map((a) => `<rect x="-0.03" y="-0.19" width="0.06" height="0.38" transform="rotate(${a})"/>`).join('')}<circle r="0.05" fill="#8a8a8a"/></g></g></g>`;
-  const [chx, chy] = iso(0.78, 0.8, h + (tier === 0 ? 0.35 : 0.5));
+  const [chx, chy] = geom.chimney;
   s += [0, 1, 2].map((k) => `<circle class="puff" cx="${chx.toFixed(1)}" cy="${chy.toFixed(1)}" r="5" fill="#e6dccb" style="animation-delay:${(-k * 0.8).toFixed(1)}s"/>`).join('') + '</g>';
-  // Placa con el producto en la cara frontal.
-  const [px, py] = iso(0.62, 1.1, h * 0.5);
-  s += `<g transform="translate(${px.toFixed(1)} ${py.toFixed(1)}) scale(0.62)"><rect x="-11" y="-10" width="22" height="20" rx="3" fill="#fff3dc" stroke="#2a1d14"/>${productIcon(id)}</g>`;
-  return `<ellipse cx="${iso(0.5, 0.55)[0]}" cy="${iso(0.5, 0.55)[1] + 3}" rx="30" ry="13" fill="#000" opacity="0.15"/>${s}`;
+  return s + plate;
 }
 
 const MAX_SHOWN = 9;
@@ -340,13 +369,19 @@ interface Obj {
 }
 
 export function createYard(container: HTMLElement): Yard {
+  // Dos SVG con una capa de canvas en medio (las máquinas, con PixiJS): detrás el cielo, el suelo y la nave;
+  // delante lo demás (pila, trabajadores, carretillas, vehículos, noche y rótulos). El de delante recibe los toques.
+  const svgBack = document.createElementNS(NS, 'svg');
+  svgBack.setAttribute('class', 'yard yard-back');
+  svgBack.setAttribute('aria-hidden', 'true');
   const svg = document.createElementNS(NS, 'svg');
-  svg.setAttribute('class', 'yard');
+  svg.setAttribute('class', 'yard yard-front');
   const city = cityMarkup();
   const hallBox = [-500, -170, 1140, 600] as const;
-  svg.innerHTML = `<defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1a8"/><stop offset="0.5" stop-color="#f2b705"/><stop offset="1" stop-color="#b07d00"/></linearGradient>
+  const defs = `<defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1a8"/><stop offset="0.5" stop-color="#f2b705"/><stop offset="1" stop-color="#b07d00"/></linearGradient>
     <radialGradient id="ao"><stop offset="0" stop-color="#1a1008" stop-opacity="0.5"/><stop offset="0.6" stop-color="#1a1008" stop-opacity="0.22"/><stop offset="1" stop-color="#1a1008" stop-opacity="0"/></radialGradient>
-    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3d0" stop-opacity="0.18"/><stop offset="0.5" stop-color="#fff3d0" stop-opacity="0"/><stop offset="1" stop-color="#1a1530" stop-opacity="0.16"/></linearGradient></defs>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3d0" stop-opacity="0.18"/><stop offset="0.5" stop-color="#fff3d0" stop-opacity="0"/><stop offset="1" stop-color="#1a1530" stop-opacity="0.16"/></linearGradient></defs>`;
+  svgBack.innerHTML = `${defs}
     ${skySvg()}
     <g id="clouds"></g>
     ${staticImage(city.base, -1900, HORIZON - 380, 3800, 480)}
@@ -360,7 +395,8 @@ export function createYard(container: HTMLElement): Yard {
     <g id="ground"></g>
     <g id="back"></g>
     ${staticImage(hallBackSvg(), ...hallBox)}
-    ${staticImage(hallInteriorSvg(), ...hallBox)}
+    ${staticImage(hallInteriorSvg(), ...hallBox)}`;
+  svg.innerHTML = `${defs}
     <g id="objects"></g>
     <g id="hits"></g>
     ${staticImage(hallFrameSvg(), ...hallBox)}
@@ -376,8 +412,12 @@ export function createYard(container: HTMLElement): Yard {
     <g id="spots" opacity="0" pointer-events="none">${spotlightsSvg()}</g>
     <g id="labels"></g>
     <g id="pops"></g>`;
+  container.appendChild(svgBack);
   container.appendChild(svg);
-  const q = (id: string) => svg.querySelector<SVGGElement>('#' + id)!;
+  const q = (id: string) => (svg.querySelector<SVGGElement>('#' + id) ?? svgBack.querySelector<SVGGElement>('#' + id))!;
+  /** Capa de canvas de las máquinas (null mientras arranca o si WebGL no va: entonces se dibujan en SVG). */
+  let gpu: MachineLayer | null = null;
+  let lowQ = false;
   const back = q('back');
   const objectsG = q('objects');
   const front = q('front');
@@ -657,6 +697,7 @@ export function createYard(container: HTMLElement): Yard {
   /** Apertura de zona: el andamio se levanta y se desvanece mientras la máquina entra desde arriba. */
   function animateOpening(l: Line, scaffold: string): void {
     if (reducedMotion() || !l.machines.animate) return;
+    gpu?.opening(ZONES.indexOf(l.def));
     l.machines.animate(
       [
         { transform: 'translateY(-46px)', opacity: 0 },
@@ -681,6 +722,7 @@ export function createYard(container: HTMLElement): Yard {
       l.belts.innerHTML = '';
       l.worker.innerHTML = l.pallet.innerHTML = '';
       l.machines.innerHTML = `<g transform="${at(st.x, st.y)}">${scaffoldSvg(0, 0, SIZE)}</g>`;
+      gpu?.setLine(i, [], '', () => ({ svg: '', geom: { h: 0, spark: [0, 0], chimney: [0, 0], lamp: null } }));
       l.press = l.gears = l.fx = l.flows = [];
       l.torso = null;
       l.stat = l.cnt = null;
@@ -707,7 +749,16 @@ export function createYard(container: HTMLElement): Yard {
     }
     // Pintadas de atrás hacia delante.
     cells.sort((a, b) => a.c + a.r - (b.c + b.r));
-    for (const { c, r } of cells) machines += `<g transform="${at(0.2 + c * dx, 0.25 + r * dy)} scale(${scale})">${machineIso(l.def.id, zone.machineLevel)}</g>`;
+    if (gpu) {
+      const spots = cells.map(({ c, r }) => {
+        const [x, y] = iso(st.x + 0.2 + c * dx, st.y + 0.25 + r * dy);
+        return { x, y, scale };
+      });
+      gpu.setLine(i, spots, `${l.def.id}-${machineVariant(zone.machineLevel)}`, () => {
+        const m = machineBody(l.def.id, zone.machineLevel, false);
+        return { svg: m.svg + m.plate, geom: m.geom };
+      });
+    } else for (const { c, r } of cells) machines += `<g transform="${at(0.2 + c * dx, 0.25 + r * dy)} scale(${scale})">${machineIso(l.def.id, zone.machineLevel)}</g>`;
     if (zone.machines > MAX_SHOWN) {
       const [bx, by] = iso(2.9, 2.0, 0.1);
       machines += `<g transform="translate(${bx.toFixed(1)} ${by.toFixed(1)})"><rect x="-16" y="-8" width="32" height="15" rx="7" fill="#2a1d14" opacity="0.9"/><text y="3" text-anchor="middle" font-size="9.5" font-weight="900" fill="#ffd76a">+${zone.machines - MAX_SHOWN}</text></g>`;
@@ -816,6 +867,7 @@ export function createYard(container: HTMLElement): Yard {
     ship.setAttribute('transform', at(shipX, 0));
     // Cielo: nubes y pájaros.
     svg.classList.toggle('spk', Math.floor(t / 0.14) % 2 === 1);
+    svgBack.classList.toggle('spk', Math.floor(t / 0.14) % 2 === 1);
     cloudEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((t * 2.5 + i * 700) % 2800) - 1200).toFixed(1)} ${HORIZON - 190 - i * 38})`));
     birdEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((t * (16 + i * 3) + i * 520) % 2600) - 1100).toFixed(1)} ${(HORIZON - 120 - i * 34 + Math.sin(t * 1.3 + i) * 10).toFixed(1)})`));
     mainLevel += ((working ? 1 : 0) - mainLevel) * Math.min(1, dtv * (working ? 6 : 1.4));
@@ -900,6 +952,7 @@ export function createYard(container: HTMLElement): Yard {
       const wave = 0.5 + 0.5 * Math.sin(l.phase);
       const [mx, my] = iso(station(i).x + SIZE / 2, station(i).y + SIZE / 2);
       const inView = mx > view.x0 - 130 && mx < view.x1 + 130 && my > view.y0 - 130 && my < view.y1 + 130;
+      gpu?.animate(i, l.level, l.phase, l.gearAngle, inView);
       if (inView) {
         for (const e of l.press) e.style.translate = `0 ${(l.level * wave * 7).toFixed(2)}px`;
         for (const e of l.gears) e.style.rotate = `${l.gearAngle.toFixed(1)}deg`;
@@ -1145,6 +1198,7 @@ export function createYard(container: HTMLElement): Yard {
         if (at !== o.el) objectsG.insertBefore(o.el, at ?? null);
       });
     }
+    gpu?.render(t);
   }
 
   function pop(text: string, where: 'pile' | 'dock'): void {
@@ -1190,7 +1244,10 @@ export function createYard(container: HTMLElement): Yard {
     cam.y = Math.min(560, Math.max(-230, cam.y));
     const vw = w / cam.scale;
     const vh = h / cam.scale;
-    svg.setAttribute('viewBox', `${(cam.x - vw / 2).toFixed(1)} ${(cam.y - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
+    const vb = `${(cam.x - vw / 2).toFixed(1)} ${(cam.y - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`;
+    svg.setAttribute('viewBox', vb);
+    svgBack.setAttribute('viewBox', vb);
+    gpu?.setView(cam.x - vw / 2, cam.y - vh / 2, cam.scale, w, h);
     view.x0 = cam.x - vw / 2;
     view.x1 = cam.x + vw / 2;
     view.y0 = cam.y - vh / 2;
@@ -1198,6 +1255,16 @@ export function createYard(container: HTMLElement): Yard {
   }
   apply();
   new ResizeObserver(apply).observe(container);
+  // Arranca la capa de canvas; cuando está lista, las líneas se vuelven a montar con sus máquinas allí.
+  void createMachineLayer(ZONES.length).then((layer) => {
+    if (!layer) return;
+    layer.canvas.style.pointerEvents = 'none';
+    container.insertBefore(layer.canvas, svg);
+    layer.setLowQuality(lowQ);
+    gpu = layer;
+    for (const l of lines) l.key = '';
+    apply();
+  });
 
   const pointers = new Map<number, { x: number; y: number }>();
   let moved = 0;
@@ -1273,6 +1340,7 @@ export function createYard(container: HTMLElement): Yard {
     pops.appendChild(g);
     setTimeout(() => g.remove(), 1500);
     if (big) {
+      gpu?.levelUp(i, iso(st.x + SIZE / 2, st.y + SIZE / 2)[0], iso(st.x + SIZE, st.y + SIZE)[1]);
       const m = lines[i].machines;
       m.classList.remove('levelup');
       void m.getBoundingClientRect();
@@ -1297,6 +1365,8 @@ export function createYard(container: HTMLElement): Yard {
     celebrate,
     onSelect: (cb) => (onSelect = cb),
     setLowQuality: (low) => {
+      lowQ = low;
+      gpu?.setLowQuality(low);
       for (const g of [clouds, birds, hway, q('train')]) g.setAttribute('display', low ? 'none' : '');
     },
     setSelected: (sel) => selOutlines.forEach((el, id) => el.setAttribute('display', id === sel ? '' : 'none')),

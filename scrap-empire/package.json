@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@capacitor/core": "^7.6.9",
-    "firebase": "^13.0.0"
+    "firebase": "^13.0.0",
+    "pixi.js": "^8.6.0"
   }
 }

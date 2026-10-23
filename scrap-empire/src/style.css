@@ -262,3 +262,6 @@ html.contrast #shop button:disabled { opacity: 0.75; }
 #toast { background: linear-gradient(180deg, #ffe58a, #f2b705); border-color: #fff6c8; box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4), 0 10px 20px rgba(0, 0, 0, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.6); }
 button:focus-visible { outline: 3px solid #ffd76a; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { #extras .daily.ready, #extras .goals.ready { animation: none !important; } }
+/* Mapa en capas: SVG de fondo, canvas de las máquinas (PixiJS) y SVG de delante, que recibe los toques. */
+#scene-wrap > .yard, #scene-wrap > .machine-layer { position: absolute; left: 0; top: 0; }
+.yard-back, .machine-layer { pointer-events: none; }
