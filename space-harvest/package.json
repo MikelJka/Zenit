@@ -1,0 +1,22 @@
+{
+  "name": "space-harvest",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Space Harvest: juego incremental (idle) de estación espacial (Zenit Studio)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "vite": "^7.0.0",
+    "vitest": "^3.2.0"
+  },
+  "dependencies": {
+    "pixi.js": "^8.6.0"
+  }
+}

@@ -1,0 +1,25 @@
+name: 'Space Harvest: probar rama'
+
+# Prueba las ramas que tocan Space Harvest antes de llevarlas a main.
+on:
+  push:
+    branches-ignore: [main, 'capturas*']
+    paths: ['space-harvest/**', '.github/workflows/space-harvest-probar-rama.yml']
+  pull_request:
+    paths: ['space-harvest/**', '.github/workflows/space-harvest-probar-rama.yml']
+
+defaults:
+  run:
+    working-directory: space-harvest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm test
+      - run: npm run build
