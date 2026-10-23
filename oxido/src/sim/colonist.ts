@@ -1,6 +1,7 @@
 import type { WeaponId } from '../data/weapons';
 import { ArmorId, armorWalk } from '../data/armor';
 import { CREATURE_IDS, CREATURES, CreatureId } from '../data/creatures';
+import { WOUNDED_WALK_FACTOR } from '../data/movement';
 import {
   FIRST_NAMES, HAIR_COLORS, NICKNAMES, SHIRT_COLORS, SKILLS, SKIN_COLORS, Skill, TRAITS, TRAIT_CONFLICTS, TraitDef,
 } from '../data/colonists';
@@ -306,9 +307,11 @@ export function createColonist(id: number, at: Point, rng: Rng): Colonist {
   };
 }
 
+/** Multiplicador de su velocidad al caminar: rasgos, armadura, especie y heridas (−30 % con alguna). */
 export function walkSpeedMultiplier(c: Colonist): number {
   const beast = c.creature ? CREATURES[c.creature].walkSpeed : 1;
-  return c.traits.reduce((m, t) => m * (t.walkSpeed ?? 1), 1) * armorWalk([c.vest, c.helmet]) * beast;
+  const wounded = c.wounds.length > 0 ? WOUNDED_WALK_FACTOR : 1;
+  return c.traits.reduce((m, t) => m * (t.walkSpeed ?? 1), 1) * armorWalk([c.vest, c.helmet]) * beast * wounded;
 }
 
 export function activityLabel(c: Colonist): string {

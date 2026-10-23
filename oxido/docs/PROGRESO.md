@@ -2,6 +2,17 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (79) — Todo se mueve más despacio y los heridos van más lentos
+
+- Segunda de las cinco decisiones de Mikel (#3 del 🐞, opción A).
+  - Todo lo que se mueve por el mapa va a **×0,75**: un colono normal, 2,25 casillas por segundo (antes 3); enemigos, animales y vehículos, en la misma proporción (el buggy, 4,5; la balsa, 1,1).
+  - Quien tiene **alguna herida** sin cerrar camina un **30 % más despacio** (colonos, saqueadores y animales); al cerrarse todas, vuelve a su paso.
+  - Los viajes del mapa del mundo (expediciones) no cambian.
+- Números en `src/data/movement.json`; reglas en `src/sim/world.ts` (`BASE_WALK_SPEED`) y `src/sim/colonist.ts` (`walkSpeedMultiplier`). 4 tests nuevos en `tests/moveSpeed.test.ts`; ajustados los de buggy, balsa y lancha a la nueva velocidad.
+- Qué probar: a ×1, los colonos deben verse más tranquilos; tras un raid, un herido debe ir claramente más lento que los demás hasta que se le cierren las heridas.
+- Qué sigue: #5 sueño (6 h en cama, 7 en el suelo, de 21:00 a 07:00).
+- Sin npm en el entorno: tests con Bun (717); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 (78) — El primer raid llega más tarde, es pequeño y se ve venir
 
 - Primera de las cinco decisiones de Mikel (#2 del 🐞, A + B): da tiempo a hacer armas antes del primer raid.

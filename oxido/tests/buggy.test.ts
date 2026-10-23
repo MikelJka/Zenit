@@ -87,9 +87,9 @@ describe('buggy blindado', () => {
     expect(w.orderVehicleMove(v.id, { x: 25, y: 12 })).toBe('ok');
     const ticks = run(w, 5000, () => v.path.length === 0);
     expect(v.x).toBe(25);
-    // 13 casillas a 6 casillas/s = 2,2 s (un colono, a 3 casillas/s, tardaría el doble).
-    expect(ticks / TICKS_PER_SECOND).toBeLessThan(2.5);
-    expect(ticks / TICKS_PER_SECOND).toBeGreaterThan(2);
+    // 13 casillas a 4,5 casillas/s (el doble que un colono, 2,25 desde el #3 del 🐞) = 2,9 s.
+    expect(ticks / TICKS_PER_SECOND).toBeLessThan(3.2);
+    expect(ticks / TICKS_PER_SECOND).toBeGreaterThan(2.7);
     expect(10 - v.fuel).toBeCloseTo(ticks / TICKS_PER_HOUR, 5);
     expect(checkWorld(w)).toEqual([]);
   });

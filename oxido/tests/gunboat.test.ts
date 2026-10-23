@@ -95,7 +95,8 @@ describe('lancha armada', () => {
     v.fuel = 10;
     expect(w.orderVehicleMove(v.id, { x: 18, y: 12 })).toBe('ok');
     const ticks = run(w, 6000, () => v.path.length === 0);
-    const expected = (8 / (3 * 1.5)) * TICKS_PER_SECOND;
+    // Un colono anda a 3 × 0,75 casillas por segundo (#3 del 🐞).
+    const expected = (8 / (3 * 0.75 * 1.5)) * TICKS_PER_SECOND;
     expect(ticks).toBeGreaterThan(expected * 0.9);
     expect(ticks).toBeLessThan(expected * 1.1 + 2);
   });

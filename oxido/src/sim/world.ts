@@ -61,9 +61,13 @@ import { CROPS, CropDef } from '../data/crops';
 import { FOOD_RESOURCES, RESOURCES, ResourceId, STARTING_SUPPLIES } from '../data/resources';
 
 import { TICKS_PER_DAY, TICKS_PER_HOUR, TICKS_PER_SECOND } from './time';
+import { GLOBAL_MOVE_SPEED } from '../data/movement';
 export { TICKS_PER_DAY, TICKS_PER_HOUR, TICKS_PER_SECOND };
-/** Casillas por segundo (a x1) de un colono normal en terreno de coste 1. */
-const BASE_WALK_SPEED = 3;
+/**
+ * Casillas por segundo (a x1) de un colono normal en terreno de coste 1: 3 por el multiplicador
+ * común de `movement.json` (×0,75 desde el #3 del 🐞). También es la base de los vehículos.
+ */
+const BASE_WALK_SPEED = 3 * GLOBAL_MOVE_SPEED;
 /** La partida empieza a las 7:00 del día 1. */
 export const START_HOUR = 7;
 /** Máximo de ticks a simular por fotograma para no bloquear el navegador. */

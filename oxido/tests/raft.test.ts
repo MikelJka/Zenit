@@ -109,8 +109,8 @@ describe('balsa', () => {
     const { v } = raftWithRower(w);
     expect(w.orderVehicleMove(v.id, { x: 18, y: 12 })).toBe('ok');
     const ticks = run(w, 6000, () => v.path.length === 0);
-    // 8 casillas a la mitad de lo que anda un colono (3 casillas por segundo): 1,5 por segundo.
-    const expected = (8 / (3 * 0.5)) * TICKS_PER_SECOND;
+    // 8 casillas a la mitad de lo que anda un colono (3 × 0,75 casillas por segundo desde el #3 del 🐞).
+    const expected = (8 / (3 * 0.75 * 0.5)) * TICKS_PER_SECOND;
     expect(ticks).toBeGreaterThan(expected * 0.9);
     expect(ticks).toBeLessThan(expected * 1.1 + 2);
   });
