@@ -87,7 +87,7 @@ Lo que Mikel aprueba en `FEEDBACK.md` se resume aquí.
 - **Moneda y recurso** (2026-10-19): una sola moneda, el **dólar**, con la que se compran todas las mejoras. La **chatarra** es el único recurso de entrada. Todo lo fabricado se convierte en dólares al expedirlo.
 - **Zonas** (2026-10-19): se desbloquean con dólares y cada una transforma la chatarra en un producto de más valor (p. ej. aplastado de chatarra → bloques de chatarra, 1 $; fundido de chatarra → lingotes de chatarra, 4 $…).
 - **Ayudantes** (2026-10-19): uno nuevo por cada zona desbloqueada. Según su nivel dan mejoras, por ejemplo que lo producido valga más dinero.
-- **Prestigio** (2026-10-19): no en la primera versión; en una actualización posterior. **Cambiado el 2026-10-23:** Mikel lo aprueba (S4); cómo funciona se decide en la Parte 28.
+- **Prestigio** (2026-10-19): no en la primera versión; en una actualización posterior. **Cambiado el 2026-10-23:** Mikel lo aprueba (S4); cómo funciona (Parte 28: PA1 PB1 PC3 PD2): desde la zona 8; Tornillos de oro = √(dinero ganado en la partida / 1 000 000 000); se conservan Pase, racha, logros, ranking y destinos del tren y el barco; +5 % a todo lo producido por Tornillo, para siempre.
 - **Chatarra** (2026-10-19): al principio se recoge tocando la pila; luego se compran camiones que la traen solos.
 - **Zonas en paralelo** (2026-10-19): cada zona transforma la chatarra directamente en su producto; las nuevas dan un producto que vale más.
 - **Expedición** (2026-10-19): se compran carretillas que llevan lo fabricado a un muelle de carga; los camiones llegan solos a cargar cuando el muelle tiene suficiente stock, y al expedirlo se convierte en dólares.
@@ -128,4 +128,4 @@ Lo que Mikel aprueba en `FEEDBACK.md` se resume aquí.
 - **Nombre global** (2026-10-20, Mikel): «Scrap Empire: Idle Factory» (opción G2).
 - **Equilibrio (2026-10-21):** zonas 8-10 un 30 % más baratas de abrir; nivel de máquina ×1,8. Objetivos diarios y F3/F4/F5 (rutas, almacén, capitán del tren y el barco) aprobados; los números se deciden en las Partes 25 y 26 de `FEEDBACK.md`.
 - **Almacén y menú (2026-10-21):** el almacén del tren y el barco cuesta la mitad que el transporte (×1,8 por nivel); el menú de inicio sale siempre al abrir el juego.
-- **Qué hacemos ahora (Parte 27, 2026-10-23, Mikel elige S1, S2, S3 y S4):** S1 mapa en canvas con PixiJS por partes, mismo aspecto; S2 botón 🐞 que abre incidencias `feedback` + `scrap-empire` en Zenit; S3 preparar Google Play (privacidad, consentimiento UE con Google UMP, AdMob de prueba); S4 prestigio (detalles en la Parte 28).
+- **Qué hacemos ahora (Parte 27, 2026-10-23, Mikel elige S1, S2, S3 y S4):** S1 mapa en canvas con PixiJS por partes, mismo aspecto; S2 botón 🐞 que abre incidencias `feedback` + `scrap-empire` en Zenit; S3 preparar Google Play (privacidad, consentimiento UE con Google UMP, AdMob de prueba); S4 prestigio (ver arriba).

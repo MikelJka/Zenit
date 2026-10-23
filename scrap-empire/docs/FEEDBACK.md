@@ -13,7 +13,7 @@ Escribe aquí lo que quieras, o abre una incidencia en GitHub con la etiqueta `f
   - [ ] **S1 — Rendimiento:** pasar el dibujo del mapa de SVG a canvas con PixiJS (MIT), por partes: primero suelo y máquinas, mismo aspecto y más fps en móviles flojos.
   - [ ] **S2 — Botón 🐞 en el juego,** como el de Óxido: abre una incidencia en `MikelJka/Zenit` con las etiquetas `feedback` y `scrap-empire`, el tipo (fallo o petición) y los datos de la partida.
   - [ ] **S3 — Preparar Google Play:** política de privacidad en la web, consentimiento de anuncios UE (Google UMP) y AdMob en modo de prueba; los identificadores reales los crea Mikel.
-  - [ ] **S4 — Prestigio:** cómo funciona, a decidir en la Parte 28 de las propuestas; se programa cuando Mikel responda.
+  - [ ] **S4 — Prestigio** (Parte 28, 2026-10-23, Mikel elige PA1 PB1 PC3 PD2): se puede reiniciar a partir de abrir la zona 8; da «Tornillos de oro» = raíz cuadrada de (dinero ganado en la partida / 1 000 000 000); se conservan el Pase, la racha, los logros, el ranking y los destinos comprados del tren y el barco (todo lo demás vuelve a cero); cada Tornillo de oro da +5 % a todo lo producido, para siempre.
 
 - [ ] **Estilo visual: 2D muy bonito y atractivo** (2026-10-19, Mikel cambia el 3D por 2D: «no aporta nada ver esto desde diferentes ángulos»): escena del desguace en SVG dibujada por código, estilo dibujo animado. **Hecha la vista isométrica** (2026-10-19, como la captura de serrería que enseñó Mikel): mapa a pantalla completa (arrastrar y pellizcar), puestos con líneas amarillas, máquinas por nivel (1-2 por puesto), ayudantes de bloques, palés, carretillas, camiones de chatarra detrás y de expedición delante, dinero que salta al cobrar; botones flotantes y tienda en panel inferior. **Hechos los sonidos** (2026-10-19, sintetizados por código, con botón de silencio) **y las animaciones** (2026-10-19): productos distintos por línea, carretillas que giran, máquinas que trabajan, volquete, coches de fondo, ciudad industrial, nave en rayos X, nubes, pájaros y paseantes. Falta: pulir.
 
@@ -62,12 +62,4 @@ Escribe aquí lo que quieras, o abre una incidencia en GitHub con la etiqueta `f
 
 Aquí se concreta el diseño de Scrap Empire entre Mikel y Claude, por partes. La estructura genérica está en `docs/DISENO.md`. Responde con las letras (p. ej. «O2S») o con tu idea, por el chat, editando este archivo o con una incidencia `feedback`.
 
-### Parte 28 — Cómo funciona el prestigio (2026-10-23)
-
-Aprobaste S4 (reinicio con premio). Antes de programarlo, elige una letra de cada grupo (p. ej. «PA2 PB1 PC1 PD2») o di tu idea:
-
-- **PA — Cuándo se puede reiniciar:** PA1 al abrir la zona 8 · PA2 al abrir la zona 10 (todo abierto) · PA3 desde el principio, pero solo da premio si se ha ganado al menos 1 000 000 000 $ en la partida.
-- **PB — Cuánta moneda da (nombre propuesto: «Tornillos de oro»):** PB1 raíz cuadrada del dinero ganado en la partida entre 1 000 000 000 (crece despacio) · PB2 una por cada zona abierta más una por cada 25 niveles de máquina (fácil de entender) · PB3 raíz cúbica del dinero ganado (crece más despacio aún, partidas más largas).
-- **PC — Qué se conserva al reiniciar:** PC1 solo el Pase, la racha, los logros y el ranking (todo lo demás vuelve a cero) · PC2 lo de PC1 más los niveles de los ayudantes · PC3 lo de PC1 más los destinos comprados del tren y el barco.
-- **PD — Qué da cada Tornillo de oro:** PD1 +2 % a todo lo producido, para siempre · PD2 +5 % · PD3 se gastan en una tienda de mejoras permanentes (más chatarra inicial, carretillas más rápidas, más tope fuera…), que te propondría en otra parte.
-
+No hay propuestas abiertas.
