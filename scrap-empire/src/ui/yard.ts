@@ -1393,6 +1393,10 @@ export function createYard(container: HTMLElement): Yard {
   }
   apply(true);
   new ResizeObserver(() => apply(true)).observe(container);
+  // Por si el navegador desplaza el contenedor (p. ej. para enseñar algo que se toca o se enfoca): siempre en su sitio.
+  container.addEventListener('scroll', () => {
+    if (container.scrollLeft || container.scrollTop) container.scrollLeft = container.scrollTop = 0;
+  });
   // Arranca la capa de canvas; cuando está lista, las líneas se vuelven a montar con sus máquinas allí.
   void createMachineLayer(ZONES.length).then((layer) => {
     if (!layer) return;
