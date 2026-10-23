@@ -2,6 +2,11 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Mikel elige las cinco propuestas
+
+- Respondidas en el chat: primer raid **A + B** (día 7, pequeño, cuenta atrás desde el día 3 y aviso un día antes), velocidad **A** (×0,75, herido −30 %), sueño **B** (6 h en cama, 7 h en el suelo, de 21:00 a 07:00), botones **🎯 Cazar** y **🤝 Domar** en Órdenes (**B**) y comida con **fecha de caducidad por unidad** que se estropea de golpe (B, con duraciones ajustadas: carne, pescado y leche 2 días; comida cocinada 4; huevos y setas 7; patata 20; maíz 30).
+- Pasan a «Pendiente» de `FEEDBACK.md`, una por sesión en ese orden. No quedan propuestas abiertas.
+
 ## 2026-10-23 (77) — Cerrar un trato con la caravana ya no falla
 
 - Arreglo del 🐞 #6 de Mikel («posible fallo al cerrar un trato»). Revisado el cierre del trato y arreglados cuatro fallos:

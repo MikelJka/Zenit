@@ -4,11 +4,18 @@ Escribe aquí lo que quieras, o usa el botón 🐞 del juego: abre una incidenci
 
 ## Pendiente
 
+- [ ] **Decisiones de Mikel del 2026-10-23 sobre el 🐞 del 2026-10-22** (respondió en el chat a las cinco propuestas). Una por sesión, en este orden:
+  - [ ] **#2 Primer raid (A + B)**: el primer raid llega el **día 7** en Normal (en los demás niveles, 2 días más tarde que ahora) y siempre es **pequeño** (2 saqueadores con palos). **Cuenta atrás visible desde el día 3** y el día anterior, aviso «se ven saqueadores en el horizonte».
+  - [ ] **#3 Velocidad (A)**: todo (colonos, enemigos, animales y vehículos) va a **×0,75**; un herido, **−30 %**.
+  - [ ] **#5 Sueño (B)**: **6 h en cama y 7 h en el suelo**, en la franja de **21:00 a 07:00**; los «Nocturno», de día (de 09:00 a 19:00; puesto en el chat, Mikel puede cambiarlo). Fuera de la franja solo se acuestan si están agotados.
+  - [ ] **#1 Botones de cazar y domar (B)**: en 🪓 Órdenes, «🎯 Cazar» y «🤝 Domar» como botones aparte; se arrastra sobre los animales para marcarlos todos («Quitar» les quita la marca). Tocar un animal sigue funcionando.
+  - [ ] **#1 Caducidad de la comida (B, cambiada por Mikel)**: cada unidad de comida tiene su **fecha de caducidad** desde que se obtiene (cosecha, caza, pesca, cocina…); mientras no llega está fresca y, al llegar, **esa unidad se estropea entera de golpe** (ya no se pierde un poco cada día). Al juntar montones se guarda cada lote con su fecha y se come primero lo que caduca antes. En una **nevera con corriente** o con **frío** el tiempo no corre. Duración (Mikel eligió 2 días para carne, pescado y leche y 7 para lo demás, y pidió ajustarlo para que no se queden sin comida; ajustado en el chat del 2026-10-23, puede cambiarlo): **carne, pescado y leche, 2 días; comida cocinada, 4; huevos y setas, 7; patata, 20; maíz, 30** (las cosechas son de temporada y con 7 días se perdería casi toda). Partidas guardadas: lo que ya hay en el suelo empieza con la duración entera.
+
 - [x] **Bugs del 🐞 del 2026-10-22** (Mikel, partida en el móvil). Van antes que lo demás, uno por sesión:
   - [x] **#4 Almacenes y muebles**: no se pueden dibujar almacenes encima de objetos; si se pone un objeto en un almacén, esa casilla sale de él; las neveras y muebles parecidos tienen ahora un inventario propio en vez de un almacén encima. *Hecho (sesión 75, 2026-10-23)*: cuenta como objeto todo lo que no es suelo, puente, plataforma ni cable, también los planos. La nevera, las estanterías, el armario y el armero terminados llevan su **inventario** (al tocarlos se abre con lo guardado, la prioridad y el filtro, y no se puede borrar). Decidido en esta sesión (Mikel puede cambiarlo): el inventario empieza con prioridad **alta** (`FURNITURE_PRIORITY` en `src/sim/zones.ts`), la nevera solo acepta comida y el armero armas y munición; al mover un mueble su inventario vuelve a la prioridad y el filtro de serie.
   - [x] **#1 Botón de cazar**: no se ve bien. (Lo de que la comida empiece a ponerse mala a los días está en «Propuestas».) *Hecho (sesión 76, 2026-10-23)*: la marca de cazar no se dibujaba en el mapa (solo salía un aviso al tocar el animal). Ahora el animal marcado lleva encima un globo con una **diana naranja** (cazar) o un **corazón verde** (domar), que late un poco para verse en el móvil. Si Mikel se refería a un botón en 🪓 Órdenes, ver «Propuestas».
   - [x] **#6 Trato con un comerciante**: posible fallo al cerrar un trato; Mikel no dice qué pasa, se revisa el cierre del trato (lo que se da y se recibe, la relación y la caravana). *Hecho (sesión 77, 2026-10-23)*: revisado el cierre del trato y arreglados cuatro fallos: (1) lo que llevaban encima los colonos contaba como vuestro y se cobraba, pero no se quitaba (se vendía gratis); ahora sale de sus manos; (2) lo comprado que no cabía junto a la caravana se perdía; ahora va junto a la colonia o alrededor, y si aun así no cabe, el comerciante se lo queda y lo dice el diario; (3) si mientras se preparaba el trato los colonos gastaban algo de lo que se iba a vender, salía «No hay tanto de madera» con el nombre interno; ahora el trato se ajusta solo a lo que queda y el aviso dice el nombre y cuánto queda; (4) las cantidades se limpian (enteras y sin personas repetidas). La relación y la caravana ya funcionaban bien. Si Mikel veía otro fallo, que lo cuente con 🐞.
-  - Las peticiones #2 (no da tiempo a hacer armas antes del primer raid), #3 (todo se mueve más despacio y los heridos van más lentos) y #5 (dormir menos horas y de noche) dejan números sin decidir: están en «Propuestas para Mikel».
+  - Las peticiones #2 (no da tiempo a hacer armas antes del primer raid), #3 (todo se mueve más despacio y los heridos van más lentos) y #5 (dormir menos horas y de noche) dejaban números sin decidir: Mikel los eligió el 2026-10-23 (arriba).
 
 - [x] **Cama de hospital, gráficos para móviles, primeros pasos y uranio** (2026-10-22, **elegidas por Mikel en el chat las cuatro propuestas A, B, C y D**). Se hacen en este orden, cada una en su sesión (por partes si es grande):
   - [x] **A. Cama de hospital**: 🪵15 🔩6 🧵4, 2×1, en 🏗 → Muebles; el herido va antes a ella que a su cama, sus heridas se cierran un 50 % antes y se infectan la mitad. *Hecha (sesión 69, 2026-10-22)*: «un 50 % antes» se ha tomado como «en la mitad de tiempo» (×2 de velocidad; se cambia en `medicine.json` → `hospitalBed.healFactor`). Los sanos no duermen en ella.
@@ -59,26 +66,7 @@ Lo que Mikel ha pedido dejar para más adelante. No se trabaja en ello salvo par
 
 Lo que una sesión quiere meter y necesita su visto bueno (responde por el chat o con 🐞).
 
-- **#1 Botón de cazar en Órdenes** (ahora: se caza tocando el animal, que queda marcado con la diana; no hay botón). Opciones:
-  - **A.** Botón «🎯 Cazar» en 🪓 Órdenes: se arrastra sobre los animales para marcarlos todos (y «Quitar» les quita la marca).
-  - **B.** Igual que A, y también «🤝 Domar» como botón aparte.
-  - **C.** Dejarlo como está (tocar el animal) con la nueva diana encima.
-- **#5 Sueño** (ahora: 6 h en cama, 8 h en el suelo, a cualquier hora cuando se cansan). Opciones:
-  - **A.** 5 h en cama y 6 h en el suelo; solo se acuestan entre las 22:00 y las 06:00 salvo que estén agotados; los «Nocturno», de 10:00 a 18:00.
-  - **B.** 6 h en cama y 7 h en el suelo, en la franja de 21:00 a 07:00 (los «Nocturno», de día).
-  - **C.** Las mismas horas que ahora, pero siempre de noche (los «Nocturno», de día).
-- **#3 Velocidad** (ahora: 3 casillas/s andando; los heridos andan igual). Opciones:
-  - **A.** Todos (colonos, enemigos, animales y vehículos) a ×0,75; herido, −30 %.
-  - **B.** Todos a ×0,6; herido, tanto más lento cuanta más vida le falte (hasta −50 %).
-  - **C.** Todos a ×0,85; herido, −20 %.
-- **#2 Primer raid** (ahora: día 5 en Normal, sin aviso previo). Opciones:
-  - **A.** El primero, el día 7 en Normal, y aviso un día antes («se ven saqueadores en el horizonte»).
-  - **B.** El mismo día 5, pero el primero siempre pequeño (2 saqueadores con palos) y con una cuenta atrás visible desde el día 3.
-  - **C.** Se empieza con 3 armas de cuerpo a cuerpo (cuchillo, tubería, lanza) en las provisiones y aviso un día antes.
-- **#1 Comida que se pone mala a los días** (ahora: se pierde poco a poco desde el primer momento). Opciones:
-  - **A.** Toda la comida aguanta fresca 2 días y después se estropea como ahora.
-  - **B.** Carne, pescado y leche aguantan 2 días; lo demás, 7; después, como ahora.
-  - **C.** Carne, pescado y leche aguantan 1 día y lo demás 4, y después se pierde el doble de deprisa que ahora.
+(Ninguna abierta: Mikel respondió a las cinco el 2026-10-23; están en «Pendiente».)
 
 ## Hecho
 
