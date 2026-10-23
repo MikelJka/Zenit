@@ -1299,6 +1299,10 @@ export function createYard(container: HTMLElement): Yard {
         if (at !== o.el) objectsG.insertBefore(o.el, at ?? null);
       });
     }
+    if (pendingCss !== null) {
+      for (const el of layers) el.style.transform = pendingCss;
+      pendingCss = null;
+    }
     gpu?.render(t);
   }
 
@@ -1333,7 +1337,31 @@ export function createYard(container: HTMLElement): Yard {
   // ---- Cámara: arrastrar para mover, pellizcar o rueda para acercar ----
   const cam = { x: iso(4.5, 6.5)[0], y: iso(4.5, 4.8)[1], scale: 1 };
   let fitted = false;
-  function apply(): void {
+  // Mover el viewBox obliga al navegador a volver a pintar los dos SVG enteros (miles de piezas) en cada movimiento del
+  // dedo: en móviles flojos el arrastre bajaba a ~10 fps. Ahora los SVG se pintan con un margen alrededor de la pantalla
+  // y, mientras se arrastra o se pellizca, solo se desplazan y escalan con CSS (lo hace la tarjeta gráfica, sin repintar).
+  // El viewBox de verdad se pone al soltar, o si el arrastre se sale del margen o el zoom cambia mucho.
+  const OVERSCAN = 0.35; // margen a cada lado, en fracción de la pantalla
+  const shown = { x0: 0, y0: 0, scale: 0, w: 0, h: 0, mx: 0, my: 0 };
+  const layers = [svgBack, svg];
+  let pendingCss: string | null = null;
+  function commitView(w: number, h: number): void {
+    const mx = Math.round(w * OVERSCAN);
+    const my = Math.round(h * OVERSCAN);
+    Object.assign(shown, { x0: view.x0, y0: view.y0, scale: cam.scale, w, h, mx, my });
+    const vb = `${(view.x0 - mx / cam.scale).toFixed(1)} ${(view.y0 - my / cam.scale).toFixed(1)} ${((w + 2 * mx) / cam.scale).toFixed(1)} ${((h + 2 * my) / cam.scale).toFixed(1)}`;
+    for (const el of layers) {
+      el.setAttribute('viewBox', vb);
+      el.style.left = `${-mx}px`;
+      el.style.top = `${-my}px`;
+      el.style.width = `${w + 2 * mx}px`;
+      el.style.height = `${h + 2 * my}px`;
+      el.style.transformOrigin = `${mx}px ${my}px`;
+      el.style.transform = '';
+    }
+    pendingCss = null;
+  }
+  function apply(commit = false): void {
     const w = container.clientWidth || 380;
     const h = container.clientHeight || 640;
     if (!fitted && w > 0) {
@@ -1345,17 +1373,26 @@ export function createYard(container: HTMLElement): Yard {
     cam.y = Math.min(560, Math.max(-230, cam.y));
     const vw = w / cam.scale;
     const vh = h / cam.scale;
-    const vb = `${(cam.x - vw / 2).toFixed(1)} ${(cam.y - vh / 2).toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`;
-    svg.setAttribute('viewBox', vb);
-    svgBack.setAttribute('viewBox', vb);
-    gpu?.setView(cam.x - vw / 2, cam.y - vh / 2, cam.scale, w, h);
     view.x0 = cam.x - vw / 2;
     view.x1 = cam.x + vw / 2;
     view.y0 = cam.y - vh / 2;
     view.y1 = cam.y + vh / 2;
+    gpu?.setView(view.x0, view.y0, cam.scale, w, h);
+    const k = cam.scale / (shown.scale || 1);
+    const tx = (shown.x0 - view.x0) * cam.scale;
+    const ty = (shown.y0 - view.y0) * cam.scale;
+    // Lo que se ve tiene que caber dentro de lo pintado (con el margen), y el zoom no debe emborronar demasiado.
+    const fits = tx <= shown.mx && ty <= shown.my && tx + k * (shown.w + shown.mx) >= w && ty + k * (shown.h + shown.my) >= h;
+    if (commit || shown.scale === 0 || w !== shown.w || h !== shown.h || !fits || k < 0.8 || k > 1.25) commitView(w, h);
+    else {
+      const css = k === 1 ? `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px)` : `translate(${tx.toFixed(1)}px, ${ty.toFixed(1)}px) scale(${k.toFixed(4)})`;
+      // Con la capa de canvas, el desplazamiento se pone en el mismo fotograma en que se pinta el canvas (van a la par).
+      if (gpu) pendingCss = css;
+      else for (const el of layers) el.style.transform = css;
+    }
   }
-  apply();
-  new ResizeObserver(apply).observe(container);
+  apply(true);
+  new ResizeObserver(() => apply(true)).observe(container);
   // Arranca la capa de canvas; cuando está lista, las líneas se vuelven a montar con sus máquinas allí.
   void createMachineLayer(ZONES.length).then((layer) => {
     if (!layer) return;
@@ -1370,6 +1407,7 @@ export function createYard(container: HTMLElement): Yard {
   const pointers = new Map<number, { x: number; y: number }>();
   let moved = 0;
   let pinch = 0;
+  let wheelTimer = 0;
   svg.addEventListener('pointerdown', (e) => {
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     if (pointers.size === 1) moved = 0;
@@ -1397,6 +1435,7 @@ export function createYard(container: HTMLElement): Yard {
   const end = (e: PointerEvent) => {
     pointers.delete(e.pointerId);
     if (pointers.size < 2) pinch = 0;
+    if (pointers.size === 0) apply(true); // al soltar, se pinta nítido en su sitio
   };
   svg.addEventListener('pointerup', end);
   svg.addEventListener('pointercancel', end);
@@ -1406,6 +1445,8 @@ export function createYard(container: HTMLElement): Yard {
       e.preventDefault();
       cam.scale *= e.deltaY < 0 ? 1.1 : 0.9;
       apply();
+      clearTimeout(wheelTimer);
+      wheelTimer = window.setTimeout(() => apply(true), 200);
     },
     { passive: false },
   );
@@ -1455,7 +1496,7 @@ export function createYard(container: HTMLElement): Yard {
     const [px, py] = i >= 0 ? iso(station(i).x + SIZE / 2, station(i).y + SIZE / 2, 0.8) : sel === 'dock' ? iso(10, DOCK_Y, 0.3) : iso(6, BACK_Y, 0);
     cam.x = px;
     cam.y = py + ((container.clientHeight || 640) * 0.22) / cam.scale;
-    apply();
+    apply(true);
   }
 
   return {

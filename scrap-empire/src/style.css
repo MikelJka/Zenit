@@ -13,7 +13,7 @@ h1 { font-size: 40px; color: var(--rust); margin: 8px 0 16px; }
 .status { max-width: 320px; line-height: 1.5; }
 .build { font-size: 12px; color: var(--muted); }
 .game { position: fixed; inset: 0; overflow: hidden; font-family: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif; }
-#scene-wrap { position: absolute; inset: 0; background: #a8906a; }
+#scene-wrap { position: absolute; inset: 0; background: #a8906a; overflow: hidden; }
 .yard { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
 .tappable { cursor: pointer; }
 .hint { animation: bob 1.2s ease-in-out infinite; }
@@ -264,6 +264,8 @@ button:focus-visible { outline: 3px solid #ffd76a; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { #extras .daily.ready, #extras .goals.ready { animation: none !important; } }
 /* Mapa en capas: SVG de fondo, canvas de las máquinas (PixiJS) y SVG de delante, que recibe los toques. */
 #scene-wrap > .yard, #scene-wrap > .machine-layer { position: absolute; left: 0; top: 0; }
+/* Los SVG del mapa son capas propias: al arrastrar solo se desplazan (ver «apply» en yard.ts). */
+#scene-wrap > .yard { will-change: transform; }
 .yard-back, .machine-layer { pointer-events: none; }
 
 /* Botón 🐞 (S2): abajo a la izquierda; se esconde con la hoja abierta. */

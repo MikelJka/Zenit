@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Arrastrar el mapa ya no lo repinta entero (#16, segunda parte)
+
+- Mikel, probando la primera parte: sin tocar va a unos 30 fps, pero al arrastrar con zoom baja a ~10.
+- Causa: cada movimiento del dedo cambiaba el viewBox de los dos SVG del mapa, y el navegador volvía a pintar miles de piezas (ciudad, nave, decorado, rótulos) a la resolución del móvil.
+- Ahora los SVG se pintan con un margen del 35 % alrededor de la pantalla y, mientras se arrastra o se pellizca, solo se desplazan y escalan con CSS (lo mueve la tarjeta gráfica sin repintar), a la par que la capa de canvas. Se vuelven a pintar nítidos al soltar, si el arrastre se sale del margen o si el zoom cambia más de un 25 %.
+- Mientras se pellizca, lo del SVG puede verse un poco borroso hasta soltar; al hacer un arrastre muy largo hay un tirón cuando se repinta.
+- Qué probar: en el móvil, con `?fps=1`, arrastrar y pellizcar con el zoom hecho y ver si el contador ya no baja tanto; comprobar que los toques en puestos, pila y camión dorado siguen funcionando tras moverse.
+- Sigue: si aún va justo, los AGV, la pila y el decorado animado a canvas.
+
 ## 2026-10-23 — El juego trabaja menos en el móvil (#16, primera parte)
 
 - Petición de Mikel desde el botón 🐞 (#16, Android 10, 4 zonas): «Optimiza el juego para que vaya mejor».
