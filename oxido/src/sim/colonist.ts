@@ -267,7 +267,12 @@ export interface PrisonerInfo {
   lastTalk: number;
 }
 
-export function createColonist(id: number, at: Point, rng: Rng): Colonist {
+/**
+ * Crea una persona. `takenNames`: nombres que ya llevan otras personas; si el sorteado está
+ * cogido se usa el siguiente libre de la lista (sin gastar más tiradas del `Rng`). Solo si están
+ * todos cogidos se repite.
+ */
+export function createColonist(id: number, at: Point, rng: Rng, takenNames: ReadonlySet<string> = new Set()): Colonist {
   const skills = {} as Record<Skill, number>;
   const passions = {} as Record<Skill, 0 | 1 | 2>;
   for (const s of SKILLS) {
@@ -278,7 +283,7 @@ export function createColonist(id: number, at: Point, rng: Rng): Colonist {
   }
   return {
     id,
-    name: pick(FIRST_NAMES, rng),
+    name: pickFreeName(rng, takenNames),
     nickname: pick(NICKNAMES, rng),
     age: rng.int(17, 62),
     skills,
@@ -356,6 +361,20 @@ export function activityLabel(c: Colonist): string {
     case 'wandering': return 'Deambulando';
     default: return 'Descansando';
   }
+}
+
+function pickFreeName(rng: Rng, taken: ReadonlySet<string>): string {
+  const start = Math.floor(rng.next() * FIRST_NAMES.length);
+  return firstFreeName(taken, start) ?? FIRST_NAMES[start];
+}
+
+/** El primer nombre de la lista (desde `start`, dando la vuelta) que no está en `taken`. */
+export function firstFreeName(taken: ReadonlySet<string>, start = 0): string | null {
+  for (let k = 0; k < FIRST_NAMES.length; k++) {
+    const n = FIRST_NAMES[(start + k) % FIRST_NAMES.length];
+    if (!taken.has(n)) return n;
+  }
+  return null;
 }
 
 function pick<T>(list: readonly T[], rng: Rng): T {

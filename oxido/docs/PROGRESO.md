@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (86) — Los colonos ya no se llaman igual y sus nombres se leen bien en el móvil
+
+- Sin incidencias nuevas del 🐞.
+- Arreglado Z#15: cada persona nueva recibe un nombre que no lleve nadie (colonos, visitantes, prisioneros, los que están de viaje y los de otras colonias); si el sorteado está cogido se usa el siguiente libre de la lista. Al cargar una partida con nombres repetidos, el segundo y siguientes reciben uno libre (`takenNames`, `renameIfDuplicate` en `src/sim/world.ts`; `firstFreeName` en `src/sim/colonist.ts`).
+- Fila de colonos de abajo: con más de 5 los botones se encogían y los nombres se montaban; ahora no se encogen, la fila se desliza de lado y en el móvil en vertical los botones son más estrechos (nombres largos con «…»).
+- Tests nuevos en `tests/colonistNames.test.ts`.
+- Qué probar: cargar la partida de la semilla 538395 (algún colono repetido cambiará de nombre) y deslizar la fila de colonos en el móvil.
+- Qué sigue: Z#7 (la luz de noche que sale en dos puntos).
+
 ## 2026-10-23 (85) — La cuenta atrás del primer raid ya no se equivoca ni tapa los recursos
 
 - Sin incidencias nuevas del 🐞.

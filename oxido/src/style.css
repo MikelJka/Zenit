@@ -180,7 +180,10 @@ button.active { border-color: var(--accent); color: var(--accent); }
   max-width: calc(100% - 16px);
   overflow-x: auto;
 }
-#roster button { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+/* flex: none: con muchos colonos los botones no se encogen (los nombres se montaban unos
+   sobre otros en el móvil, Z#15); la fila se desliza de lado. */
+#roster { overscroll-behavior-x: contain; scrollbar-width: thin; }
+#roster button { display: flex; flex: none; align-items: center; gap: 6px; white-space: nowrap; }
 #roster .dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
 
 /* Ficha del colono: hoja con cabecera, resumen fijo y pestañas (Estado, Equipo, Trabajos, Perfil). */
@@ -238,6 +241,12 @@ button.active { border-color: var(--accent); color: var(--accent); }
 #cp-health { font-size: 12px; color: #e8826a; }
 #cp-health:empty { display: none; }
 
+/* Móvil en vertical: botones de la fila de colonos más justos, para que quepan más. */
+@media (max-width: 600px) and (orientation: portrait) {
+  #roster { gap: 4px; padding: 4px; }
+  #roster button { padding: 4px 8px; gap: 4px; max-width: 120px; }
+  #roster button .name { overflow: hidden; text-overflow: ellipsis; }
+}
 /* Móvil en vertical: a todo lo ancho, encima de la fila de colonos. */
 @media (max-width: 600px) and (orientation: portrait) {
   #colonist-panel {
@@ -777,6 +786,12 @@ button.primary { background: var(--accent); color: var(--bg); border-color: var(
 .ps-delete { flex: none; min-height: 44px; margin-top: 6px; border-color: #5a3a30; }
 .ps-delete.confirm { border-color: #d9534f; color: #e8826a; background: #3a1a16; font-weight: bold; }
 
+/* Móvil en vertical: botones de la fila de colonos más justos, para que quepan más. */
+@media (max-width: 600px) and (orientation: portrait) {
+  #roster { gap: 4px; padding: 4px; }
+  #roster button { padding: 4px 8px; gap: 4px; max-width: 120px; }
+  #roster button .name { overflow: hidden; text-overflow: ellipsis; }
+}
 /* Móvil en vertical: a todo lo ancho, encima de la fila de colonos. */
 @media (max-width: 600px) and (orientation: portrait) {
   .place-sheet {

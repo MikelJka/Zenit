@@ -1508,7 +1508,7 @@ let rosterKey = '';
 window.setInterval(() => {
   const s = game.scene.getScene('world') as WorldScene | null;
   if (!s || !s.world) return;
-  const key = s.world.colonists.map((c) => c.id).join(',');
+  const key = s.world.colonists.map((c) => `${c.id}:${c.name}`).join(',');
   if (key === rosterKey) return;
   const first = rosterKey === '';
   rosterKey = key;
@@ -1537,7 +1537,10 @@ function renderRoster(): void {
     dot.style.background = `#${c.look.shirt.toString(16).padStart(6, '0')}`;
     const flag = document.createElement('span');
     flag.className = 'draft-flag';
-    b.append(dot, document.createTextNode(c.name), flag);
+    const name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = c.name;
+    b.append(dot, name, flag);
     let pressTimer = 0;
     let longPressed = false;
     b.addEventListener('pointerdown', () => {

@@ -11,7 +11,7 @@ import { recipeDef } from '../data/recipes';
 import { TERRAIN_JOBS, TerrainJob } from './terrain';
 import { RESOURCES, ResourceId } from '../data/resources';
 import { WORK_TYPES, WorkType } from '../data/work';
-import { Colonist, DEFAULT_PRIORITY, STANCES, WorkPriority } from './colonist';
+import { Colonist, DEFAULT_PRIORITY, firstFreeName, STANCES, WorkPriority } from './colonist';
 import { fillBarrelStock, GameMap, inBounds, isPassable } from './map';
 import { structureCost } from './structures';
 import type { StoragePriority } from './zones';
@@ -814,6 +814,15 @@ export function loadWorld(input: string | unknown): World {
     o.world.factions = world.factions;
     o.world.ruins = world.ruins;
     o.world.market = world.market;
+  }
+  // Partidas de antes del 2026-10-23 podían tener colonos con el mismo nombre (Z#15): el
+  // segundo y siguientes reciben el primer nombre libre.
+  const seen = new Set<string>();
+  for (const w of [world, ...world.outposts.map((o) => o.world)]) {
+    for (const c of w.colonists) {
+      if (seen.has(c.name)) c.name = firstFreeName(w.takenNames(c)) ?? c.name;
+      seen.add(c.name);
+    }
   }
   return world;
 }

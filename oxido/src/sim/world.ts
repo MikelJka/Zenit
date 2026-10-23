@@ -1,4 +1,4 @@
-import { Colonist, createColonist, RaidGroup, Stance, walkSpeedMultiplier } from './colonist';
+import { Colonist, createColonist, firstFreeName, RaidGroup, Stance, walkSpeedMultiplier } from './colonist';
 import { createFactions, FactionState, shiftRelation } from './factions';
 import { marketDay, MarketState, newMarket } from './market';
 import { ActiveEvent, firstEventTick, runEvents, solarFactor } from './events';
@@ -647,9 +647,32 @@ export class World implements JobContext {
     return true;
   }
 
+  /**
+   * Nombres que ya lleva alguien (personas del mapa, de viaje o de oferta), también en las otras
+   * colonias del jugador, para que no se repitan (Z#15). Los animales no cuentan.
+   */
+  takenNames(except?: Colonist): Set<string> {
+    const out = new Set<string>();
+    for (const w of [this, ...this.otherColonies()]) {
+      const people = [...w.pawns(), ...(w.expedition?.members ?? []), ...w.boatTrips.flatMap((t) => t.crew)];
+      if (w.offer) people.push(w.offer.pawn);
+      for (const c of people) if (c !== except && c.role !== 'animal') out.add(c.name);
+    }
+    return out;
+  }
+
+  /** Si otro colono ya se llama igual, le pone el primer nombre libre (Z#15). */
+  renameIfDuplicate(c: Colonist): void {
+    if (c.role === 'animal') return;
+    const clash = [this, ...this.otherColonies()].some((w) => w.colonists.some((k) => k !== c && k.name === c.name));
+    if (!clash) return;
+    const free = firstFreeName(this.takenNames(c));
+    if (free) c.name = free;
+  }
+
   /** Persona nueva (aún sin colocar). */
   makePawn(role: Colonist['role']): Colonist {
-    const c = createColonist(this.nextPawnId++, { x: 0, y: 0 }, this.rng);
+    const c = createColonist(this.nextPawnId++, { x: 0, y: 0 }, this.rng, this.takenNames());
     c.role = role;
     return c;
   }
@@ -788,6 +811,8 @@ export class World implements JobContext {
     if (c.pos.x === 0.5 && c.pos.y === 0.5 && c.tile.x === 0 && c.tile.y === 0 && !this.placeAtEdge(c)) this.placeNearColony(c);
     // Que nadie comparta id.
     if (this.colonists.some((k) => k.id === c.id)) c.id = this.nextPawnId++;
+    // Ni nombre (partidas antiguas podían tener dos iguales).
+    this.renameIfDuplicate(c);
     this.colonists.push(c);
     const home = this.colonyPoint();
     const path = home ? findPath(this.map, c.tile, home, 60000) : null;
@@ -924,7 +949,12 @@ export class World implements JobContext {
       }
     }
     while (spots.length < count) spots.push({ ...start });
-    for (let i = 0; i < count; i++) this.colonists.push(createColonist(i + 1, spots[i], this.rng));
+    const taken = new Set<string>();
+    for (let i = 0; i < count; i++) {
+      const c = createColonist(i + 1, spots[i], this.rng, taken);
+      taken.add(c.name);
+      this.colonists.push(c);
+    }
   }
 
   private updateColonist(c: Colonist): void {
