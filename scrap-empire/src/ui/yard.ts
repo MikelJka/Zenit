@@ -28,7 +28,7 @@ import {
   staticImage,
   terrainSvg,
 } from './scenery';
-import { TRUCK_SLOTS, agvIso, carIso, forkliftIso, goldenTruckIso, scrapTruckIso, shipTruckIso } from './vehicles';
+import { TRUCK_SLOTS, agvIso, carIso, forkliftIso, goldenTruckIso, scrapTruckIso, shipTruckBackIso, shipTruckFrontIso, shipTruckIso } from './vehicles';
 import { reducedMotion } from './prefs';
 import { createMachineLayer, type CartPose, type FloorFlow, type FloorTile, type MachineLayer } from './machineLayer';
 
@@ -534,14 +534,20 @@ export function createYard(container: HTMLElement): Yard {
 
   // Tráfico de fondo en las dos carreteras.
   const CAR_COLORS = ['#c0392b', '#2f6fb3', '#e8e0d0', '#3fa7a0', '#d4a72c', '#6b5a8a', '#4a4a4a'];
+  /** Aspecto de un coche de fondo desde su clave «color|furgoneta|al revés». */
+  const carSvg = (key: string): string => {
+    const [color, van, rev] = key.split('|');
+    return carIso(color, van === '1', rev === '1');
+  };
   const mkCars = (parent: SVGGElement, lanes: { y: number; dir: 1 | -1; speed: number }[], perLane: number) => {
-    const list: { g: SVGGElement; y: number; dir: 1 | -1; speed: number; off: number }[] = [];
+    const list: { g: SVGGElement; key: string; y: number; dir: 1 | -1; speed: number; off: number }[] = [];
     let n = 0;
     for (const lane of lanes)
       for (let i = 0; i < perLane; i++) {
         // Misma velocidad en cada carril y huecos iguales: así nunca se alcanzan ni se atraviesan.
-        const g = mk(parent, carIso(CAR_COLORS[(n * 3 + 1) % CAR_COLORS.length], n % 3 === 2, lane.dir < 0));
-        list.push({ g, y: lane.y, dir: lane.dir, speed: lane.speed, off: (i / perLane) * 44 });
+        const key = `${CAR_COLORS[(n * 3 + 1) % CAR_COLORS.length]}|${n % 3 === 2 ? 1 : 0}|${lane.dir < 0 ? 1 : 0}`;
+        const g = mk(parent, carSvg(key));
+        list.push({ g, key, y: lane.y, dir: lane.dir, speed: lane.speed, off: (i / perLane) * 44 });
         n++;
       }
     return list;
@@ -969,7 +975,17 @@ export function createYard(container: HTMLElement): Yard {
         c.g.setAttribute('transform', at(-8 + run, c.y));
       });
     drive(backCars);
-    drive(frontCars);
+    // Los coches de la carretera de delante van en la capa de canvas cuando está.
+    if (gpu) {
+      gpu.setCars(
+        frontCars.map((c) => {
+          c.g.setAttribute('visibility', 'hidden');
+          const run = (((c.off + c.dir * t * c.speed) % 44) + 44) % 44;
+          return { ...isoXY(-8 + run, c.y), key: c.key };
+        }),
+        carSvg,
+      );
+    } else drive(frontCars);
 
     // Líneas.
     const openIds: string[] = [];
@@ -1152,12 +1168,17 @@ export function createYard(container: HTMLElement): Yard {
       while (shipMix.length < TRUCK_SLOTS) shipMix.push(shipMix[shipMix.length % Math.max(1, shipMix.length)] ?? openIds[0]);
     }
     const ids = Array.from({ length: count }, (_, k) => shipMix[k] ?? openIds[0]);
-    const sk = ids.join(',');
-    if (sk !== shipKey) {
-      shipKey = sk;
-      shipTruck.innerHTML = shipTruckIso(ids);
+    if (gpu) {
+      shipTruck.setAttribute('visibility', 'hidden');
+      gpu.setShipTruck(isoXY(tx, FRONT_Y), ids, () => ({ back: shipTruckBackIso(), front: shipTruckFrontIso() }), propIso);
+    } else {
+      const sk = ids.join(',');
+      if (sk !== shipKey) {
+        shipKey = sk;
+        shipTruck.innerHTML = shipTruckIso(ids);
+      }
+      shipTruck.setAttribute('transform', at(tx, FRONT_Y));
     }
-    shipTruck.setAttribute('transform', at(tx, FRONT_Y));
 
     // Huellas de salida: cuánto hay de cada producto esperando en el muelle.
     const load0 = dockLoad(state);

@@ -62,7 +62,7 @@ Terminado: el juego se ve, suena y se siente como un título de estudio grande, 
 - [x] Textos en inglés con selector de idioma
 - [x] Equilibrio con el bot: simulación de jugador hecha (`scripts/balance.ts`), propuesta en la Parte 18; falta que Mikel elija
 - [x] Pedidos especiales y zonas 9-10 con tren y barco (barco animado; estación propia en el anexo hecha; falta equilibrar)
-- [ ] Mapa en canvas con PixiJS (S1, 2026-10-23), por partes: suelo y máquinas primero (**hechas la primera parte, 2026-10-23: las máquinas en canvas, y la segunda, 2026-10-23: el suelo de los puestos y sus cintas, la tercera, 2026-10-23: los ayudantes de los puestos, y la cuarta, 2026-10-23: las carretillas y los palés de las líneas**; siguen los camiones y vehículos)
+- [ ] Mapa en canvas con PixiJS (S1, 2026-10-23), por partes: suelo y máquinas primero (**hechas la primera parte, 2026-10-23: las máquinas en canvas, y la segunda, 2026-10-23: el suelo de los puestos y sus cintas, la tercera, 2026-10-23: los ayudantes de los puestos, y la cuarta, 2026-10-23: las carretillas y los palés de las líneas, y la quinta, 2026-10-23: el camión de expedición y los coches de la carretera de delante**; siguen, si hace falta, los AGV y la pila (los camiones de chatarra y los coches del fondo pasan por detrás de la nave y se quedan en SVG))
 - [ ] Botón 🐞 dentro del juego para abrir incidencias (S2, 2026-10-23)
 - [x] Pruebas: la prueba de humo comprueba el panel por línea, el ranking apagado y la noche (**hecho**; los tests de interfaz sencillos quedan para más adelante)
 

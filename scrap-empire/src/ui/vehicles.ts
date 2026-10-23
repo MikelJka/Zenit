@@ -156,16 +156,31 @@ const SLOTS: [number, number][] = [
 ];
 export const TRUCK_SLOTS = SLOTS.length;
 
+/** Parte del camión de expedición que queda detrás de la carga: sombra, chasis, frente de la caja y suelo de la caja. */
+export function shipTruckBackIso(body = '#c2683a'): string {
+  return truckBase() + block(0, 0, 0.37, 1.75, 0.08, 0.5, body) + block(0, 0, 0.37, 1.75, 1, 0.1, body);
+}
+
+/** Parte del camión de expedición que queda delante de la carga: laterales y trasera de la caja, cabina y ruedas. */
+export function shipTruckFrontIso(body = '#c2683a', cab = '#e08a4f'): string {
+  return block(0, 0, 0.37, 0.1, 1, 0.5, body) + block(1.65, 0, 0.37, 0.1, 1, 0.5, body) + block(0, 0.92, 0.37, 1.75, 0.08, 0.22, body) + cabIso(cab) + wheels();
+}
+
+/** Dónde va (en píxeles, respecto al camión) el producto del hueco `k` de la caja. */
+export function truckSlotAt(k: number): [number, number] {
+  const [x, y] = SLOTS[k];
+  return iso(x, y, 0.47);
+}
+
 /** Camión de expedición con `ids.length` productos en la caja (ids de zona, uno por hueco). */
 export function shipTruckIso(ids: string[], body = '#c2683a', cab = '#e08a4f'): string {
-  let bed = block(0, 0, 0.37, 1.75, 0.08, 0.5, body) + block(0, 0, 0.37, 1.75, 1, 0.1, body);
-  ids.forEach((id, k) => {
-    const [x, y] = SLOTS[k];
-    const [sx, sy] = iso(x, y, 0.47);
-    bed += `<g transform="translate(${sx.toFixed(1)} ${sy.toFixed(1)})">${propIso(id)}</g>`;
-  });
-  bed += block(0, 0, 0.37, 0.1, 1, 0.5, body) + block(1.65, 0, 0.37, 0.1, 1, 0.5, body) + block(0, 0.92, 0.37, 1.75, 0.08, 0.22, body);
-  return truckBase() + bed + cabIso(cab) + wheels();
+  const load = ids
+    .map((id, k) => {
+      const [sx, sy] = truckSlotAt(k);
+      return `<g transform="translate(${sx.toFixed(1)} ${sy.toFixed(1)})">${propIso(id)}</g>`;
+    })
+    .join('');
+  return shipTruckBackIso(body) + load + shipTruckFrontIso(body, cab);
 }
 
 /** Camión dorado (se toca). */

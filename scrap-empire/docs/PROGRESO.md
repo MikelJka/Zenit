@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — El camión de expedición y los coches de delante se dibujan en canvas (S1, quinta parte)
+
+- El camión de expedición del muelle pasa a la capa de canvas (PixiJS): chasis y caja horneados desde el mismo SVG en dos piezas (lo de detrás de la carga y lo de delante) y, en medio, los productos de la caja con la textura del producto que ya usan las carretillas; se llena, sale y vuelve como antes.
+- Los coches de la carretera de delante también van en canvas (cada aspecto se hornea una vez).
+- Los camiones de chatarra y los coches de la carretera de atrás se quedan en SVG: pasan por detrás de la pared de la nave y en canvas quedarían encima de ella. El camión dorado sigue en SVG (se toca).
+- Mismo aspecto (el SVG del camión sale idéntico tras partirlo en dos); con `?svg=1`, o si WebGL no arranca, todo sigue en SVG.
+- Qué probar: ver cómo se llena el camión del muelle con varias líneas abiertas y cómo sale, y mover el mapa en el móvil con `?fps=1`, comparando con `?svg=1`.
+- Sigue: S1 se puede dar por terminada (lo que queda en SVG apenas se mueve: AGV, pila y decorado) o pasar a S2 (botón 🐞) si Mikel lo ve suficiente.
+
 ## 2026-10-23 — Las carretillas y los palés de las líneas se dibujan en canvas (S1, cuarta parte)
 
 - Las carretillas de las líneas pasan a la capa de canvas (PixiJS): la carretilla se dibuja con los mismos bloques girados que en el SVG (en pasos de 10°, como antes) y lo que lleva con la textura horneada del producto de su línea; las de delante tapan a las de detrás.
