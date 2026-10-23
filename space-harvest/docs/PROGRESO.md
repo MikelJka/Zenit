@@ -2,6 +2,14 @@
 
 Diario del juego espacial, la entrada más reciente arriba. Antes vivía en el diario de Scrap Empire (IdleScrapyard); se separó el 2026-10-21.
 
+## 2026-10-23 — Hito 0, segunda parte: página con PixiJS, textos es/en y ajustes
+
+- Recuperado el núcleo de simulación de la rama `claude/space-harvest-hito0` (nunca se había fusionado) y añadido PixiJS 8, `index.html` y `src/main.ts`.
+- Menú de inicio: estación con luces parpadeantes y estrellas en 3 capas con paralaje, botón JUGAR de 60 px, resumen de créditos/módulos y panel de ajustes (idioma, sonido, calidad, reducir movimiento) guardado en el navegador. Textos en `src/ui/i18n.ts` (es/en, test de que ambos tienen las mismas claves). Captura en `docs/captura-menu.png`.
+- 10 tests, `npm run build` correcto, sin errores de consola en Chromium a 390×780.
+- Qué probar: `npm install && npm run dev` en `space-harvest/` y abrirlo en el móvil.
+- Sigue: logo animado, mapa con cámara arrastrable, publicación de prueba (GitHub Pages) y scripts de rendimiento y equilibrio.
+
 ## 2026-10-22 — Hito 0, primera parte: núcleo de la simulación
 
 - `package.json`, TypeScript estricto, Vite y Vitest; `src/sim/core/` con `Rng`, contrato de módulo, registro, `Game` (pasos fijos, guardado con versión por módulo, carga con valor por defecto para módulos que faltan) y tope de ganancias offline. 5 tests.

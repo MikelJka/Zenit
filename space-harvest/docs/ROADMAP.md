@@ -6,10 +6,10 @@ Cada hito acaba **jugable y publicado** en una versión web de prueba, con la si
 
 Terminado: se abre en el móvil a 60 fps, con menú de inicio y mapa de la estación con paralaje.
 
-- [ ] Esqueleto Vite + TypeScript + Vitest + PixiJS en `space-harvest/`, con `Rng`, reloj, guardado con versión y registro de módulos (**hecho el núcleo de simulación y los tests; falta PixiJS y la página**)
+- [x] Esqueleto Vite + TypeScript + Vitest + PixiJS en `space-harvest/`, con `Rng`, reloj, guardado con versión y registro de módulos
 - [ ] Publicación de prueba (GitHub Pages) y prueba de humo con capturas
-- [ ] Textos es/en y ajustes (sonido, idioma, calidad, reducir movimiento)
-- [ ] Menú de inicio con logo animado y estación al fondo
+- [x] Textos es/en y ajustes (sonido, idioma, calidad, reducir movimiento) (el sonido es solo un ajuste guardado: aún no hay audio)
+- [ ] Menú de inicio con logo animado y estación al fondo (**hecho: estación con luces y botón; falta el logo animado**)
 - [ ] Mapa de la estación con paralaje, luces y cámara que se arrastra y se pellizca
 - [ ] Script de rendimiento (CPU ×4) y de equilibrio (dos jugadores simulados)
 
