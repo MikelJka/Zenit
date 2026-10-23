@@ -2,6 +2,13 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Mikel elige la Parte 27
+
+- Mikel aprueba las cuatro opciones en este orden: S1 mapa en canvas con PixiJS, S2 botón 🐞, S3 preparar Google Play, S4 prestigio. Pasadas a «Pendiente» de FEEDBACK.md, a «Decidido» de DISENO.md y al ROADMAP.
+- Nueva **Parte 28** en FEEDBACK.md: cómo funciona el prestigio (cuándo, cuánta moneda, qué se conserva, qué da).
+- No cambia nada del juego.
+- Sigue: S1, primera parte (suelo y máquinas en canvas).
+
 ## 2026-10-22 — Propuesta: qué hacemos ahora (Parte 27)
 
 - Primera sesión en Zenit: la web nueva se publica bien («Zenit: publicar web» en verde, con prueba de humo y capturas de Scrap Empire). Ninguna incidencia `feedback` + `scrap-empire` abierta.

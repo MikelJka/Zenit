@@ -36,7 +36,7 @@ Terminado: la primera versión se juega de principio a fin y engancha a Mikel.
 - [x] Panel de mejoras por línea (se toca el puesto), estado y cuello de botella a la vista, huellas de salida por producto, focos de noche y máquinas que se transforman cada 5 niveles
 - [ ] Ranking mundial (a decidir: Parte 12 de FEEDBACK.md)
 - [ ] Equilibrio: ajustar precios jugando de verdad (precios de los ayudantes y espera del empujón provisionales)
-- Prestigio: no en la primera versión (decidido por Mikel)
+- [ ] Prestigio (aprobado por Mikel el 2026-10-23, S4; cómo funciona: Parte 28 de FEEDBACK.md)
 
 ## Fase 2b — Calidad profesional
 
@@ -62,6 +62,8 @@ Terminado: el juego se ve, suena y se siente como un título de estudio grande, 
 - [x] Textos en inglés con selector de idioma
 - [x] Equilibrio con el bot: simulación de jugador hecha (`scripts/balance.ts`), propuesta en la Parte 18; falta que Mikel elija
 - [x] Pedidos especiales y zonas 9-10 con tren y barco (barco animado; estación propia en el anexo hecha; falta equilibrar)
+- [ ] Mapa en canvas con PixiJS (S1, 2026-10-23), por partes: suelo y máquinas primero
+- [ ] Botón 🐞 dentro del juego para abrir incidencias (S2, 2026-10-23)
 - [x] Pruebas: la prueba de humo comprueba el panel por línea, el ranking apagado y la noche (**hecho**; los tests de interfaz sencillos quedan para más adelante)
 
 ## Fase 3 — Android y monetización
@@ -71,7 +73,7 @@ Terminado: el juego está en la prueba cerrada de Google Play con anuncios de pr
 - [ ] Empaquetar con Capacitor y generar el archivo para Google Play en GitHub Actions (**hecho: Capacitor y workflow que genera un APK de prueba**, `docs/ANDROID.md`; falta la clave de firma y el AAB)
 - [x] Anuncios y compras decididos (empujón, camión dorado, pase a 2,99 €)
 - [ ] Anuncios reales con AdMob y compra del pase con Google Play Billing
-- [ ] Consentimiento de anuncios (UE) y política de privacidad
+- [ ] Consentimiento de anuncios (UE) y política de privacidad (S3, 2026-10-23: con Google UMP y AdMob en modo de prueba)
 - [x] Textos en inglés
 - [ ] Ficha de la tienda (**hecho: textos, icono, capturas, gráfico y vídeo en `docs/FICHA_TIENDA.md` y `/press/`**; falta política de privacidad y clasificación)
 
