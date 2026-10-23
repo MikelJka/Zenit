@@ -2,6 +2,17 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (80) — Los colonos duermen de noche y menos horas
+
+- Tercera de las cinco decisiones de Mikel (#5 del 🐞, opción B).
+  - Descansan del todo en **6 h en cama** y **7 h en el suelo** (antes 8).
+  - Se acuestan cansados en la franja de **21:00 a 07:00**; de día siguen trabajando aunque estén cansados y solo se acuestan si están **agotados**.
+  - Los **«Nocturno»** duermen de **09:00 a 19:00** y trabajan de noche (antes el rasgo no hacía nada).
+- Números en `src/data/sleep.json`; reglas en `src/sim/needs.ts` (`sleepWindowOf`, `inSleepWindow`) y `src/sim/world.ts` (`tryStartNeed`). 7 tests nuevos en `tests/sleepWindow.test.ts`.
+- Qué probar: a partir de las 21:00 la colonia se va a la cama y a media mañana nadie duerme; un «Nocturno» se acuesta por la mañana.
+- Qué sigue: #1 botones «🎯 Cazar» y «🤝 Domar» en 🪓 Órdenes.
+- Sin npm en el entorno: tests con Bun (724); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 (79) — Todo se mueve más despacio y los heridos van más lentos
 
 - Segunda de las cinco decisiones de Mikel (#3 del 🐞, opción A).

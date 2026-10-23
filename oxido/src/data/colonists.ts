@@ -43,7 +43,7 @@ export const TRAITS: TraitDef[] = [
   { id: 'trabajador', name: 'Trabajador', description: 'Trabaja más rápido.' },
   { id: 'perezoso', name: 'Perezoso', description: 'Trabaja más despacio.' },
   { id: 'carroñero', name: 'Carroñero', description: 'Encuentra más botín en las ruinas.' },
-  { id: 'nocturno', name: 'Nocturno', description: 'Prefiere trabajar de noche.' },
+  { id: 'nocturno', name: 'Nocturno', description: 'Duerme de día (de 09:00 a 19:00) y trabaja de noche.' },
   { id: 'glotón', name: 'Glotón', description: 'Necesita comer más a menudo.' },
 ];
 

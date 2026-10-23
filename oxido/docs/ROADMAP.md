@@ -26,6 +26,7 @@ Terminado: puedo mover la cámara y ver a 3 colonos caminar por el mapa; el tiem
 - [x] Seleccionar un colono tocándolo y ver su ficha en un panel adaptable a móvil
 - [x] Ordenar a un colono seleccionado que vaya a una casilla (control directo)
 - [x] Ritmo de movimiento: todo (colonos, enemigos, animales y vehículos) a ×0,75 y los heridos un 30 % más lentos (#3 del 🐞)
+- [x] Horario de sueño: 6 h en cama y 7 en el suelo, de 21:00 a 07:00 (los «Nocturno», de 09:00 a 19:00); fuera de esa franja solo duermen si están agotados (#5 del 🐞)
 - [x] Suelo continuo con transiciones suaves y variedad mediante objetos (árboles secos, matorrales, rocas, chatarra, coches, muros, barriles tóxicos, charcos radiactivos, manantiales, huesos, neumáticos); carreteras viejas con ruinas; vados en los ríos
 - [x] Más geografía: terrazas de altura (llano bajo, llano, loma, meseta), acantilados, pendientes, pasos estrechos y vados garantizados; tests de variedad y conectividad
 - [x] Comprobar en la URL pública que los colonos caminan, se seleccionan y se mueven en móvil y PC (lo confirma Mikel)

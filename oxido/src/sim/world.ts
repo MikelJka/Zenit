@@ -48,7 +48,7 @@ import { prepName, theName, usesFuel, vehicleDef } from '../data/vehicles';
 import { TRAPPED_TILES } from './diagnostics';
 import {
   BAD_WATER_TICKS_DAYS, DEHYDRATED, DRINK_TICKS, EAT_TICKS, EXHAUSTED, foodDecay, foodPreference, HUNGRY, isFood, isRawFood, NUTRITION, restDecay,
-  restGain, STARVING, THIRSTY, TIRED, waterDecay,
+  restGain, STARVING, THIRSTY, inSleepWindow, sleepWindowOf, waterDecay,
 } from './needs';
 import { applyTerrainJob, LOWER_STONE, terrainBlocker, TerrainJob, TerrainOrders, updateFlooding } from './terrain';
 import { Bill, buildWork, PlaceShape, Structure, Structures } from './structures';
@@ -1164,17 +1164,13 @@ export class World implements JobContext {
     if (c.activity !== 'sleeping') n.rest = Math.max(0, n.rest - restDecay(TICKS_PER_HOUR));
   }
 
-  /** Es de noche (22:00–6:00): hora de dormir. */
-  private get isNight(): boolean {
-    const h = this.hour;
-    return h >= 22 || h < 6;
-  }
-
   /** Empieza a comer o a dormir si hace falta. Lo urgente interrumpe el trabajo. */
   private tryStartNeed(c: Colonist): boolean {
     const n = c.needs;
     const busy = c.job !== null || c.activity === 'moving';
-    const wantsSleep = n.rest < (busy ? EXHAUSTED : TIRED) || (!busy && this.isNight && n.rest < 0.75);
+    // #5: se acuestan en su franja (21:00–07:00; los «Nocturno», de día); fuera de ella, solo si están agotados.
+    const bedtime = inSleepWindow(sleepWindowOf(c), this.hour);
+    const wantsSleep = n.rest < EXHAUSTED || (bedtime && !busy && n.rest < 0.75);
     const wantsFood = n.food < (busy ? STARVING : HUNGRY);
     const wantsWater = n.water < (busy ? DEHYDRATED : THIRSTY);
     const wantsRest = this.wantsBedRest(c);
@@ -1404,7 +1400,7 @@ export class World implements JobContext {
     c.needs.rest = Math.min(1, c.needs.rest + restGain(t.bed, TICKS_PER_HOUR));
     if (t.type === 'reposar') return;
     // Se despierta descansado (o, de día, bastante descansado) o si el hambre aprieta.
-    const rested = c.needs.rest >= 0.99 || (!this.isNight && c.needs.rest >= 0.85);
+    const rested = c.needs.rest >= 0.99 || (!inSleepWindow(sleepWindowOf(c), this.hour) && c.needs.rest >= 0.85);
     if (rested || c.needs.food < STARVING) {
       c.needs.sleptIn = t.bed ? (roofed(this, t.x, t.y) ? 'habitacion' : 'cama') : 'suelo';
       this.endNeed(c);

@@ -60,9 +60,9 @@ describe('necesidades', () => {
     expect(c.needs.sleptIn).toBe('cama');
   });
 
-  it('se recupera del todo en 6 h en cama y en 8 h en el suelo (#15, opción A)', () => {
+  it('se recupera del todo en 6 h en cama y en 7 h en el suelo (#5 del 🐞, opción B)', () => {
     expect(restGain(true, TICKS_PER_HOUR) * 6 * TICKS_PER_HOUR).toBeCloseTo(1);
-    expect(restGain(false, TICKS_PER_HOUR) * 8 * TICKS_PER_HOUR).toBeCloseTo(1);
+    expect(restGain(false, TICKS_PER_HOUR) * 7 * TICKS_PER_HOUR).toBeCloseTo(1);
     // Una noche: de vacío a lleno en cama tarda menos de 6,5 h de juego.
     const world = flatWorld(1, { needs: true });
     const c = world.colonists[0];

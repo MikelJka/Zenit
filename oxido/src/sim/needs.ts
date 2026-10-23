@@ -10,14 +10,15 @@ import { INFECTION } from '../data/medicine';
 import { FINISH_MOOD } from '../data/morale';
 import { CORPSES } from '../data/creatures';
 import { BONFIRE_CHEER } from '../data/buildings';
+import { NIGHT_OWL_SLEEP_WINDOW, SLEEP_BED_HOURS, SLEEP_GROUND_HOURS, SLEEP_WINDOW, SleepWindow } from '../data/sleep';
 
 /** Días de juego que tarda un colono en pasar de lleno a vacío. */
 export const FOOD_DAYS = 1.5;
 /** Horas despierto que tarda en agotarse el descanso. */
 export const AWAKE_HOURS = 18;
-/** Horas de sueño para recuperarse del todo: en cama y en el suelo. */
-export const SLEEP_HOURS_BED = 6;
-export const SLEEP_HOURS_GROUND = 8;
+/** Horas de sueño para recuperarse del todo: en cama y en el suelo (`src/data/sleep.json`). */
+export const SLEEP_HOURS_BED = SLEEP_BED_HOURS;
+export const SLEEP_HOURS_GROUND = SLEEP_GROUND_HOURS;
 /** Comida que da cada unidad de un alimento (de 0 a 1). Una ración cocinada sale de 2,5 a 3 crudos y alimenta más. */
 export const NUTRITION: Partial<Record<ResourceId, number>> = { comida: 0.35, patata: 0.1, maiz: 0.1, setas: 0.08, pescado: 0.1, carne: 0.1, leche: 0.12, huevos: 0.08 };
 /** Casillas de más que un colono está dispuesto a andar para comer cocinado en vez de crudo. */
@@ -107,6 +108,17 @@ export function restDecay(ticksPerHour: number): number {
 
 export function restGain(inBed: boolean, ticksPerHour: number): number {
   return 1 / ((inBed ? SLEEP_HOURS_BED : SLEEP_HOURS_GROUND) * ticksPerHour);
+}
+
+/** Franja de horas en la que se acuesta este colono: la de todos o, si es «Nocturno», la de día. */
+export function sleepWindowOf(c: Pick<Colonist, 'traits'>): SleepWindow {
+  return c.traits.some((t) => t.id === 'nocturno') ? NIGHT_OWL_SLEEP_WINDOW : SLEEP_WINDOW;
+}
+
+/** ¿Está la hora (0–24, decimal) dentro de la franja? La franja puede cruzar la medianoche. */
+export function inSleepWindow(w: SleepWindow, hour: number): boolean {
+  const h = ((hour % 24) + 24) % 24;
+  return w.from <= w.to ? h >= w.from && h < w.to : h >= w.from || h < w.to;
 }
 
 /** Ánimo de más por dormir o trabajar de noche junto a una lámpara encendida (aprobado por Mikel). */

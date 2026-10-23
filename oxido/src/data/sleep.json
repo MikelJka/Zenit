@@ -1,0 +1,6 @@
+{
+  "bedHours": 6,
+  "groundHours": 7,
+  "window": { "from": 21, "to": 7 },
+  "nightOwlWindow": { "from": 9, "to": 19 }
+}
