@@ -7,8 +7,8 @@ import { DIFFICULTIES, makeDifficulty, MAX_GRACE_DAYS, raidGap, raidSize, scaled
 import { STARTING_SUPPLIES } from '../src/data/resources';
 
 describe('dificultad', () => {
-  it('por defecto es Normal con 5 días sin raids, y normaliza valores raros', () => {
-    expect(makeDifficulty()).toEqual({ level: 'normal', graceDays: 5 });
+  it('por defecto es Normal con 7 días sin raids, y normaliza valores raros', () => {
+    expect(makeDifficulty()).toEqual({ level: 'normal', graceDays: 7 });
     expect(makeDifficulty({ level: 'brutal' })).toEqual({ level: 'brutal', graceDays: DIFFICULTIES.brutal.graceDays });
     expect(makeDifficulty({ level: 'toString', graceDays: -3 })).toEqual({ level: 'normal', graceDays: 0 });
     expect(makeDifficulty({ level: 'dura', graceDays: 99 }).graceDays).toBe(MAX_GRACE_DAYS);
@@ -78,6 +78,6 @@ describe('dificultad', () => {
     expect(loaded.difficulty).toEqual({ level: 'dura', graceDays: 9 });
     const old = serializeWorld(w) as unknown as Record<string, unknown>;
     delete old.difficulty;
-    expect(loadWorld(JSON.stringify(old)).difficulty).toEqual({ level: 'normal', graceDays: 5 });
+    expect(loadWorld(JSON.stringify(old)).difficulty).toEqual({ level: 'normal', graceDays: 7 });
   });
 });

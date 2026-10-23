@@ -1,4 +1,5 @@
 import { TICKS_PER_HOUR } from './sim/time';
+import { firstRaidCountdown } from './sim/storyteller';
 import { VOLUME_STEPS } from './audio/sound';
 import { setTarget, targetOf, tileTemp } from './sim/climate';
 import { roofed } from './sim/roofs';
@@ -111,8 +112,21 @@ const speedButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('#s
 speedButtons.forEach((b) =>
   b.addEventListener('click', () => scene().setSpeed(Number(b.dataset.speed) as GameSpeed)),
 );
+// Cuenta atrás del primer raid (#2 del 🐞): desde el día 3 hasta que llega.
+const raidCountdown = document.createElement('div');
+raidCountdown.id = 'raid-countdown';
+raidCountdown.className = 'panel';
+raidCountdown.hidden = true;
+document.body.append(raidCountdown);
+function renderRaidCountdown(): void {
+  const w = scene().world;
+  const n = firstRaidCountdown(w);
+  raidCountdown.hidden = n === null;
+  if (n !== null) raidCountdown.textContent = n === 0 ? '⚔️ Primer raid: ¡hoy!' : n === 1 ? '⚔️ Primer raid: ¡mañana!' : `⚔️ Primer raid en ${n} días`;
+}
 game.events.on('clock', (label: string, speed: GameSpeed) => {
   clock.textContent = speed === 0 ? `${label} · en pausa` : label;
+  renderRaidCountdown();
   speedButtons.forEach((b) => b.classList.toggle('active', Number(b.dataset.speed) === speed));
   checkBattleSwitch();
   // La bandeja hidropónica abierta: su % va subiendo.

@@ -3,7 +3,7 @@
 // prisioneros (retener, convencer, liberar) y caravanas de comerciantes (con esclavos).
 import { RESOURCE_ICONS, RESOURCE_NAMES, RESOURCES, ResourceId } from '../data/resources';
 import { personValue, RESOURCE_VALUES } from '../data/values';
-import { ammoFor, damageAt, GRENADE, isGear, RAIDER_AMMO, raiderWeaponPool, WEAPONS, WeaponDef } from '../data/weapons';
+import { ammoFor, damageAt, GRENADE, WeaponId, isGear, RAIDER_AMMO, raiderWeaponPool, WEAPONS, WeaponDef } from '../data/weapons';
 import { armorProtection, isArmor, raiderVestPool } from '../data/armor';
 import { MEDICINE_STOCK } from '../data/medicine';
 import { CREATURES, CreatureId, flies, isMachine, MACHINES, PACKS, TAMING } from '../data/creatures';
@@ -14,7 +14,7 @@ import { findPath, flightPath, Point } from './pathfinding';
 import { BLOCK_SOLID, inBounds, isPassable, isWater, Prop, PROP_INFO, RADIATION_THRESHOLD, Terrain, TERRAIN_INFO } from './map';
 import { absorbHit, besideTiles, fits, nearRaft, nextTo, occupant, raftLanding, riders, VEHICLE_SIZE } from './vehicles';
 import { RAIDER_RAFT, RAIDER_VEHICLE, vehicleDef } from '../data/vehicles';
-import { DIFFICULTIES, RADIO_GAP_DAYS, raidGap, raidSize, TRADER_GAP, WANDERER_GAP } from './storyteller';
+import { DIFFICULTIES, FIRST_RAID, RADIO_GAP_DAYS, raidGap, raidSize, TRADER_GAP, WANDERER_GAP } from './storyteller';
 import type { World } from './world';
 import { maybePanic, witnessFall } from './panic';
 import { tryThrowGrenade } from './grenades';
@@ -97,7 +97,19 @@ export function runStoryteller(w: World): void {
       }
     }
   } else sch.nextRadio = undefined;
-  if (w.tick >= sch.nextRaid) {
+  // Primer raid (#2 del 🐞): el día antes, aviso de que se ven saqueadores en el horizonte.
+  if (!sch.firstRaidDone && !sch.firstRaidWarned && w.tick < sch.nextRaid
+    && w.tick >= sch.nextRaid - Math.round(FIRST_RAID.warnHours * TICKS_PER_DAY / 24)) {
+    sch.firstRaidWarned = true;
+    w.addLog('👀 Se ven saqueadores en el horizonte: mañana atacarán. Preparad armas y defensas.', 'malo', 'raid');
+  }
+  if (w.tick >= sch.nextRaid && !sch.firstRaidDone) {
+    sch.nextRaid = w.tick + days(raidGap(w.difficulty.level));
+    sch.firstRaidDone = true;
+    sch.firstRaidWarned = true;
+    startFirstRaid(w);
+  }
+  else if (w.tick >= sch.nextRaid) {
     sch.nextRaid = w.tick + days(raidGap(w.difficulty.level));
     // Máquinas (bloque 6 del catálogo): desde el día 30, 1 de cada 4 ataques es de máquinas.
     // Mutantes (bloque 2 del catálogo): desde el día 8, 1 de cada 3 raids es una manada de perros
@@ -481,6 +493,21 @@ export function startRaid(w: World, n: number, withBuggy?: boolean, withRaft?: b
   const fdef = faction !== RAIDER_FACTION ? factionDef(faction) : undefined;
   const who = fdef ? ` de ${fdef.name} (en guerra con la colonia)` : '';
   w.addLog(`⚔️ ¡Raid${who}! ${n} ${n === 1 ? 'saqueador llega' : 'saqueadores llegan'}${lead}${how}${river}. Recluta a los colonos (🎖) para defenderos.`, 'malo', 'raid', first.tile);
+  return out;
+}
+
+/**
+ * El primer raid de la partida (#2 del 🐞, elegido por Mikel el 2026-10-23): siempre pequeño, 2
+ * saqueadores con palos, sin chalecos ni vehículos, en cualquier dureza.
+ */
+export function startFirstRaid(w: World): Colonist[] {
+  const out = startRaid(w, FIRST_RAID.size, false, false, RAIDER_FACTION);
+  for (const r of out) {
+    r.weapon = FIRST_RAID.weapon as WeaponId;
+    r.ammo = 0;
+    r.vest = null;
+    r.grenades = 0;
+  }
   return out;
 }
 

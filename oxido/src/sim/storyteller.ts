@@ -4,7 +4,11 @@ import storyData from '../data/storyteller.json';
 
 /** Día en que puede llegar el primer superviviente, el primer raid y la primera caravana. */
 export const FIRST_WANDERER_DAY: number = storyData.wanderers.firstDay;
-export const FIRST_RAID_DAY = 5;
+/** Días sin raids en Normal: el primer raid llega 7 días después de empezar (#2 del 🐞, Mikel, 2026-10-23). */
+export const FIRST_RAID_DAY = 7;
+
+/** El primer raid (#2 del 🐞, A + B): pequeño, con cuenta atrás y aviso el día antes. */
+export const FIRST_RAID: { size: number; weapon: string; countdownFromDay: number; warnHours: number } = storyData.firstRaid;
 export const FIRST_TRADER_DAY = 4;
 
 export interface StorySchedule {
@@ -16,6 +20,10 @@ export interface StorySchedule {
   nextTrader: number;
   /** Tick del superviviente que atrae la radio de llamada con corriente (sin radio encendida, no hay). */
   nextRadio?: number;
+  /** Ya ha llegado el primer raid (el pequeño). */
+  firstRaidDone?: boolean;
+  /** Ya se ha avisado de que se ven saqueadores en el horizonte. */
+  firstRaidWarned?: boolean;
 }
 
 export function initialSchedule(ticksPerDay: number, startTick: number, graceDays: number = FIRST_RAID_DAY): StorySchedule {
@@ -23,6 +31,8 @@ export function initialSchedule(ticksPerDay: number, startTick: number, graceDay
     nextWanderer: startTick + FIRST_WANDERER_DAY * ticksPerDay,
     nextRaid: startTick + graceDays * ticksPerDay,
     nextTrader: startTick + FIRST_TRADER_DAY * ticksPerDay,
+    firstRaidDone: false,
+    firstRaidWarned: false,
   };
 }
 
@@ -65,10 +75,10 @@ export interface DifficultyDef {
 }
 
 export const DIFFICULTIES: Record<DifficultyLevel, DifficultyDef> = {
-  tranquila: { label: 'Tranquila', desc: 'Raids pequeños y espaciados, golpes flojos y más provisiones.', raidScale: 0.6, raidGapScale: 1.5, enemyDamage: 0.7, supplies: 1.5, graceDays: 8 },
+  tranquila: { label: 'Tranquila', desc: 'Raids pequeños y espaciados, golpes flojos y más provisiones.', raidScale: 0.6, raidGapScale: 1.5, enemyDamage: 0.7, supplies: 1.5, graceDays: 10 },
   normal: { label: 'Normal', desc: 'La partida tal como está pensada.', raidScale: 1, raidGapScale: 1, enemyDamage: 1, supplies: 1, graceDays: FIRST_RAID_DAY },
-  dura: { label: 'Dura', desc: 'Raids más grandes y frecuentes; menos provisiones.', raidScale: 1.4, raidGapScale: 0.8, enemyDamage: 1.2, supplies: 0.75, graceDays: 4 },
-  brutal: { label: 'Brutal', desc: 'El yermo no perdona: raids el doble de grandes, golpes duros y casi sin provisiones.', raidScale: 2, raidGapScale: 0.6, enemyDamage: 1.5, supplies: 0.5, graceDays: 3 },
+  dura: { label: 'Dura', desc: 'Raids más grandes y frecuentes; menos provisiones.', raidScale: 1.4, raidGapScale: 0.8, enemyDamage: 1.2, supplies: 0.75, graceDays: 6 },
+  brutal: { label: 'Brutal', desc: 'El yermo no perdona: raids el doble de grandes, golpes duros y casi sin provisiones.', raidScale: 2, raidGapScale: 0.6, enemyDamage: 1.5, supplies: 0.5, graceDays: 5 },
 };
 
 export const DIFFICULTY_LEVELS = Object.keys(DIFFICULTIES) as DifficultyLevel[];
@@ -107,4 +117,14 @@ export function scaledSupplies(base: Partial<Record<string, number>>, level: Dif
   const out: Record<string, number> = {};
   for (const [r, n] of Object.entries(base)) out[r] = Math.max(0, Math.round((n ?? 0) * k));
   return out;
+}
+
+/**
+ * Días de calendario que faltan para el primer raid, para la cuenta atrás de la pantalla (#2 del 🐞):
+ * solo desde el día 3 y mientras no haya llegado. 1 = mañana, 0 = hoy. `null` = no se enseña.
+ */
+export function firstRaidCountdown(w: { schedule: StorySchedule; tick: number; day: number; dayOf(tick: number): number }): number | null {
+  const sch = w.schedule;
+  if (sch.firstRaidDone || w.day < FIRST_RAID.countdownFromDay || w.tick >= sch.nextRaid) return null;
+  return Math.max(0, w.dayOf(sch.nextRaid) - w.day);
 }

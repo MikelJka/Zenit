@@ -2,6 +2,18 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (78) — El primer raid llega más tarde, es pequeño y se ve venir
+
+- Primera de las cinco decisiones de Mikel (#2 del 🐞, A + B): da tiempo a hacer armas antes del primer raid.
+  - En Normal llega **7 días después de empezar** (antes 5); Tranquila 10, Dura 6 y Brutal 5 (2 días más que antes). Los días sin raids del menú siguen pudiéndose cambiar.
+  - Es **siempre pequeño**: 2 saqueadores con palos, sin chalecos ni vehículos, en cualquier dureza.
+  - **Cuenta atrás** arriba a la izquierda desde el día 3 («⚔️ Primer raid en N días», «¡mañana!», «¡hoy!») y, 24 h antes, el aviso «👀 Se ven saqueadores en el horizonte».
+  - Partidas guardadas: si ya pasó el día del primer raid, no se repite; si no, el que llegue será el pequeño.
+- Reglas en `src/sim/people.ts` (`startFirstRaid`) y `src/sim/storyteller.ts`; números en `src/data/storyteller.json` (5 tests nuevos en `tests/firstRaid.test.ts`).
+- Qué probar: partida nueva en Normal; el día 3 debe salir la cuenta atrás; el día 7 por la mañana, el aviso; al empezar el día 8, dos saqueadores con palos.
+- Qué sigue: #3 velocidad (×0,75; herido −30 %).
+- Sin npm en el entorno: tests con Bun (713); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 — Mikel elige las cinco propuestas
 
 - Respondidas en el chat: primer raid **A + B** (día 7, pequeño, cuenta atrás desde el día 3 y aviso un día antes), velocidad **A** (×0,75, herido −30 %), sueño **B** (6 h en cama, 7 h en el suelo, de 21:00 a 07:00), botones **🎯 Cazar** y **🤝 Domar** en Órdenes (**B**) y comida con **fecha de caducidad por unidad** que se estropea de golpe (B, con duraciones ajustadas: carne, pescado y leche 2 días; comida cocinada 4; huevos y setas 7; patata 20; maíz 30).

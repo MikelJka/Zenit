@@ -76,7 +76,7 @@ export interface SaveData {
   graveyard?: { name: string; cause: string; day: number }[];
   gameOver?: { day: number; cause: string } | null;
   offer?: { pawn: SavedColonist; until: number; kind?: string } | null;
-  schedule?: { nextWanderer: number; nextRaid: number; nextTrader: number; nextRadio?: number };
+  schedule?: { nextWanderer: number; nextRaid: number; nextTrader: number; nextRadio?: number; firstRaidDone?: boolean; firstRaidWarned?: boolean };
   /** Facciones (desde el 2026-10-21); las partidas antiguas las sacan de la semilla. */
   factions?: { id: string; settlement: string; relation: number; helpAt?: number; warRaidAt?: number; calledAt?: number; base?: { x: number; y: number; population: number; wealth: number; defenses: number; grownAt: number } }[];
   /** Mercado: precios respecto a su valor (desde el 2026-10-21). */
@@ -644,6 +644,9 @@ export function loadWorld(input: string | unknown): World {
     ? {
         nextWanderer: num(d.schedule.nextWanderer, 0), nextRaid: num(d.schedule.nextRaid, 0), nextTrader: num(d.schedule.nextTrader, 0),
         ...(d.schedule.nextRadio !== undefined ? { nextRadio: num(d.schedule.nextRadio, 0) } : {}),
+        // Partidas de antes del primer raid pequeño (#2 del 🐞): si ya pasó su día, cuenta como llegado.
+        firstRaidDone: d.schedule.firstRaidDone ?? world.day > makeDifficulty(d.difficulty).graceDays + 1,
+        firstRaidWarned: d.schedule.firstRaidWarned ?? false,
       }
     : initialSchedule(TICKS_PER_DAY, world.tick);
   // #21 A: en partidas guardadas con la espera antigua (4-8 días), el próximo superviviente

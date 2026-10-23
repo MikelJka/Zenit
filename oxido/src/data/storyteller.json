@@ -10,5 +10,12 @@
   "radio": {
     "_": "#21 C (elegido por Mikel el 2026-10-19): una radio de llamada con corriente atrae un superviviente más cada gapDays días",
     "gapDays": 3
+  },
+  "firstRaid": {
+    "_": "#2 del 🐞 (A + B, elegido por Mikel el 2026-10-23): el primer raid es siempre pequeño, con cuenta atrás desde el día 3 y aviso el día antes",
+    "size": 2,
+    "weapon": "palo",
+    "countdownFromDay": 3,
+    "warnHours": 24
   }
 }
