@@ -4,6 +4,12 @@ Escribe aquí lo que quieras, o usa el botón 🐞 del juego: abre una incidenci
 
 ## Pendiente
 
+- [ ] **Óxido en Google Play: prueba gratis hasta el día 10 y desbloqueo de 2,99 €** (decidido por Mikel en el chat del 2026-10-23: bloqueo en el **día 10**, precio **2,99 €**, pago único; mejor que meter anuncios). Por partes, una por sesión:
+  - [ ] Regla del bloqueo en `src/sim/` (número en JSON): al empezar el día 10 la partida se pausa y sale una pantalla «Fin de la prueba gratis» con el botón de desbloquear; la partida queda guardada y sigue igual tras pagar. Sin anuncios.
+  - [ ] Empaquetar Óxido para Android con Capacitor (como Scrap Empire, `.github/workflows/scrap-empire-android.yml`) y la compra única con Play Billing (plugin libre y gratuito), con una versión «de mentira» para la web y los tests.
+  - [ ] Ficha de la tienda que diga claro «Prueba gratis hasta el día 10; desbloqueo único de 2,99 €».
+  - Lo que hace Mikel: crear la cuenta de desarrollador de Play (25 $, la misma que la de Scrap Empire) y conseguir 12 testers durante 14 días para la prueba cerrada.
+
 - [ ] **🐞 del 2026-10-23 (Mikel, partida en el móvil, semilla 538395)**. Números de las incidencias de `mikeljka/zenit` (se escriben «Z#N» para no confundirlos con los antiguos de OxidoGame). Los bugs, primero y uno por sesión:
   - [x] **Z#14 (bug) Banco de trabajo**: tras fabricar cuchillos no deja fabricar otra cosa. *Hecho (sesión 84, 2026-10-23)*: la simulación cambiaba bien de receta (comprobado con tests, también con estanterías, armero y a mitad de tanda); el fallo era al tocar: en el móvil, con un colono elegido (p. ej. tras «reclutar y devolverlo al trabajo» de la guía), tocar el banco solo decía «No se puede caminar ahí» y no abría su panel. Ahora, con un colono elegido, tocar un taller, un mueble con panel o una nevera/estantería suelta al colono y abre su panel. Si con el panel abierto seguía sin dejar elegir otra receta, que Mikel lo cuente con 🐞.
   - [ ] **Z#10 (bug) Cuenta atrás del primer raid**: en una partida en el día 6 sale «Primer raid en 5 días»; además el aviso tapa las cantidades de madera y otros recursos de arriba.
@@ -79,7 +85,10 @@ Lo que Mikel ha pedido dejar para más adelante. No se trabaja en ello salvo par
 
 Lo que una sesión quiere meter y necesita su visto bueno (responde por el chat o con 🐞).
 
-(Ninguna abierta: Mikel respondió a las cinco el 2026-10-23; están en «Pendiente».)
+- **¿Qué pasa con la web gratis de GitHub Pages cuando Óxido esté en Play?** (2026-10-23). Si la web sigue siendo el juego entero gratis, casi nadie pagará en Android. Opciones:
+  - **A.** La web también se corta en el día 10 y enseña «Sigue en Google Play» (sin cobrar en la web).
+  - **B.** La web se queda entera y gratis como escaparate (se acepta vender menos).
+  - **C.** Se quita la web de Óxido al salir en Play y en la portada de Zenit queda solo el enlace a la tienda.
 
 ## Hecho
 
