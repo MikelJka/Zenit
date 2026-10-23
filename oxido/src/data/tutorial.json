@@ -1,39 +1,212 @@
 {
+  "_": "Primeros pasos (aprobados por Mikel el 2026-10-22; narradora y pasos nuevos elegidos por él en el chat del 2026-10-23: «Voz por la radio» y comida y agua, banco de trabajo y armas, investigación, defensa y reclutar).",
+  "narrator": {
+    "name": "Nora",
+    "station": "Radio Óxido",
+    "portrait": "radio"
+  },
+  "intro": {
+    "title": "Aquí Radio Óxido",
+    "text": "¿Me recibís? Aquí Nora, desde Radio Óxido, la única emisora que queda en pie. Si me oís, es que habéis llegado al páramo con vida. Os voy a ir contando cómo aguantar los primeros días. Atentos."
+  },
+  "outro": {
+    "title": "Corto y cambio",
+    "text": "Ya tenéis lo básico: techo, comida, agua y con qué defenderos. En 📜 veréis a vuestra gente y el diario, y en ☰ podéis guardar. Seguiré en el aire. Aquí Nora, de Radio Óxido: corto y cambio."
+  },
   "steps": [
     {
       "id": "talar",
       "title": "Tala unos árboles",
-      "text": "Toca ⚒ Órdenes → 🪓 Talar y arrastra sobre unos árboles: los colonos irán a por madera.",
-      "check": { "designation": "talar" },
-      "target": { "menu": "orders", "mode": "talar" }
+      "text": "Lo primero es madera. Toca ⚒ Órdenes → 🪓 Talar y arrastra sobre unos árboles: tu gente irá a por ellos. Sin madera no hay refugio, ni camas, ni nada.",
+      "check": {
+        "designation": "talar"
+      },
+      "target": {
+        "menu": "orders",
+        "mode": "talar"
+      }
     },
     {
       "id": "almacen",
       "title": "Marca un almacén",
-      "text": "⚒ Órdenes → 📦 Almacén y arrastra un rectángulo cerca de la gente: ahí llevarán lo que recojan.",
-      "check": { "storageZone": true },
-      "target": { "menu": "orders", "mode": "almacen" }
+      "text": "Lo que recojáis no puede quedarse tirado por ahí. ⚒ Órdenes → 📦 Almacén y arrastra un rectángulo cerca de tu gente: allí lo irán llevando todo.",
+      "check": {
+        "storageZone": true
+      },
+      "target": {
+        "menu": "orders",
+        "mode": "almacen"
+      }
     },
     {
       "id": "huerto",
       "title": "Planta un huerto",
-      "text": "⚒ Órdenes → 🌱 Huerto y arrastra sobre tierra (mejor la oscura): sembrarán y cosecharán comida.",
-      "check": { "growZone": true },
-      "target": { "menu": "orders", "mode": "cultivo" }
+      "text": "Las latas se acaban, creedme. ⚒ Órdenes → 🌱 Huerto y arrastra sobre tierra (mejor la oscura, que es más fértil): sembrarán y cosecharán solos.",
+      "check": {
+        "growZone": true
+      },
+      "target": {
+        "menu": "orders",
+        "mode": "cultivo"
+      }
+    },
+    {
+      "id": "pozo",
+      "title": "Cava un pozo",
+      "text": "Sin agua, en tres días no queda nadie para escucharme. 🏗 Construir → Agua → Pozo, y colócalo cerca: los colonos irán a beber solos.",
+      "check": {
+        "buildings": [
+          "pozo"
+        ]
+      },
+      "target": {
+        "menu": "build",
+        "category": "agua",
+        "build": "pozo"
+      }
+    },
+    {
+      "id": "cocina",
+      "title": "Monta una cocina",
+      "text": "La carne y las patatas crudas dan para poco y sientan mal. 🏗 Construir → Talleres → Cocina: allí se cocinan comidas que llenan más y aguantan días.",
+      "check": {
+        "buildings": [
+          "cocina"
+        ]
+      },
+      "target": {
+        "menu": "build",
+        "category": "taller",
+        "build": "cocina"
+      }
     },
     {
       "id": "cama",
       "title": "Pon una cama",
-      "text": "🏗 Construir → Muebles → Cama y colócala: dormir en el suelo baja el ánimo.",
-      "check": { "buildings": ["cama"] },
-      "target": { "menu": "build", "category": "mueble", "build": "cama" }
+      "text": "Dormir en el suelo pone de mal humor a cualquiera. 🏗 Construir → Muebles → Cama y colócala.",
+      "check": {
+        "buildings": [
+          "cama"
+        ]
+      },
+      "target": {
+        "menu": "build",
+        "category": "mueble",
+        "build": "cama"
+      }
     },
     {
       "id": "muro",
       "title": "Levanta un muro",
-      "text": "🏗 Construir → Muros → Muro de madera y arrastra un rectángulo: cierra un cuarto alrededor de la cama.",
-      "check": { "category": "muro" },
-      "target": { "menu": "build", "category": "muro", "build": "muro_madera" }
+      "text": "Ahora, cuatro paredes. 🏗 Construir → Muros → Muro de madera y arrastra un rectángulo alrededor de la cama. Deja hueco para una puerta.",
+      "check": {
+        "category": "muro"
+      },
+      "target": {
+        "menu": "build",
+        "category": "muro",
+        "build": "muro_madera"
+      }
+    },
+    {
+      "id": "banco",
+      "title": "Construye un banco de trabajo",
+      "text": "Aquí fuera no todos son amigos. 🏗 Construir → Talleres → Banco de trabajo: ahí se fabrican herramientas y armas.",
+      "check": {
+        "buildings": [
+          "banco_trabajo"
+        ]
+      },
+      "target": {
+        "menu": "build",
+        "category": "taller",
+        "build": "banco_trabajo"
+      }
+    },
+    {
+      "id": "armas",
+      "title": "Encarga unas armas",
+      "text": "Cuando el banco esté terminado, tócalo en el mapa y elige qué fabricar: una lanza o un arco valen para empezar. Daos prisa: los saqueadores suelen asomar hacia el día 7.",
+      "check": {
+        "weaponBill": true
+      }
+    },
+    {
+      "id": "investigacion",
+      "title": "Construye el banco de investigación",
+      "text": "Quien sabe más, dura más. 🏗 Construir → Talleres → Banco de investigación: con él se aprenden armas, defensas y máquinas nuevas.",
+      "check": {
+        "buildings": [
+          "banco_investigacion"
+        ]
+      },
+      "target": {
+        "menu": "build",
+        "category": "taller",
+        "build": "banco_investigacion"
+      }
+    },
+    {
+      "id": "proyecto",
+      "title": "Elige qué investigar",
+      "text": "Toca 📜 → 🔬 Investigación y elige un proyecto. Un colono irá al banco a estudiarlo cuando esté terminado.",
+      "check": {
+        "researching": true
+      },
+      "target": {
+        "menu": "element",
+        "selectors": [
+          "#pp-tabs [data-tab=\"investigacion\"]:not(.active)",
+          "#people-btn"
+        ]
+      }
+    },
+    {
+      "id": "barricada",
+      "title": "Pon una barricada",
+      "text": "Toca preparar la defensa. 🏗 Construir → Defensas → Barricada de madera, en el lado por donde entraría alguien: tus colonos se cubren detrás.",
+      "check": {
+        "buildings": [
+          "barricada_madera",
+          "barricada_chatarra",
+          "barricada_metal",
+          "barricada_hormigon",
+          "sacos_arena"
+        ]
+      },
+      "target": {
+        "menu": "build",
+        "category": "defensa",
+        "build": "barricada_madera"
+      }
+    },
+    {
+      "id": "reclutar",
+      "title": "Llama a las armas",
+      "text": "Cuando lleguen, nadie debe estar plantando patatas. Toca a un colono y pulsa 🎖 Reclutar (o la tecla G): deja de trabajar y obedece tus órdenes. Tócale el suelo para moverlo.",
+      "check": {
+        "drafted": true
+      },
+      "target": {
+        "menu": "element",
+        "selectors": [
+          "#cp-draft"
+        ]
+      }
+    },
+    {
+      "id": "desreclutar",
+      "title": "Vuelta al trabajo",
+      "text": "Falsa alarma, por esta vez. Vuelve a pulsar 🎖 Reclutar para que vuelva a sus tareas: un colono reclutado no trabaja.",
+      "check": {
+        "noneDrafted": true
+      },
+      "target": {
+        "menu": "element",
+        "selectors": [
+          "#cp-draft"
+        ]
+      }
     }
   ]
 }

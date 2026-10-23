@@ -112,9 +112,13 @@ try {
     await page.screenshot({ path: `smoke/${d.name}-dios.png` });
     await page.click('#gp-close');
     // Primeros pasos: la guía con su flecha (abriendo ⚒ Órdenes), y saltarla.
+    // Empieza con el saludo de Nora por la radio; se contesta y sale el primer paso.
     await page.evaluate(() => window.oxidoPrueba.primerosPasos());
-    await sleep(700);
+    await sleep(2500);
     await page.evaluate(() => document.querySelectorAll('#alerts .alert-card').forEach((e) => e.remove()));
+    await page.screenshot({ path: `smoke/${d.name}-primeros-pasos-radio.png` });
+    await page.click('#tutorial .tu-next');
+    await sleep(700);
     await page.click('#orders-btn');
     await sleep(700);
     await page.screenshot({ path: `smoke/${d.name}-primeros-pasos.png` });

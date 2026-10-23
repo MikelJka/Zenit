@@ -851,12 +851,19 @@ button.primary { background: var(--accent); color: var(--bg); border-color: var(
   z-index: 6;
   left: 8px;
   top: 114px;
-  width: min(320px, calc(100% - 16px));
+  width: min(340px, calc(100% - 16px));
   padding: 8px 10px;
   border-color: #c8a040;
   font-size: 13px;
   line-height: 1.35;
 }
+#tutorial:not([hidden]) { display: flex; gap: 8px; align-items: flex-start; }
+#tutorial .tu-portrait { flex: none; width: 48px; height: 48px; image-rendering: pixelated; background: #1a1410; border: 1px solid #6a5030; border-radius: 4px; }
+#tutorial .tu-main { flex: 1; min-width: 0; }
+#tutorial .tu-who { font-size: 11px; color: #c8a060; letter-spacing: 0.03em; }
+#tutorial .tu-text { cursor: pointer; font-style: italic; min-height: 3.6em; }
+#tutorial .tu-next { margin-top: 6px; min-height: 36px; padding: 6px 12px; font-weight: bold; }
+#tutorial .tu-next[hidden] { display: none; }
 #tutorial .tu-head { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
 #tutorial .tu-head strong { color: #e8c060; font-size: 13px; }
 #tutorial .tu-head button { flex: none; font-size: 12px; padding: 4px 8px; }

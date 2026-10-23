@@ -2,6 +2,7 @@
 // guía. La guía no cambia nada de la partida: solo lee. Dónde va la guía y qué enseña lo decide
 // `src/data/tutorial.json`.
 import { TutorialCheck, TutorialStep } from '../data/tutorial';
+import { isWeapon } from '../data/weapons';
 import type { World } from './world';
 
 /** El paso ya está hecho en esta partida (algo de lo que pide existe ahora mismo). */
@@ -15,6 +16,14 @@ export function tutorialCheckDone(world: World, check: TutorialCheck): boolean {
       if (check.category && s.def.category === check.category) return true;
     }
   }
+  if (check.weaponBill) {
+    for (const s of world.structures.all()) {
+      if (s.bill && Object.keys(s.bill.recipe.outputs).some(isWeapon)) return true;
+    }
+  }
+  if (check.researching && (world.research.current !== null || world.research.done.length > 0)) return true;
+  if (check.drafted && world.colonists.some((c) => c.drafted)) return true;
+  if (check.noneDrafted && !world.colonists.some((c) => c.drafted)) return true;
   return false;
 }
 

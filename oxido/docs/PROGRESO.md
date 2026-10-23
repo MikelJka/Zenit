@@ -2,6 +2,16 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (83) — Los primeros pasos los cuenta Nora por la radio
+
+- Pedido por Mikel en el chat: que alguien explique la guía y que sea más larga. Eligió «Voz por la radio» y añadir comida y agua, armas, investigación y defensa.
+  - Lo cuenta **Nora, de Radio Óxido**: radio en pixel art junto a la tarjeta (luz, aguja y ondas al hablar), chasquido de radio y texto letra a letra; tocar el texto lo enseña entero.
+  - Saludo al empezar («Te recibo ▸») y despedida al acabar.
+  - **14 pasos** (antes 5): talar, almacén, huerto, pozo, cocina, cama, muro, banco de trabajo, encargar un arma, banco de investigación, elegir proyecto, barricada, reclutar y devolverlo al trabajo. La flecha señala la pestaña 🔬 y el botón 🎖 Reclutar.
+- Textos y pasos en `src/data/tutorial.json`; comprobaciones nuevas en `src/sim/tutorial.ts`; tarjeta en `src/ui/tutorial.ts`. Tests de la guía ampliados.
+- Qué probar: partida nueva con «Guía de primeros pasos» marcada; hablará Nora y se puede seguir hasta reclutar a un colono.
+- Qué sigue: la parte 2 de la caducidad de la comida.
+
 ## 2026-10-23 (82) — La comida caduca por lotes (primera parte)
 
 - Quinta de las decisiones de Mikel (#1 del 🐞, caducidad cambiada por él). Parte 1 de 2.

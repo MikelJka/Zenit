@@ -448,6 +448,7 @@ setBuildCategory(buildCategory);
 const tutorial = mountTutorial({
   getWorld: () => (game.scene.getScene('world') as WorldScene | null)?.world ?? null,
   buildCategory: () => buildCategory,
+  onSpeak: () => (game.scene.getScene('world') as WorldScene | null)?.sfx.play('radio', undefined, 0.8),
 });
 // La primera vez que se abre el juego (sin partida guardada), el primer mapa también lleva la guía.
 if (!wantsNew && !storedSave && tutorialWanted()) tutorial.startOnNextMap();

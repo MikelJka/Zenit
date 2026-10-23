@@ -792,6 +792,7 @@ export function mountPeople(opts: Options): PeopleUI {
       const b = button('', () => setTab(t), label);
       b.append(el('span', 'tab-icon', icon), el('span', 'tab-label', label));
       b.setAttribute('role', 'tab');
+      b.dataset.tab = t; // la guía de primeros pasos señala la de 🔬
       b.setAttribute('aria-selected', String(t === tab));
       if (badge !== '') b.append(el('span', 'badge', String(badge)));
       if (t === tab) b.classList.add('active');

@@ -27,6 +27,8 @@ const FX: Record<string, ZzfxParams> = {
   trueno: [1.6, 0.1, 40, 0.05, 0.5, 1.8, 4, 1, 0, 0, 0, 0, 0, 30, 0, 0.5, 0.1, 0.5, 0.3],
   chapoteo: [0.25, 0.2, 300, 0, 0.02, 0.12, 4, 1, 0, 0, 0, 0, 0, 15],
   clic: [0.15, 0, 1300, 0, 0, 0.02, 1],
+  // Chasquido de radio al hablar Nora en los primeros pasos.
+  radio: [0.22, 0, 900, 0.01, 0.12, 0.1, 4, 1, 0, 0, 0, 0, 0, 40, 0, 0.6, 0, 0.6, 0.02, 0.5],
 };
 
 /** Cada cuánto, como mucho, suena cada efecto (ms): una batalla no se vuelve ruido. */
