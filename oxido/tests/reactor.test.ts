@@ -60,7 +60,7 @@ describe('energía nuclear y reactor pequeño', () => {
     let ok = false;
     for (let t = 0; t < 20000 && !ok; t++) {
       w.step();
-      ok = (r.fuel ?? 0) > 0 && r.powered;
+      ok = (r.fuel ?? 0) > 0 && !!r.powered;
     }
     expect(ok).toBe(true);
     expect(r.fuel ?? 0).toBeLessThanOrEqual(r.def.fuel!.capacity);
