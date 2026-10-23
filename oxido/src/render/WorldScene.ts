@@ -212,6 +212,8 @@ export class WorldScene extends Phaser.Scene {
   private shadowGfx: Phaser.GameObjects.Graphics | null = null;
   private shadowKey = '';
   private carrySprites = new Map<number, Phaser.GameObjects.Image>();
+  /** Marca 🎯 (cazar) o 🤝 (domar) encima de los animales marcados. */
+  private animalMarks = new Map<number, Phaser.GameObjects.Image>();
   /** Dibujo de cada vehículo, por id. */
   private vehicleSprites = new Map<number, Phaser.GameObjects.Image>();
   /** Dibujo de cada cadáver, por id. */
@@ -1451,6 +1453,8 @@ export class WorldScene extends Phaser.Scene {
       this.sprites.delete(id);
       this.carrySprites.get(id)?.destroy();
       this.carrySprites.delete(id);
+      this.animalMarks.get(id)?.destroy();
+      this.animalMarks.delete(id);
     }
     for (const c of pawns) {
       const img = this.ensureSprite(c);
@@ -1503,7 +1507,30 @@ export class WorldScene extends Phaser.Scene {
       img.setAngle(lying && !human ? -90 : 0);
       if (c.carriedBy !== undefined) img.y -= 7;
       this.syncCarried(c, img);
+      this.syncAnimalMark(c, img);
     }
+  }
+
+  /**
+   * Encima de un animal marcado para cazar, una diana naranja; para domar, un corazón verde. Late
+   * un poco para que se vea en el móvil incluso con poco zoom.
+   */
+  private syncAnimalMark(c: Colonist, img: Phaser.GameObjects.Image): void {
+    let mark = this.animalMarks.get(c.id);
+    const kind = c.tamed ? null : c.huntMarked ? 'hunt' : c.tameMarked ? 'tame' : null;
+    if (!kind) {
+      mark?.setVisible(false);
+      return;
+    }
+    const key = `animal-mark-${kind}`;
+    if (!this.textures.exists(key)) paintAnimalMark(this, key, kind);
+    if (!mark) {
+      mark = this.add.image(0, 0, key).setOrigin(0.5, 1).setScale(0.5);
+      this.animalMarks.set(c.id, mark);
+    }
+    const pulse = 0.5 + Math.sin(this.time.now / 260 + c.id) * 0.05;
+    const top = img.y - img.displayHeight * img.originY;
+    mark.setTexture(key).setVisible(img.visible).setScale(pulse).setPosition(img.x, top - 1).setDepth(COLONIST_DEPTH + 0.9);
   }
 
   /** Dibuja cada vehículo donde está (centrado en sus 2×2 casillas) y quita los que ya no existen. */
@@ -2629,6 +2656,60 @@ function drawCharSheet(scene: Phaser.Scene, key: string, c: Colonist): void {
   if (!tex) return;
   paintCharSheet(tex.getContext(), c);
   CHAR_POSES.forEach((pose, i) => tex.add(pose, 0, i * CHAR, 0, CHAR, CHAR));
+  tex.refresh();
+}
+
+/** Marca de los animales (a doble resolución): diana naranja para cazar o corazón verde para domar. */
+function paintAnimalMark(scene: Phaser.Scene, key: string, kind: 'hunt' | 'tame'): void {
+  const S = 26;
+  const tex = scene.textures.createCanvas(key, S, S + 6);
+  if (!tex) return;
+  const ctx = tex.getContext();
+  const cx = S / 2;
+  const cy = S / 2;
+  // Globo oscuro con borde claro y un piquito hacia el animal: se lee sobre hierba, arena o nieve.
+  ctx.fillStyle = '#1a1410';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+  ctx.moveTo(cx - 4, cy + 10);
+  ctx.lineTo(cx, S + 5);
+  ctx.lineTo(cx + 4, cy + 10);
+  ctx.fill();
+  ctx.strokeStyle = '#f0d7b0';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 11.5, 0, Math.PI * 2);
+  ctx.stroke();
+  if (kind === 'hunt') {
+    ctx.strokeStyle = '#ff7a3a';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 7.5, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 10);
+    ctx.lineTo(cx, cy - 4);
+    ctx.moveTo(cx, cy + 4);
+    ctx.lineTo(cx, cy + 10);
+    ctx.moveTo(cx - 10, cy);
+    ctx.lineTo(cx - 4, cy);
+    ctx.moveTo(cx + 4, cy);
+    ctx.lineTo(cx + 10, cy);
+    ctx.stroke();
+    ctx.fillStyle = '#ffb070';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 2, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.fillStyle = '#7fd06a';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + 7);
+    ctx.bezierCurveTo(cx - 10, cy, cx - 7, cy - 9, cx, cy - 3);
+    ctx.bezierCurveTo(cx + 7, cy - 9, cx + 10, cy, cx, cy + 7);
+    ctx.fill();
+    ctx.fillStyle = '#c8f0b0';
+    ctx.fillRect(cx - 5, cy - 4, 2, 2);
+  }
   tex.refresh();
 }
 

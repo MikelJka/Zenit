@@ -6,7 +6,7 @@ Escribe aquí lo que quieras, o usa el botón 🐞 del juego: abre una incidenci
 
 - [ ] **Bugs del 🐞 del 2026-10-22** (Mikel, partida en el móvil). Van antes que lo demás, uno por sesión:
   - [x] **#4 Almacenes y muebles**: no se pueden dibujar almacenes encima de objetos; si se pone un objeto en un almacén, esa casilla sale de él; las neveras y muebles parecidos tienen ahora un inventario propio en vez de un almacén encima. *Hecho (sesión 75, 2026-10-23)*: cuenta como objeto todo lo que no es suelo, puente, plataforma ni cable, también los planos. La nevera, las estanterías, el armario y el armero terminados llevan su **inventario** (al tocarlos se abre con lo guardado, la prioridad y el filtro, y no se puede borrar). Decidido en esta sesión (Mikel puede cambiarlo): el inventario empieza con prioridad **alta** (`FURNITURE_PRIORITY` en `src/sim/zones.ts`), la nevera solo acepta comida y el armero armas y munición; al mover un mueble su inventario vuelve a la prioridad y el filtro de serie.
-  - [ ] **#1 Botón de cazar**: no se ve bien. (Lo de que la comida empiece a ponerse mala a los días está en «Propuestas».)
+  - [x] **#1 Botón de cazar**: no se ve bien. (Lo de que la comida empiece a ponerse mala a los días está en «Propuestas».) *Hecho (sesión 76, 2026-10-23)*: la marca de cazar no se dibujaba en el mapa (solo salía un aviso al tocar el animal). Ahora el animal marcado lleva encima un globo con una **diana naranja** (cazar) o un **corazón verde** (domar), que late un poco para verse en el móvil. Si Mikel se refería a un botón en 🪓 Órdenes, ver «Propuestas».
   - [ ] **#6 Trato con un comerciante**: posible fallo al cerrar un trato; Mikel no dice qué pasa, se revisa el cierre del trato (lo que se da y se recibe, la relación y la caravana).
   - Las peticiones #2 (no da tiempo a hacer armas antes del primer raid), #3 (todo se mueve más despacio y los heridos van más lentos) y #5 (dormir menos horas y de noche) dejan números sin decidir: están en «Propuestas para Mikel».
 
@@ -59,6 +59,10 @@ Lo que Mikel ha pedido dejar para más adelante. No se trabaja en ello salvo par
 
 Lo que una sesión quiere meter y necesita su visto bueno (responde por el chat o con 🐞).
 
+- **#1 Botón de cazar en Órdenes** (ahora: se caza tocando el animal, que queda marcado con la diana; no hay botón). Opciones:
+  - **A.** Botón «🎯 Cazar» en 🪓 Órdenes: se arrastra sobre los animales para marcarlos todos (y «Quitar» les quita la marca).
+  - **B.** Igual que A, y también «🤝 Domar» como botón aparte.
+  - **C.** Dejarlo como está (tocar el animal) con la nueva diana encima.
 - **#5 Sueño** (ahora: 6 h en cama, 8 h en el suelo, a cualquier hora cuando se cansan). Opciones:
   - **A.** 5 h en cama y 6 h en el suelo; solo se acuestan entre las 22:00 y las 06:00 salvo que estén agotados; los «Nocturno», de 10:00 a 18:00.
   - **B.** 6 h en cama y 7 h en el suelo, en la franja de 21:00 a 07:00 (los «Nocturno», de día).

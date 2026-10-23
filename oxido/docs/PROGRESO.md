@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (76) — Los animales marcados se ven en el mapa
+
+- Arreglo del 🐞 #1 de Mikel («no se ve bien el botón de cazar»): al tocar un animal se marcaba para cazar o domar, pero en el mapa **no se veía ninguna marca**. Ahora lleva encima un globo oscuro con una **diana naranja** (cazar) o un **corazón verde** (domar), que late un poco para verse en el móvil; desaparece al quitar la marca, al domarlo o al morir.
+- Dibujado en `src/render/WorldScene.ts` (`syncAnimalMark`, `paintAnimalMark`); la simulación no cambia.
+- Propuesta nueva para Mikel: si quería un botón «🎯 Cazar» en 🪓 Órdenes (arrastrar sobre los animales), opciones en `FEEDBACK.md`.
+- Qué probar: tocar un ciervo o un jabalí: sale la diana encima; tocarlo otra vez (si se puede domar): corazón; otra vez: sin marca.
+- Qué sigue: el trato con el comerciante (#6).
+- Sin npm en el entorno: tipos y build en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 (75) — Los muebles de guardar llevan su inventario
 
 - Arreglo del 🐞 #4 de Mikel: los **almacenes ya no se dibujan encima de objetos** (muebles, talleres, defensas, muros, puertas… y sus planos) y, si se construye o se pone el plano de algo dentro de un almacén, **esa casilla sale del almacén**.
