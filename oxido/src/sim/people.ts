@@ -1,7 +1,7 @@
 // Gente que no es de la colonia y lo que trae el narrador: supervivientes que piden unirse,
 // raids de saqueadores (combate cuerpo a cuerpo, huida, heridos que se pueden capturar),
 // prisioneros (retener, convencer, liberar) y caravanas de comerciantes (con esclavos).
-import { RESOURCE_ICONS, RESOURCES, ResourceId } from '../data/resources';
+import { RESOURCE_ICONS, RESOURCE_NAMES, RESOURCES, ResourceId } from '../data/resources';
 import { personValue, RESOURCE_VALUES } from '../data/values';
 import { ammoFor, damageAt, GRENADE, isGear, RAIDER_AMMO, raiderWeaponPool, WEAPONS, WeaponDef } from '../data/weapons';
 import { armorProtection, isArmor, raiderVestPool } from '../data/armor';
@@ -1590,30 +1590,69 @@ function dealValue(w: World, trader: Colonist, d: TradeDeal): number {
   return v;
 }
 
+/** Cantidades enteras y positivas (lo demás se quita del trato). */
+function cleanAmounts(m: Partial<Record<ResourceId, number>>): Partial<Record<ResourceId, number>> {
+  const out: Partial<Record<ResourceId, number>> = {};
+  for (const [r, n] of Object.entries(m) as [ResourceId, number][]) {
+    const k = Math.floor(Number(n) || 0);
+    if (k > 0) out[r] = k;
+  }
+  return out;
+}
+
 /** Hace un trato. Devuelve un motivo si no se puede, o null si se ha hecho. */
-export function makeDeal(w: World, trader: Colonist, d: TradeDeal): string | null {
+export function makeDeal(w: World, trader: Colonist, deal: TradeDeal): string | null {
   const t = trader.trader;
   if (!t || t.leaving) return 'El comerciante ya se va';
+  // #6: cantidades limpias y sin repetir personas.
+  const d: TradeDeal = {
+    buy: cleanAmounts(deal.buy),
+    sell: cleanAmounts(deal.sell),
+    slaves: [...new Set(deal.slaves)],
+    sellPrisoners: [...new Set(deal.sellPrisoners)],
+    mules: Math.max(0, Math.floor(deal.mules ?? 0)),
+  };
   const inv = w.inventory();
-  for (const [r, n] of Object.entries(d.sell) as [ResourceId, number][]) if (n > inv[r]) return `No hay tanto de ${r}`;
-  for (const [r, n] of Object.entries(d.buy) as [ResourceId, number][]) if (n > (t.stock[r] ?? 0)) return `No tiene tanto de ${r}`;
+  for (const [r, n] of Object.entries(d.sell) as [ResourceId, number][]) if (n > inv[r]) return `Ya no tenéis tanto de ${RESOURCE_NAMES[r].toLowerCase()} (quedan ${inv[r]})`;
+  for (const [r, n] of Object.entries(d.buy) as [ResourceId, number][]) if (n > (t.stock[r] ?? 0)) return `No tiene tanto de ${RESOURCE_NAMES[r].toLowerCase()} (le quedan ${t.stock[r] ?? 0})`;
   const balance = dealBalance(w, trader, d);
   if (balance < 0) return 'No le compensa: ofrece más o pide menos';
-  // Lo vendido sale de los montones de la colonia (los más cercanos al comerciante).
+  const dist = (a: Point) => Math.abs(a.x - trader.tile.x) + Math.abs(a.y - trader.tile.y);
+  // Lo vendido sale de los montones de la colonia (los más cercanos al comerciante) y, si no
+  // basta, de lo que llevan encima los colonos (#6: antes eso se cobraba sin quitarlo).
   for (const [r, n] of Object.entries(d.sell) as [ResourceId, number][]) {
     let left = n;
-    const stacks = w.items.list().filter((s) => s.resource === r)
-      .sort((a, b) => Math.abs(a.x - trader.tile.x) + Math.abs(a.y - trader.tile.y) - (Math.abs(b.x - trader.tile.x) + Math.abs(b.y - trader.tile.y)));
+    const stacks = w.items.list().filter((s) => s.resource === r).sort((a, b) => dist(a) - dist(b));
     for (const s of stacks) {
       if (left <= 0) break;
       const got = w.items.take(s.x, s.y, left);
       if (got) left -= got.amount;
     }
-    t.stock[r] = (t.stock[r] ?? 0) + n;
+    for (const c of [...w.colonists].sort((a, b) => dist(a.tile) - dist(b.tile))) {
+      if (left <= 0) break;
+      if (c.carrying?.resource !== r) continue;
+      const got = Math.min(left, c.carrying.amount);
+      c.carrying.amount -= got;
+      if (c.carrying.amount <= 0) c.carrying = null;
+      left -= got;
+    }
+    t.stock[r] = (t.stock[r] ?? 0) + n - left;
   }
+  // Lo comprado se deja junto a la caravana; si no cabe ahí, junto a la colonia, y si tampoco,
+  // repartido alrededor (#6: antes lo que no cabía se perdía).
+  const home = w.colonyPoint();
   for (const [r, n] of Object.entries(d.buy) as [ResourceId, number][]) {
     t.stock[r] = (t.stock[r] ?? 0) - n;
-    w.items.drop(trader.tile.x, trader.tile.y, r, n);
+    let left = w.items.drop(trader.tile.x, trader.tile.y, r, n);
+    if (left > 0 && home) left = w.items.drop(home.x, home.y, r, left);
+    for (let k = 0; left > 0 && k < 40; k++) {
+      const p = { x: trader.tile.x + w.rng.int(-12, 12), y: trader.tile.y + w.rng.int(-12, 12) };
+      if (inBounds(w.map, p.x, p.y)) left = w.items.drop(p.x, p.y, r, left);
+    }
+    if (left > 0) {
+      t.stock[r] = (t.stock[r] ?? 0) + left;
+      w.addLog(`🐫 No cabían ${left} de ${RESOURCE_NAMES[r].toLowerCase()} en el suelo: ${trader.name} se los queda.`, 'info');
+    }
   }
   for (const id of d.sellPrisoners) {
     const p = w.others.find((o) => o.id === id && o.role === 'prisionero');

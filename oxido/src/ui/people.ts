@@ -635,6 +635,18 @@ export function mountPeople(opts: Options): PeopleUI {
     }
     const t = trader.trader!;
     const inv = w.inventory();
+    // #6: si algo se ha gastado o vendido mientras el trato estaba abierto, se ajusta a lo que queda.
+    for (const r of Object.keys(deal.sell) as ResourceId[]) {
+      deal.sell[r] = Math.min(deal.sell[r] ?? 0, inv[r]);
+      if (!deal.sell[r]) delete deal.sell[r];
+    }
+    for (const r of Object.keys(deal.buy) as ResourceId[]) {
+      deal.buy[r] = Math.min(deal.buy[r] ?? 0, t.stock[r] ?? 0);
+      if (!deal.buy[r]) delete deal.buy[r];
+    }
+    deal.slaves = deal.slaves.filter((id) => t.slaves.some((s) => s.id === id));
+    deal.sellPrisoners = deal.sellPrisoners.filter((id) => w.others.some((o) => o.id === id && o.role === 'prisionero'));
+    if (deal.mules) deal.mules = Math.min(deal.mules, t.mules ?? 0);
     const out: HTMLElement[] = [];
     const hours = Math.max(0, Math.ceil((t.leaveAt - w.tick) / TICKS_PER_HOUR));
     out.push(el('p', 'pp-hint', `Caravana de ${trader.name} · se va en ${hours} h. Cobra un ${Math.round((TRADER_MARGIN - 1) * 100)} % más de lo que paga. Elige con − y + qué compras y qué vendes; el saldo sale abajo.`));

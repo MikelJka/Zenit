@@ -2,6 +2,18 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (77) — Cerrar un trato con la caravana ya no falla
+
+- Arreglo del 🐞 #6 de Mikel («posible fallo al cerrar un trato»). Revisado el cierre del trato y arreglados cuatro fallos:
+  - Lo que llevaban **en las manos** los colonos contaba como vuestro y el comerciante lo pagaba, pero no se quitaba: ahora sale de sus manos.
+  - Lo **comprado que no cabía** junto a la caravana se perdía: ahora se deja junto a la colonia o alrededor (y si de verdad no cabe, el comerciante se lo queda y lo dice el diario).
+  - Si mientras preparabas el trato los colonos gastaban algo de lo que ibas a vender, el trato fallaba con un aviso raro («No hay tanto de madera» con el nombre interno). Ahora **el trato se ajusta solo** a lo que queda y el aviso dice el nombre y cuánto queda.
+  - Cantidades limpias (enteras y sin personas repetidas). La relación con la facción y la caravana ya iban bien.
+- Reglas en `makeDeal` (`src/sim/people.ts`); ajuste del trato en `src/ui/people.ts` (4 tests nuevos en `tests/tradeDeal.test.ts`).
+- Qué probar: con una caravana en la colonia, vender toda la madera mientras un colono lleva madera en la mano; comprar mucho metal: debe aparecer todo en el suelo.
+- Con esto están hechos los tres bugs del 🐞 (#1, #4 y #6). Qué sigue: nada aprobado en «Pendiente»; quedan las 5 propuestas de `FEEDBACK.md` (#1 botón de cazar, #5 sueño, #3 velocidad, #2 primer raid y #1 comida) esperando la respuesta de Mikel.
+- Sin npm en el entorno: tests con Bun (708); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-23 (76) — Los animales marcados se ven en el mapa
 
 - Arreglo del 🐞 #1 de Mikel («no se ve bien el botón de cazar»): al tocar un animal se marcaba para cazar o domar, pero en el mapa **no se veía ninguna marca**. Ahora lleva encima un globo oscuro con una **diana naranja** (cazar) o un **corazón verde** (domar), que late un poco para verse en el móvil; desaparece al quitar la marca, al domarlo o al morir.
