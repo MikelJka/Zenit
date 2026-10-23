@@ -117,7 +117,8 @@ const raidCountdown = document.createElement('div');
 raidCountdown.id = 'raid-countdown';
 raidCountdown.className = 'panel';
 raidCountdown.hidden = true;
-document.body.append(raidCountdown);
+// Debajo de los recursos (Z#10: antes iba encima y tapaba la madera y lo demás).
+$('inventory').after(raidCountdown);
 function renderRaidCountdown(): void {
   const w = scene().world;
   const n = firstRaidCountdown(w);

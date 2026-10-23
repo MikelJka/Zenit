@@ -542,6 +542,18 @@ function restoreColonist(s: SavedColonist): Colonist {
 }
 
 /** Rehace una partida guardada. */
+/**
+ * El primer raid (el pequeño, #2 del 🐞) ya pasó aunque la partida no lo diga (Z#10): partidas de antes
+ * de él, que pueden haberse guardado otra vez con «no ha llegado». La partida empieza en el tick 0 y el
+ * primer raid llega a los `graceDays` días; si ya es más tarde, o el próximo raid ya se ha vuelto a
+ * programar para después, es que ya llegó. Antes se miraba el día y una partida con la espera antigua
+ * (5 días) en el día 6 enseñaba «Primer raid en 5 días» hasta el siguiente raid normal.
+ */
+export function firstRaidAlreadyPassed(tick: number, nextRaid: number, graceDays: number): boolean {
+  const at = graceDays * TICKS_PER_DAY;
+  return tick >= at || nextRaid > at;
+}
+
 export function loadWorld(input: string | unknown): World {
   const d = parseSave(input);
   const map = restoreMap(d);
@@ -646,8 +658,7 @@ export function loadWorld(input: string | unknown): World {
     ? {
         nextWanderer: num(d.schedule.nextWanderer, 0), nextRaid: num(d.schedule.nextRaid, 0), nextTrader: num(d.schedule.nextTrader, 0),
         ...(d.schedule.nextRadio !== undefined ? { nextRadio: num(d.schedule.nextRadio, 0) } : {}),
-        // Partidas de antes del primer raid pequeño (#2 del 🐞): si ya pasó su día, cuenta como llegado.
-        firstRaidDone: d.schedule.firstRaidDone ?? world.day > makeDifficulty(d.difficulty).graceDays + 1,
+        firstRaidDone: !!d.schedule.firstRaidDone || firstRaidAlreadyPassed(world.tick, num(d.schedule.nextRaid, 0), makeDifficulty(d.difficulty).graceDays),
         firstRaidWarned: d.schedule.firstRaidWarned ?? false,
       }
     : initialSchedule(TICKS_PER_DAY, world.tick);
