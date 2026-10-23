@@ -2,7 +2,8 @@
 // El cuerpo de cada máquina se dibuja una vez desde el mismo SVG de siempre y se guarda como textura (mismo aspecto);
 // lo que se mueve (prensa, engranaje, chispa, humo y luz) se dibuja aquí por código. Si WebGL no arranca, el mapa sigue en SVG.
 // Segunda parte: el suelo de cada puesto (con su borde de rayas) y sus cintas, con la chatarra que avanza, también van aquí,
-// debajo de todas las máquinas.
+// debajo de todas las máquinas. Tercera parte: el ayudante de cada puesto (piernas fijas y torso que se mueve al trabajar),
+// encima de todas las máquinas.
 import { Application, CanvasSource, Container, Graphics, Sprite, Texture } from 'pixi.js';
 import { iso } from './iso';
 import type { MachineGeom } from './yard';
@@ -11,6 +12,9 @@ import type { MachineGeom } from './yard';
 const BOX = { x: -50, y: -52, w: 100, h: 100 };
 /** 512 × 512 píxeles (potencia de dos: admite mipmaps en todos los móviles). */
 const RES = 5.12;
+/** Recuadro del ayudante (píxeles locales antes de su escala ×1,45): 32 × 64 → 128 × 256 píxeles. */
+const PERSON_BOX = { x: -16, y: -44, w: 32, h: 64 };
+const PERSON_RES = 4;
 const EDGE = 0x2a1d14;
 
 export interface MachineSpot {
@@ -46,6 +50,8 @@ export interface MachineLayer {
   /** Estado de la animación de una línea en este fotograma. */
   /** Pone el suelo y las cintas del puesto `i` (debajo de todas las máquinas). */
   setFloor(i: number, tiles: FloorTile[], flows: FloorFlow[]): void;
+  /** Pone el ayudante del puesto `i` (o ninguno). `key` identifica su aspecto; `parts` da su SVG en dos piezas. */
+  setWorker(i: number, spot: MachineSpot | null, key: string, parts: () => { base: string; torso: string }): void;
   animate(i: number, level: number, phase: number, gearAngle: number, inView: boolean): void;
   /** Rebote de subida de nivel (como `.levelup`) con el pie en (px, py). */
   levelUp(i: number, px: number, py: number): void;
@@ -175,17 +181,20 @@ interface LineView {
   floor: Graphics;
   flowG: Graphics;
   flows: FloorFlow[];
+  worker: { root: Container; torso: Sprite } | null;
 }
 
 /** Hornea el SVG fijo de una máquina en una textura (asíncrono: el navegador decodifica la imagen). */
-function bake(svg: string): Promise<Texture> {
-  const markup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${BOX.x} ${BOX.y} ${BOX.w} ${BOX.h}" width="512" height="512"><defs><radialGradient id="glow"><stop offset="0" stop-color="#ffe9a0" stop-opacity="0.9"/><stop offset="1" stop-color="#ffe9a0" stop-opacity="0"/></radialGradient></defs>${svg}</svg>`;
+function bake(svg: string, box = BOX, res = RES): Promise<Texture> {
+  const pw = Math.round(box.w * res);
+  const ph = Math.round(box.h * res);
+  const markup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${box.x} ${box.y} ${box.w} ${box.h}" width="${pw}" height="${ph}"><defs><radialGradient id="glow"><stop offset="0" stop-color="#ffe9a0" stop-opacity="0.9"/><stop offset="1" stop-color="#ffe9a0" stop-opacity="0"/></radialGradient></defs>${svg}</svg>`;
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       const cv = document.createElement('canvas');
-      cv.width = 512;
-      cv.height = 512;
+      cv.width = pw;
+      cv.height = ph;
       const ctx = cv.getContext('2d');
       if (!ctx) return reject(new Error('sin 2d'));
       ctx.drawImage(img, 0, 0, cv.width, cv.height);
@@ -221,6 +230,8 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   app.stage.addChild(world);
   const ground = new Container();
   world.addChild(ground);
+  // Los ayudantes van encima de todas las máquinas (se añade al mundo después de las líneas).
+  const people = new Container();
   const textures = new Map<string, Promise<Texture>>();
   let low = false;
 
@@ -230,24 +241,42 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
     const floor = new Graphics();
     const flowG = new Graphics();
     ground.addChild(floor, flowG);
-    return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [] };
+    return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [], worker: null };
   });
+  world.addChild(people);
 
-  function makeMachine(spot: MachineSpot, tex: Promise<Texture>, geom: MachineGeom): Machine {
-    const root = new Container();
-    root.position.set(spot.x, spot.y);
-    root.scale.set(spot.scale);
+  /** Sprite con una textura que llega cuando el navegador termina de hornearla. */
+  function lateSprite(tex: Promise<Texture>, box: typeof BOX, res: number): Sprite {
     const sprite = new Sprite(Texture.EMPTY);
-    sprite.position.set(BOX.x, BOX.y);
-    sprite.scale.set(1 / RES);
+    sprite.position.set(box.x, box.y);
+    sprite.scale.set(1 / res);
     sprite.visible = false;
     tex.then(
       (t) => {
+        if (sprite.destroyed) return;
         sprite.texture = t;
         sprite.visible = true;
       },
       () => {},
     );
+    return sprite;
+  }
+
+  function texture(key: string, make: () => Promise<Texture>): Promise<Texture> {
+    let tex = textures.get(key);
+    if (!tex) {
+      tex = make();
+      textures.set(key, tex);
+      tex.catch(() => textures.delete(key));
+    }
+    return tex;
+  }
+
+  function makeMachine(spot: MachineSpot, tex: Promise<Texture>, geom: MachineGeom): Machine {
+    const root = new Container();
+    root.position.set(spot.x, spot.y);
+    root.scale.set(spot.scale);
+    const sprite = lateSprite(tex, BOX, RES);
     root.addChild(sprite);
     const press = new Graphics();
     drawBlock(press, 0.12, 0.22, geom.h, 0.5, 0.45, 0.16, '#3b3b3b');
@@ -278,17 +307,28 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       l.machines = [];
       if (!spots.length) return;
       const { svg, geom } = body();
-      let tex = textures.get(variant);
-      if (!tex) {
-        tex = bake(svg);
-        textures.set(variant, tex);
-        tex.catch(() => textures.delete(variant));
-      }
+      const tex = texture(variant, () => bake(svg));
       for (const spot of spots) {
         const m = makeMachine(spot, tex, geom);
         l.root.addChild(m.root);
         l.machines.push(m);
       }
+    },
+    setWorker(i, spot, key, parts) {
+      const l = lines[i];
+      l.worker?.root.destroy({ children: true });
+      l.worker = null;
+      if (!spot) return;
+      let made: { base: string; torso: string } | null = null;
+      const get = () => (made ??= parts());
+      const root = new Container();
+      root.position.set(spot.x, spot.y);
+      root.scale.set(spot.scale);
+      const base = lateSprite(texture(`person-${key}-base`, () => bake(get().base, PERSON_BOX, PERSON_RES)), PERSON_BOX, PERSON_RES);
+      const torso = lateSprite(texture(`person-${key}-torso`, () => bake(get().torso, PERSON_BOX, PERSON_RES)), PERSON_BOX, PERSON_RES);
+      root.addChild(base, torso);
+      people.addChild(root);
+      l.worker = { root, torso };
     },
     setFloor(i, tiles, flows) {
       const l = lines[i];
@@ -340,6 +380,11 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
             l.flowG.stroke({ width: 3.2, color: num(f.color), cap: 'round' });
           }
           l.flowG.alpha = 0.95 * l.level;
+        }
+        if (l.worker) {
+          l.worker.root.visible = l.inView;
+          // El torso sube y baja 2 px al trabajar (como `.torso` en el SVG).
+          if (l.inView) l.worker.torso.y = PERSON_BOX.y - 2 * l.level * (0.5 + 0.5 * Math.sin(l.phase * 1.3));
         }
         if (!l.machines.length) continue;
         l.root.visible = l.inView;

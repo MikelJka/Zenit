@@ -78,6 +78,12 @@ function at(x: number, y: number, z = 0): string {
 
 /** Ayudante o trabajador hecho de bloques. */
 export function personIso(look: HelperLook): string {
+  const { base, torso } = personParts(look);
+  return `${base}<g class="torso">${torso}</g>`;
+}
+
+/** La persona en dos piezas: sombra y piernas (fijas) y el torso con la cabeza (se mueve al trabajar). */
+export function personParts(look: HelperLook): { base: string; torso: string } {
   const { skin, hair, gear, accessory } = look;
   let top = block(0.0, -0.02, 1.0, 0.32, 0.28, 0.08, hair);
   let extra = '';
@@ -110,12 +116,14 @@ export function personIso(look: HelperLook): string {
   }
   const [e1x, e1y] = iso(0.1, 0.25, 0.9);
   const [e2x, e2y] = iso(0.21, 0.25, 0.9);
-  return `<ellipse cx="0" cy="${iso(0.15, 0.12)[1] + 2}" rx="11" ry="5" fill="#000" opacity="0.2"/>
-    ${block(0.02, 0.02, 0, 0.12, 0.2, 0.36, '#3b4a6b')}${block(0.18, 0.02, 0, 0.12, 0.2, 0.36, '#3b4a6b')}
-    <g class="torso">${block(-0.02, -0.02, 0.36, 0.34, 0.26, 0.4, gear)}
+  return {
+    base: `<ellipse cx="0" cy="${iso(0.15, 0.12)[1] + 2}" rx="11" ry="5" fill="#000" opacity="0.2"/>
+    ${block(0.02, 0.02, 0, 0.12, 0.2, 0.36, '#3b4a6b')}${block(0.18, 0.02, 0, 0.12, 0.2, 0.36, '#3b4a6b')}`,
+    torso: `${block(-0.02, -0.02, 0.36, 0.34, 0.26, 0.4, gear)}
     ${block(0.02, 0.0, 0.74, 0.28, 0.25, 0.27, skin)}
     <circle cx="${e1x.toFixed(1)}" cy="${e1y.toFixed(1)}" r="1.1" fill="#2a1d14"/><circle cx="${e2x.toFixed(1)}" cy="${e2y.toFixed(1)}" r="1.1" fill="#2a1d14"/>
-    ${top}${extra}</g>`;
+    ${top}${extra}`,
+  };
 }
 
 /** Grado de una máquina: sube uno cada 5 niveles de máquina y la transforma (máximo 6). */
@@ -731,6 +739,7 @@ export function createYard(container: HTMLElement): Yard {
       l.worker.innerHTML = l.pallet.innerHTML = '';
       l.machines.innerHTML = `<g transform="${at(st.x, st.y)}">${scaffoldSvg(0, 0, SIZE)}</g>`;
       gpu?.setLine(i, [], '', () => ({ svg: '', geom: { h: 0, spark: [0, 0], chimney: [0, 0], lamp: null } }));
+      gpu?.setWorker(i, null, '', () => ({ base: '', torso: '' }));
       l.press = l.gears = l.fx = l.flows = [];
       l.torso = null;
       l.stat = l.cnt = null;
@@ -786,7 +795,12 @@ export function createYard(container: HTMLElement): Yard {
     }
     l.belts.innerHTML = belts;
     l.machines.innerHTML = `<g transform="${at(st.x, st.y)}">${machines}</g>`;
-    l.worker.innerHTML = `<g transform="scale(1.45)">${personIso(HELPER_LOOKS[l.def.helper.id])}</g>`;
+    // El ayudante del puesto: en la capa de canvas si está (encima de las máquinas); si no, en el SVG.
+    const helperLook = HELPER_LOOKS[l.def.helper.id];
+    if (gpu) {
+      l.worker.innerHTML = '';
+      gpu.setWorker(i, { x: iso(st.x + 1.3, st.y + 2.3)[0], y: iso(st.x + 1.3, st.y + 2.3)[1], scale: 1.45 }, l.def.helper.id, () => personParts(helperLook));
+    } else l.worker.innerHTML = `<g transform="scale(1.45)">${personIso(helperLook)}</g>`;
     const [lx, ly] = iso(st.x + 0.3, st.y + SIZE + 0.2);
     const extra = zone.machines > 1 ? ` · ${zone.machines} ${tr('map.machShort')}` : '';
     l.label.innerHTML = `<g transform="translate(${lx} ${ly})"><text text-anchor="middle" font-size="10" font-weight="900" fill="#fff6e0" stroke="#2a1d14" stroke-width="3" paint-order="stroke">${zoneProduct(l.def)}${extra}</text></g>

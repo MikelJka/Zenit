@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — Los ayudantes de los puestos se dibujan en canvas (S1, tercera parte)
+
+- El ayudante de cada puesto (Grúa, Pistón, Bujía…) pasa a la capa de canvas (PixiJS), encima de las máquinas: piernas y sombra en una textura y torso con la cabeza en otra, horneadas desde el mismo SVG; el torso sube y baja al trabajar, como antes.
+- Mismo aspecto que en SVG; con `?svg=1`, o si WebGL no arranca, todo sigue en SVG.
+- Pequeña diferencia: el ayudante queda siempre por debajo de carretillas, palés y vehículos (antes se ordenaba por profundidad; en su sitio no se cruza con nada).
+- Qué probar: abrir una zona nueva (tiene que salir su ayudante al momento) y mover el mapa en el móvil con `?fps=1`, comparando con `?svg=1`.
+- Sigue: S1, cuarta parte (carretillas en canvas).
+
 ## 2026-10-23 — El suelo de los puestos y las cintas se dibujan en canvas (S1, segunda parte)
 
 - En la capa de canvas (PixiJS), debajo de todas las máquinas: el suelo de cada puesto con su borde amarillo de rayas, el de los puestos cerrados (rayas oscuras) y las cintas que bajan a cada máquina, con la chatarra que avanza animada por código (quieta con «Calidad baja», como antes).
