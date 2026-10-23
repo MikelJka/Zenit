@@ -30,7 +30,7 @@ import {
 } from './scenery';
 import { TRUCK_SLOTS, agvIso, carIso, forkliftIso, goldenTruckIso, scrapTruckIso, shipTruckIso } from './vehicles';
 import { reducedMotion } from './prefs';
-import { createMachineLayer, type MachineLayer } from './machineLayer';
+import { createMachineLayer, type FloorFlow, type FloorTile, type MachineLayer } from './machineLayer';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -62,6 +62,11 @@ function station(i: number): { x: number; y: number; row: number; col: number } 
   const row = i < 4 ? 0 : i < 8 ? 1 : i - 8;
   const col = i < 8 ? i % 4 : 4;
   return { x: COL_X[col], y: ROW_Y[row], row, col };
+}
+
+/** Esquinas en pantalla de un rectángulo del suelo (lo mismo que dibuja `tile()`). */
+function tilePts(x: number, y: number, w: number, d: number, z = 0): [number, number][] {
+  return [iso(x, y, z), iso(x + w, y, z), iso(x + w, y + d, z), iso(x, y + d, z)];
 }
 
 function at(x: number, y: number, z = 0): string {
@@ -718,7 +723,10 @@ export function createYard(container: HTMLElement): Yard {
     const zone = state.zones[l.def.id];
     const look = ZONE_LOOKS[l.def.id] ?? { wall: '#999', roof: '#555' };
     if (!zone.unlocked) {
-      l.floor.innerHTML = tile(st.x, st.y, SIZE, SIZE, `fill="#000" opacity="${isNext ? 0.12 : 0.06}" stroke="#2a1d14" stroke-width="1.2" stroke-dasharray="6 5"`);
+      if (gpu) {
+        l.floor.innerHTML = '';
+        gpu.setFloor(i, [{ pts: tilePts(st.x, st.y, SIZE, SIZE), fill: '#000000', stroke: '#2a1d14', width: 1.2, dash: [6, 5], alpha: isNext ? 0.12 : 0.06 }], []);
+      } else l.floor.innerHTML = tile(st.x, st.y, SIZE, SIZE, `fill="#000" opacity="${isNext ? 0.12 : 0.06}" stroke="#2a1d14" stroke-width="1.2" stroke-dasharray="6 5"`);
       l.belts.innerHTML = '';
       l.worker.innerHTML = l.pallet.innerHTML = '';
       l.machines.innerHTML = `<g transform="${at(st.x, st.y)}">${scaffoldSvg(0, 0, SIZE)}</g>`;
@@ -731,9 +739,16 @@ export function createYard(container: HTMLElement): Yard {
         ${isNext ? `<text y="26" text-anchor="middle" font-size="11" font-weight="900" fill="#fff6e0" stroke="#2a1d14" stroke-width="3" paint-order="stroke">${zoneName(l.def)}</text><text y="40" text-anchor="middle" font-size="11" font-weight="900" fill="#ffd76a" stroke="#2a1d14" stroke-width="3" paint-order="stroke">$${fmtShort(l.def.unlockCost)}</text>` : `<text y="24" text-anchor="middle" font-size="9" font-weight="900" fill="#fff6e0" stroke="#2a1d14" stroke-width="3" paint-order="stroke">${tr('map.soon')}</text>`}</g>`;
       return;
     }
-    l.floor.innerHTML =
-      tile(st.x, st.y, SIZE, SIZE, `fill="${shade(look.wall, 0.75)}" opacity="0.35"`) +
-      tile(st.x + 0.1, st.y + 0.1, SIZE - 0.2, SIZE - 0.2, 'fill="none" stroke="#f4c430" stroke-width="2.2" stroke-dasharray="7 6"');
+    // Suelo del puesto y cintas: en la capa de canvas si está (debajo de las máquinas); si no, en el SVG.
+    const floorTiles: FloorTile[] = [
+      { pts: tilePts(st.x, st.y, SIZE, SIZE), fill: shade(look.wall, 0.75), alpha: 0.35 },
+      { pts: tilePts(st.x + 0.1, st.y + 0.1, SIZE - 0.2, SIZE - 0.2), stroke: '#f4c430', width: 2.2, dash: [7, 6] },
+    ];
+    const flows: FloorFlow[] = [];
+    l.floor.innerHTML = gpu
+      ? ''
+      : tile(st.x, st.y, SIZE, SIZE, `fill="${shade(look.wall, 0.75)}" opacity="0.35"`) +
+        tile(st.x + 0.1, st.y + 0.1, SIZE - 0.2, SIZE - 0.2, 'fill="none" stroke="#f4c430" stroke-width="2.2" stroke-dasharray="7 6"');
     // Las máquinas se ven una a una hasta 9 (cuadrícula de 1-2, 2×2 o 3×3), para que se note la diferencia entre pocas y muchas.
     const n = Math.min(MAX_SHOWN, zone.machines);
     const { cols, scale, dx, dy } = machineGrid(n);
@@ -742,11 +757,17 @@ export function createYard(container: HTMLElement): Yard {
     let machines = '';
     for (let c = 0; c < Math.min(cols, n); c++) {
       const mx = st.x + 0.2 + c * dx;
-      belts += tile(mx + 0.4 * scale, BELT_Y[st.row] + 0.4, 0.5, st.y + 0.3 - BELT_Y[st.row] - 0.4, BELT_ATTR);
       const [fx0, fy0] = iso(mx + 0.4 * scale + 0.25, BELT_Y[st.row] + 0.4);
       const [fx1, fy1] = iso(mx + 0.4 * scale + 0.25, st.y + 0.3);
+      if (gpu) {
+        floorTiles.push({ pts: tilePts(mx + 0.4 * scale, BELT_Y[st.row] + 0.4, 0.5, st.y + 0.3 - BELT_Y[st.row] - 0.4), fill: '#5a5550', stroke: '#2a1d14', width: 0.8 });
+        flows.push({ a: [fx0, fy0], b: [fx1, fy1], color: look.wall });
+        continue;
+      }
+      belts += tile(mx + 0.4 * scale, BELT_Y[st.row] + 0.4, 0.5, st.y + 0.3 - BELT_Y[st.row] - 0.4, BELT_ATTR);
       belts += `<polyline class="flow" points="${fx0.toFixed(1)},${fy0.toFixed(1)} ${fx1.toFixed(1)},${fy1.toFixed(1)}" fill="none" stroke="${look.wall}" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="4 14"/>`;
     }
+    gpu?.setFloor(i, floorTiles, flows);
     // Pintadas de atrás hacia delante.
     cells.sort((a, b) => a.c + a.r - (b.c + b.r));
     if (gpu) {

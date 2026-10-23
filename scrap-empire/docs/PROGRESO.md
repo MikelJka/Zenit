@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 — El suelo de los puestos y las cintas se dibujan en canvas (S1, segunda parte)
+
+- En la capa de canvas (PixiJS), debajo de todas las máquinas: el suelo de cada puesto con su borde amarillo de rayas, el de los puestos cerrados (rayas oscuras) y las cintas que bajan a cada máquina, con la chatarra que avanza animada por código (quieta con «Calidad baja», como antes).
+- Mismo aspecto que en SVG; con `?svg=1`, o si WebGL no arranca, todo sigue en SVG.
+- Se queda en SVG: las huellas del muelle, las cintas principales de la nave y el resto del decorado (son imágenes fijas o casi).
+- Qué probar: abrir una zona y comprar máquinas (las cintas nuevas tienen que salir al momento) y mover el mapa en el móvil con `?fps=1`, comparando con `?svg=1`.
+- Sigue: S1, tercera parte (trabajadores y carretillas en canvas).
+
 ## 2026-10-23 — Las máquinas se dibujan en canvas (S1, primera parte)
 
 - Nuevo `src/ui/machineLayer.ts` con PixiJS 8 (MIT, en `CREDITOS.md`): el mapa son ahora dos SVG con una capa de canvas en medio. Detrás, cielo, suelo y nave; en el canvas, las máquinas de las líneas; delante, pila, trabajadores, palés, carretillas, vehículos, noche y rótulos (recibe los toques).

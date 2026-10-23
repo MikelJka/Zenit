@@ -1,6 +1,8 @@
 // Capa de canvas (PixiJS, licencia MIT) con las máquinas de las líneas: primera parte de pasar el mapa de SVG a canvas (S1).
 // El cuerpo de cada máquina se dibuja una vez desde el mismo SVG de siempre y se guarda como textura (mismo aspecto);
 // lo que se mueve (prensa, engranaje, chispa, humo y luz) se dibuja aquí por código. Si WebGL no arranca, el mapa sigue en SVG.
+// Segunda parte: el suelo de cada puesto (con su borde de rayas) y sus cintas, con la chatarra que avanza, también van aquí,
+// debajo de todas las máquinas.
 import { Application, CanvasSource, Container, Graphics, Sprite, Texture } from 'pixi.js';
 import { iso } from './iso';
 import type { MachineGeom } from './yard';
@@ -18,11 +20,32 @@ export interface MachineSpot {
   scale: number;
 }
 
+/** Polígono del suelo (puntos ya en píxeles del mundo), como un `tile()` del SVG. */
+export interface FloorTile {
+  pts: [number, number][];
+  fill?: string;
+  stroke?: string;
+  width?: number;
+  /** Rayas del borde (como stroke-dasharray). */
+  dash?: [number, number];
+  /** Opacidad de todo el polígono (relleno y borde). */
+  alpha?: number;
+}
+
+/** Chatarra que avanza por una cinta: trazo de rayas animado de `a` a `b`. */
+export interface FloorFlow {
+  a: [number, number];
+  b: [number, number];
+  color: string;
+}
+
 export interface MachineLayer {
   canvas: HTMLCanvasElement;
   /** Pone las máquinas de la línea `i` (o ninguna). `body` da el SVG fijo y la geometría de una máquina de ese nivel. */
   setLine(i: number, spots: MachineSpot[], variant: string, body: () => { svg: string; geom: MachineGeom }): void;
   /** Estado de la animación de una línea en este fotograma. */
+  /** Pone el suelo y las cintas del puesto `i` (debajo de todas las máquinas). */
+  setFloor(i: number, tiles: FloorTile[], flows: FloorFlow[]): void;
   animate(i: number, level: number, phase: number, gearAngle: number, inView: boolean): void;
   /** Rebote de subida de nivel (como `.levelup`) con el pie en (px, py). */
   levelUp(i: number, px: number, py: number): void;
@@ -34,8 +57,15 @@ export interface MachineLayer {
   render(t: number): void;
 }
 
-const num = (hex: string, f = 1): number => {
-  const n = parseInt(hex.slice(1), 16);
+/** Color de SVG (#rgb, #rrggbb o rgb(r,g,b)) a número, opcionalmente aclarado u oscurecido. */
+const num = (color: string, f = 1): number => {
+  let n = 0;
+  const rgb = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(color);
+  if (rgb) n = (+rgb[1] << 16) | (+rgb[2] << 8) | +rgb[3];
+  else {
+    const hex = color.slice(1);
+    n = parseInt(hex.length === 3 ? [...hex].map((ch) => ch + ch).join('') : hex, 16) || 0;
+  }
   const c = (v: number) => Math.max(0, Math.min(255, Math.round(v * f)));
   return (c((n >> 16) & 255) << 16) | (c((n >> 8) & 255) << 8) | c(n & 255);
 };
@@ -74,6 +104,51 @@ function drawGear(g: Graphics, gz: number, deg: number): void {
   g.poly(map(GEAR_HUB), true).fill({ color: 0x8a8a8a }).stroke(line);
 }
 
+/** Recorre una línea quebrada y llama a `seg` con cada raya [on, off] desplazada `shift` píxeles hacia delante. */
+function dashes(pts: [number, number][], closed: boolean, on: number, off: number, shift: number, seg: (path: number[]) => void): void {
+  const list = closed ? [...pts, pts[0]] : pts;
+  const cum = [0];
+  for (let k = 1; k < list.length; k++) cum.push(cum[k - 1] + Math.hypot(list[k][0] - list[k - 1][0], list[k][1] - list[k - 1][1]));
+  const total = cum[cum.length - 1];
+  if (total <= 0) return;
+  const at = (d: number): [number, number] => {
+    let k = 1;
+    while (k < list.length - 1 && cum[k] < d) k++;
+    const len = cum[k] - cum[k - 1] || 1;
+    const u = (d - cum[k - 1]) / len;
+    return [list[k - 1][0] + (list[k][0] - list[k - 1][0]) * u, list[k - 1][1] + (list[k][1] - list[k - 1][1]) * u];
+  };
+  const period = on + off;
+  for (let p = (((shift % period) + period) % period) - period; p < total; p += period) {
+    const d0 = Math.max(0, p);
+    const d1 = Math.min(total, p + on);
+    if (d1 <= d0) continue;
+    const path = [...at(d0)];
+    for (let k = 1; k < list.length; k++) if (cum[k] > d0 && cum[k] < d1) path.push(list[k][0], list[k][1]);
+    path.push(...at(d1));
+    seg(path);
+  }
+}
+
+function drawTiles(g: Graphics, tiles: FloorTile[]): void {
+  g.clear();
+  for (const t of tiles) {
+    const alpha = t.alpha ?? 1;
+    if (t.fill) g.poly(t.pts.flat(), true).fill({ color: num(t.fill), alpha });
+    if (!t.stroke) continue;
+    const line = { width: t.width ?? 1, color: num(t.stroke), alpha, join: 'round' as const };
+    if (!t.dash) {
+      g.poly(t.pts.flat(), true).stroke(line);
+      continue;
+    }
+    dashes(t.pts, true, t.dash[0], t.dash[1], 0, (path) => {
+      g.moveTo(path[0], path[1]);
+      for (let k = 2; k < path.length; k += 2) g.lineTo(path[k], path[k + 1]);
+    });
+    g.stroke(line);
+  }
+}
+
 interface Machine {
   root: Container;
   sprite: Sprite;
@@ -97,6 +172,9 @@ interface LineView {
   bounce: number;
   pivot: [number, number];
   enter: number;
+  floor: Graphics;
+  flowG: Graphics;
+  flows: FloorFlow[];
 }
 
 /** Hornea el SVG fijo de una máquina en una textura (asíncrono: el navegador decodifica la imagen). */
@@ -141,13 +219,18 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   canvas.classList.add('machine-layer');
   const world = new Container();
   app.stage.addChild(world);
+  const ground = new Container();
+  world.addChild(ground);
   const textures = new Map<string, Promise<Texture>>();
   let low = false;
 
   const lines: LineView[] = Array.from({ length: lineCount }, () => {
     const root = new Container();
     world.addChild(root);
-    return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1 };
+    const floor = new Graphics();
+    const flowG = new Graphics();
+    ground.addChild(floor, flowG);
+    return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [] };
   });
 
   function makeMachine(spot: MachineSpot, tex: Promise<Texture>, geom: MachineGeom): Machine {
@@ -207,6 +290,12 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
         l.machines.push(m);
       }
     },
+    setFloor(i, tiles, flows) {
+      const l = lines[i];
+      drawTiles(l.floor, tiles);
+      l.flows = flows;
+      l.flowG.clear();
+    },
     animate(i, level, phase, gearAngle, inView) {
       const l = lines[i];
       l.level = level;
@@ -236,7 +325,22 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       const now = performance.now() / 1000;
       const sparkOn = !low && Math.floor(t / 0.14) % 2 === 1;
       const lampDark = !low && now % 1 >= 0.5;
+      // Rayas de la chatarra en las cintas: 4 px de raya y 14 de hueco que avanzan 18 px cada 0,9 s (sin moverse en «Calidad baja»).
+      const shift = low ? 0 : ((now / 0.9) % 1) * 18;
       for (const l of lines) {
+        l.floor.visible = l.inView;
+        l.flowG.visible = l.inView && l.level > 0 && l.flows.length > 0;
+        if (l.flowG.visible) {
+          l.flowG.clear();
+          for (const f of l.flows) {
+            dashes([f.a, f.b], false, 4, 14, shift, (path) => {
+              l.flowG.moveTo(path[0], path[1]);
+              for (let k = 2; k < path.length; k += 2) l.flowG.lineTo(path[k], path[k + 1]);
+            });
+            l.flowG.stroke({ width: 3.2, color: num(f.color), cap: 'round' });
+          }
+          l.flowG.alpha = 0.95 * l.level;
+        }
         if (!l.machines.length) continue;
         l.root.visible = l.inView;
         if (!l.inView) continue;
