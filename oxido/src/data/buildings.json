@@ -1836,6 +1836,36 @@
     "explodes": true
   },
   {
+    "id": "reactor",
+    "name": "Reactor pequeño",
+    "category": "electricidad",
+    "research": "energia_nuclear",
+    "cost": {
+      "metal": 40,
+      "componentes": 10
+    },
+    "work": 1500,
+    "hp": 400,
+    "blocks": true,
+    "height": 1,
+    "size": [
+      3,
+      3
+    ],
+    "power": 3000,
+    "fuel": {
+      "resource": "uranio",
+      "hoursPerUnit": 48,
+      "capacity": 2
+    },
+    "reactor": true,
+    "colors": {
+      "top": "#9aa48c",
+      "face": "#5e6a52",
+      "dark": "#2a3226"
+    }
+  },
+  {
     "id": "placa_solar",
     "name": "Placa solar",
     "category": "electricidad",

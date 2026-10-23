@@ -21,9 +21,9 @@ describe('investigación', () => {
     r.done.push('polvora');
     expect(canResearch(r, 'armas_largas')).toBe(true);
     expect(canResearch(r, 'polvora')).toBe(false);
-    // El árbol completo (bloque 13, elegido por Mikel el 2026-10-19): 26 proyectos, 256 h.
-    expect(RESEARCH.length).toBe(26);
-    expect(RESEARCH.reduce((n, p) => n + p.hours, 0)).toBe(256);
+    // El árbol completo (bloque 13, elegido por Mikel el 2026-10-19): 26 proyectos, 256 h (y «Energía nuclear», 24 h, de la propuesta B del 2026-10-22).
+    expect(RESEARCH.length).toBe(27);
+    expect(RESEARCH.reduce((n, p) => n + p.hours, 0)).toBe(280);
     expect(researchDef('hidroponica')?.requires).toEqual(['agricultura']);
     expect(researchDef('motores')?.requires).toEqual(['navegacion', 'polvora']);
   });

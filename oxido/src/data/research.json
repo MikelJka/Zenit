@@ -28,6 +28,7 @@
     { "id": "navegacion", "name": "Navegación", "hours": 8, "requires": ["puentes"], "unlocks": "Balsa y barcaza de carga (comercio por barco)" },
     { "id": "motores", "name": "Motores", "hours": 14, "requires": ["navegacion", "polvora"], "unlocks": "Lancha armada" },
     { "id": "radio", "name": "Radio", "hours": 10, "requires": ["medicina_campo"], "unlocks": "Radio: contactar con facciones" },
-    { "id": "rutas_comerciales", "name": "Rutas comerciales", "hours": 8, "requires": ["radio"], "unlocks": "Tendencia de precios y necesidades de la próxima caravana" }
+    { "id": "rutas_comerciales", "name": "Rutas comerciales", "hours": 8, "requires": ["radio"], "unlocks": "Tendencia de precios y necesidades de la próxima caravana" },
+    { "id": "energia_nuclear", "name": "Energía nuclear", "hours": 24, "requires": [], "unlocks": "Reactor pequeño (3 000 W con ☢ uranio)" }
   ]
 }

@@ -210,6 +210,8 @@ export interface BuildingDef {
   hydroponics?: { speed: number; crops: string[] };
   /** Explota si el fuego la destruye (generador de leña, destilería). */
   explodes?: boolean;
+  /** Reactor pequeño (propuesta B de Mikel, 2026-10-22): si le alcanza una explosión, irradia lo de alrededor (`uranium.json` → `reactor`). */
+  reactor?: boolean;
   /** Espantapájaros (pedido de Mikel del 2026-10-21): las plantas a `radius` casillas o menos no enferman con las plagas. */
   scarecrow?: { radius: number };
   /** Compostera (pedido de Mikel del 2026-10-21): cada día, a esa hora, deja `perDay` 🟤 abono a su lado (de los restos de la colonia). */

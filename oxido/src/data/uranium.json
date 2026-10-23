@@ -10,5 +10,10 @@
     "level": 0.95,
     "radius": 1,
     "irradiatedDays": 3
+  },
+  "reactor": {
+    "_": "Reactor pequeño (con «Energía nuclear»): si le alcanza una explosión (granada, mortero o algo que revienta), sus casillas y las de alrededor (a `radius` casillas o menos de su borde) quedan irradiadas durante `irradiatedDays` días. «Irradia lo de alrededor» no tenía números: se han tomado como los del barril, con más alcance",
+    "radius": 2,
+    "irradiatedDays": 3
   }
 }

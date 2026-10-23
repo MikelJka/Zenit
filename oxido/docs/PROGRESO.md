@@ -2,6 +2,17 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-23 (74) — Reactor pequeño y «Energía nuclear»
+
+- Segunda y última parte de la propuesta B que eligió Mikel: proyecto de investigación **«Energía nuclear»** (24 h) en 📜 → 🔬 Investigación.
+- Desbloquea el **reactor pequeño** (🏗 → Electricidad, 🔗40 ⚙️10, 3×3): da **3 000 W** mientras tenga ☢ y gasta **1 ☢ cada 2 días**. Los colonos le llevan el uranio del almacén como la leña a un generador (le caben 2 ☢). Dibujado a doble resolución: vasija con cúpula, señal ☢ y brillo verde.
+- **Si le alcanza una explosión** (granada, mortero o algo que revienta), sus casillas y las de 2 casillas alrededor quedan irradiadas **3 días** (huerto a la mitad, atrae perros mutantes) y el diario lo avisa. El reactor no se rompe.
+- Mikel: no estaban decididos los requisitos del proyecto (se ha puesto ninguno), cuánto ☢ cabe dentro (2) ni cuánto irradia (2 casillas, 3 días). Se cambian en `src/data/research.json`, `buildings.json` y `uranium.json`.
+- Reglas en `src/sim/grenades.ts` y `src/sim/power.ts` (5 tests nuevos en `tests/reactor.test.ts`). Con esto, «Pendiente» queda vacío.
+- Qué probar: investigar «Energía nuclear», construir el reactor con un cable a algo que gaste, saquear un barril tóxico y ver que lo llevan al reactor y da corriente.
+- Qué sigue: no queda nada aprobado; lo próximo lo decide Mikel.
+- Sin npm en el entorno: tests con Bun (698); los tipos y la build, en GitHub Actions («Óxido: probar rama»).
+
 ## 2026-10-22 (73) — Barriles tóxicos: ☢ uranio
 
 - Primera parte de la propuesta B que eligió Mikel: los **barriles tóxicos** del mapa ya se pueden **saquear** (⚒ Saquear, o tocarlos con un colono elegido), con el mismo trabajo que un montón de chatarra.

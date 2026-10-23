@@ -16,3 +16,9 @@ export const BARREL_IRRADIATION = {
   radius: data.irradiated.radius,
   days: data.irradiated.irradiatedDays,
 } as const;
+
+/** Reactor pequeño: al alcanzarle una explosión, irradia sus casillas y las de alrededor (a `radius` de su borde) `days` días. */
+export const REACTOR_IRRADIATION = {
+  radius: data.reactor.radius,
+  days: data.reactor.irradiatedDays,
+} as const;

@@ -8,14 +8,17 @@
  * Desde el día 30 algunos saqueadores traen una y la lanzan igual, a un grupo de colonos.
  */
 import { armorProtection } from '../data/armor';
+import { REACTOR_IRRADIATION } from '../data/uranium';
 import { GRENADE } from '../data/weapons';
 import type { Colonist } from './colonist';
+import type { Structure } from './structures';
 import { BODY_PARTS, hurt } from './health';
 import type { Point } from './pathfinding';
 import { creatureFallText, foeLabel, hurtFoe } from './people';
 import { witnessFall } from './panic';
+import { irradiate } from './radiation';
 import { absorbHit } from './vehicles';
-import { TICKS_PER_SECOND } from './time';
+import { TICKS_PER_DAY, TICKS_PER_SECOND } from './time';
 import type { World } from './world';
 
 /** Daño medio de un puñetazo (los golpes quitan de 0,08 a 0,18 de salud): la granada pega ×3. */
@@ -144,6 +147,11 @@ export function blastAt(w: World, to: Point, r: number, damage: number, structur
     for (let x = to.x - r; x <= to.x + r; x++) {
       const s = w.structures.mainAt(x, y);
       if (!s?.built || hit.has(s.id)) continue;
+      if (s.def.reactor) {
+        hit.add(s.id);
+        reactorHit(w, s);
+        continue;
+      }
       const cat = s.def.category;
       if (cat !== 'muro' && cat !== 'puerta' && cat !== 'porton') continue;
       hit.add(s.id);
@@ -154,4 +162,16 @@ export function blastAt(w: World, to: Point, r: number, damage: number, structur
       }
     }
   }
+}
+
+/**
+ * A un reactor pequeño le alcanza una explosión: sus casillas y las de alrededor (a `radius` de su
+ * borde) quedan irradiadas `days` días (propuesta B de Mikel, 2026-10-22). El reactor no se rompe.
+ */
+export function reactorHit(w: World, s: Structure): void {
+  const until = w.tick + Math.round(REACTOR_IRRADIATION.days * TICKS_PER_DAY);
+  for (const t of w.structures.tilesOf(s)) {
+    w.markChanged(...irradiate(w.map, w.hotTiles, t.x, t.y, until, undefined, REACTOR_IRRADIATION.radius));
+  }
+  w.addLog(`☢ ¡Le han dado al ${s.def.name.toLowerCase()}! El suelo de alrededor queda irradiado ${REACTOR_IRRADIATION.days} días.`, 'malo', 'combate', { x: s.x, y: s.y });
 }

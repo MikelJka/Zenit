@@ -9,6 +9,7 @@ import { hash, kit, Kit, OL, shade } from './furnitureArt';
 /** Ids que se dibujan aquí, a doble resolución. */
 export const POWER_HI_RES_IDS: ReadonlySet<string> = new Set([
   'generador_lena',
+  'reactor',
   'placa_solar',
   'molino_viento',
   'molino_agua',
@@ -40,6 +41,8 @@ export function drawPowerHi(ctx: CanvasRenderingContext2D, def: BuildingDef, W: 
   switch (def.id) {
     case 'generador_lena':
       return woodGenerator(k, c);
+    case 'reactor':
+      return smallReactor(k, c);
     case 'placa_solar':
       return solarPanel(k, c);
     case 'molino_viento':
@@ -87,6 +90,63 @@ function cableOut(k: Kit, x0: number, y0: number, x1: number, y1: number): void 
  * Generador de leña: caldera de hierro con la portezuela al rojo, chimenea con humo, volante de
  * inercia con su correa hasta la dinamo, manómetro y un montón de leña al lado.
  */
+/** Reactor pequeño: losa, vasija de hormigón con cúpula, señal ☢, tuberías y un brillo verde. */
+function smallReactor(k: Kit, c: Colors): void {
+  const { px, W, H, TH, F } = k;
+  groundShadow(k, 3, H - 10, W - 6, 10);
+  const lip = Math.max(3, Math.floor(F * 0.12));
+  pad(k, 2, Math.floor(TH * 0.2), W - 4, H - Math.floor(TH * 0.2) - lip - 1);
+  // Vasija: un cilindro de pie con cúpula.
+  const vx = Math.floor(W * 0.22);
+  const vw = Math.floor(W * 0.56);
+  const vy = Math.floor(TH * 0.22);
+  const vh = H - vy - Math.floor(TH * 0.14) - 6;
+  const domeH = Math.max(6, Math.floor(vw * 0.28));
+  for (let j = 0; j < domeH; j++) {
+    const t = 1 - j / domeH;
+    const half = Math.floor((vw / 2) * Math.sqrt(1 - t * t));
+    px(vx + vw / 2 - half - 1, vy + j, half * 2 + 2, 1, OL);
+    if (half > 1) px(vx + vw / 2 - half, vy + j, half * 2, 1, shade(c.top, 1.2 - 0.3 * t));
+  }
+  px(vx - 1, vy + domeH, vw + 2, vh - domeH, OL);
+  for (let i = 0; i < vw; i++) {
+    const t = i / Math.max(1, vw - 1);
+    const f = 0.7 + 0.55 * Math.sin(Math.PI * Math.min(1, t * 1.15));
+    px(vx + i, vy + domeH, 1, vh - domeH - 1, shade(c.face, f));
+  }
+  // Bandas de refuerzo con remaches.
+  for (const t of [0.3, 0.7]) {
+    const y = vy + domeH + Math.floor((vh - domeH) * t);
+    px(vx, y, vw, 2, shade(c.dark, 1.4));
+    for (let i = 3; i < vw - 2; i += 5) rivet(k, vx + i, y, c.top);
+  }
+  rustSpots(k, vx + 2, vy + domeH + 2, vw - 4, vh - domeH - 4, 8, 53);
+  // Señal de radiactividad: círculo amarillo con el trébol.
+  const sx = vx + vw / 2;
+  const sy = vy + domeH + Math.floor((vh - domeH) * 0.5);
+  const r = Math.max(4, Math.floor(vw * 0.16));
+  disc(k, sx, sy, r + 1, r + 1, OL);
+  disc(k, sx, sy, r, r, '#e8c43a');
+  for (const a of [-Math.PI / 2, Math.PI / 6, (5 * Math.PI) / 6]) {
+    line(k, sx, sy, sx + Math.cos(a) * r * 0.8, sy + Math.sin(a) * r * 0.8, Math.max(2, Math.floor(r * 0.5)), OL);
+  }
+  disc(k, sx, sy, Math.max(1, r * 0.25), Math.max(1, r * 0.25), '#e8c43a');
+  k.px(Math.round(sx), Math.round(sy), 1, 1, OL);
+  // Tuberías a los lados.
+  for (const x of [Math.floor(W * 0.08), W - Math.floor(W * 0.08) - 4]) {
+    px(x - 1, vy + domeH + 3, 6, vh - domeH - 4, OL);
+    px(x, vy + domeH + 4, 4, vh - domeH - 6, STEEL);
+    px(x, vy + domeH + 4, 1, vh - domeH - 6, shade(STEEL, 1.3));
+    const jy = vy + domeH + Math.floor((vh - domeH) * 0.4);
+    px(x + (x < vx ? 4 : -2), jy, Math.max(2, Math.abs(vx - x) - 2), 3, OL);
+  }
+  gauge(k, vx + vw - Math.max(5, Math.floor(vw * 0.14)), vy + domeH + 6, Math.max(3, Math.floor(vw * 0.08)));
+  // Brillo verde del núcleo en la base.
+  disc(k, sx, H - 6, vw * 0.55, 3, 'rgba(110,230,90,0.25)');
+  px(vx + 3, vy + vh - 4, vw - 6, 1, '#7ae05a');
+  cableOut(k, vx + vw, H - lip - 3, W - 2, H - lip - 3);
+}
+
 function woodGenerator(k: Kit, c: Colors): void {
   const { px, W, H, TH, F } = k;
   groundShadow(k, 2, H - 8, W - 4, 8);
