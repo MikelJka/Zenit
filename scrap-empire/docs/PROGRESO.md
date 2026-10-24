@@ -2,6 +2,13 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Contacto y edad en la política de privacidad (Parte 29)
+
+- Mikel responde a la Parte 29: contacto mikeljka@gmail.com (lo cambiará por un correo de Zenit Studio cuando lo cree) y juego para mayores de 13 años. Pasado a «Decidido» de DISENO.md y quitada la propuesta.
+- La política de privacidad (español e inglés) ya lleva el contacto y un apartado nuevo «Edad»: para mayores de 13, no dirigido a niños, y se borran los datos de un menor si nos avisan. Fecha: 24 de octubre de 2026. Anotado también en `docs/FICHA_TIENDA.md`.
+- Qué probar: abrir ⚙ → Política de privacidad y ver el correo y el apartado 8.
+- Sigue: S3 termina cuando Mikel pase los identificadores reales de AdMob; mientras, #16.
+
 ## 2026-10-24 — El tren y el barco pasan a canvas (#16, sexta parte)
 
 - Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».
