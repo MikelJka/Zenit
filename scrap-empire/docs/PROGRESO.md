@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Los AGV pasan a canvas (#16, tercera parte)
+
+- Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».
+- Los tres vehículos guiados (AGV) que recorren las rutas azules se dibujan ahora en la capa de canvas, como las carretillas: el mismo aspecto por bloques, con o sin contenedor de chatarra, girando en pasos de 10°. El SVG ya no cambia su posición ni redibuja su forma 30 veces por segundo, y el orden por profundidad del mapa tiene tres objetos menos que recolocar.
+- Si WebGL no arranca, o con `?svg=1`, los AGV siguen en SVG como antes.
+- Qué probar: en el móvil, que los AGV se vean igual que antes (van de la pila a las cintas, por el pasillo central y por el del muelle, cargados a la ida y vacíos a la vuelta) y que el mapa vaya igual o algo más suelto.
+- Sigue: S3 cuando Mikel pase los identificadores de AdMob y responda la Parte 29; si no, #16: la pila y el decorado animado (nubes, pájaros, autopista, tren y barco) a canvas.
+
 ## 2026-10-24 — Pantalla del prestigio (S4, segunda parte)
 
 - Sin incidencias nuevas. S3 sigue esperando a Mikel (AdMob y Parte 29); se termina S4 con la segunda parte: el botón y la pantalla de reinicio.

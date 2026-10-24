@@ -2,11 +2,6 @@
 import { block, blockP, iso, rblock, wheel, type Proj } from './iso';
 import { propIso } from './props';
 
-interface Part {
-  depth: number;
-  svg: string;
-}
-
 /** Pieza de la carretilla: un bloque girado, o el hueco de la carga `k` (producto con su esquina en `at`, en píxeles). */
 export type ForkliftPiece =
   | { kind: 'block'; cx: number; cy: number; z: number; l: number; w: number; h: number; color: string }
@@ -56,15 +51,26 @@ export function forkliftIso(ang: number, loads: string[]): string {
   return `<ellipse cx="${sx}" cy="${sy + sh.dy}" rx="${sh.rx}" ry="${sh.ry}" fill="#000" opacity="${sh.alpha}"/>${body}`;
 }
 
-/** Vehículo guiado automático (AGV): plataforma baja con luz y, si lleva carga, un contenedor de chatarra. Mira en la dirección `ang`. */
-export function agvIso(ang: number, loaded: boolean): string {
+/** Bloque girado de un vehículo (centro ya girado en cx, cy). */
+export interface VehicleBlock {
+  cx: number;
+  cy: number;
+  z: number;
+  l: number;
+  w: number;
+  h: number;
+  color: string;
+}
+
+/** Piezas del AGV mirando en `ang`, con o sin carga, ya ordenadas de atrás adelante (SVG y canvas). */
+export function agvPieces(ang: number, loaded: boolean): VehicleBlock[] {
   const c = Math.cos(ang);
   const s = Math.sin(ang);
-  const parts: Part[] = [];
+  const parts: { depth: number; piece: VehicleBlock }[] = [];
   const part = (u: number, v: number, z: number, l: number, w: number, h: number, color: string) => {
     const cx = u * c - v * s;
     const cy = u * s + v * c;
-    parts.push({ depth: cx + cy + z * 0.05, svg: rblock(cx, cy, z, l, w, h, ang, color) });
+    parts.push({ depth: cx + cy + z * 0.05, piece: { cx, cy, z, l, w, h, color } });
   };
   part(0, 0, 0.05, 0.78, 0.5, 0.14, '#5a6b7a');
   part(0.33, 0, 0.19, 0.08, 0.5, 0.03, '#f4c430');
@@ -76,8 +82,20 @@ export function agvIso(ang: number, loaded: boolean): string {
     part(-0.12, 0.08, 0.49, 0.16, 0.16, 0.07, '#5f7d91');
   }
   parts.sort((a, b) => a.depth - b.depth);
+  return parts.map((p) => p.piece);
+}
+
+/** Sombra del AGV (elipse bajo el origen). */
+export const AGV_SHADOW = { dy: 3, rx: 19, ry: 8, alpha: 0.18 };
+
+/** Vehículo guiado automático (AGV): plataforma baja con luz y, si lleva carga, un contenedor de chatarra. Mira en la dirección `ang`. */
+export function agvIso(ang: number, loaded: boolean): string {
   const [sx, sy] = iso(0, 0);
-  return `<ellipse cx="${sx}" cy="${sy + 3}" rx="19" ry="8" fill="#000" opacity="0.18"/>${parts.map((p) => p.svg).join('')}`;
+  const sh = AGV_SHADOW;
+  const body = agvPieces(ang, loaded)
+    .map((p) => rblock(p.cx, p.cy, p.z, p.l, p.w, p.h, ang, p.color))
+    .join('');
+  return `<ellipse cx="${sx}" cy="${sy + sh.dy}" rx="${sh.rx}" ry="${sh.ry}" fill="#000" opacity="${sh.alpha}"/>${body}`;
 }
 
 /** Coche de fondo; mira hacia +x, o hacia -x con `rev`. */

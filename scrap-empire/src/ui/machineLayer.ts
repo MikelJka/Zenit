@@ -7,9 +7,10 @@
 // (la carretilla, por bloques girados como en el SVG; lo que lleva, con la textura horneada del producto).
 // Quinta parte: el camión de expedición del muelle (chasis y caja horneados en dos piezas, con los productos en medio)
 // y los coches de la carretera de delante, encima de todo lo de la nave (están fuera, delante de ella).
+// Sexta parte (#16): los tres AGV de las rutas azules, por bloques girados como la carretilla, debajo de las carretillas.
 import { Application, CanvasSource, Container, Graphics, GraphicsContext, Sprite, Texture } from 'pixi.js';
 import { iso, rblockFaces } from './iso';
-import { FORKLIFT_SHADOW, TRUCK_SLOTS, forkliftPieces, truckSlotAt } from './vehicles';
+import { AGV_SHADOW, FORKLIFT_SHADOW, TRUCK_SLOTS, agvPieces, forkliftPieces, truckSlotAt } from './vehicles';
 import type { MachineGeom } from './yard';
 
 /** Recuadro (en píxeles locales de la máquina) que se hornea en la textura, y su resolución. */
@@ -70,6 +71,14 @@ export interface CartPose {
   loads: number;
 }
 
+/** AGV en este fotograma: posición en el mapa (píxeles), hacia dónde mira y si lleva el contenedor de chatarra. */
+export interface AgvPose {
+  x: number;
+  y: number;
+  ang: number;
+  loaded: boolean;
+}
+
 /** Coche de la carretera en este fotograma: posición (píxeles) y su aspecto (`key`, que dibuja `svg` de `setCars`). */
 export interface CarPose {
   x: number;
@@ -90,6 +99,8 @@ export interface MachineLayer {
   setPallet(i: number, spot: { x: number; y: number } | null, key: string, svg: () => string): void;
   /** Las carretillas visibles en este fotograma; `prop` da el SVG del producto de una línea. */
   setCarts(carts: CartPose[], prop: (zone: string) => string): void;
+  /** Los AGV en este fotograma. */
+  setAgvs(agvs: AgvPose[]): void;
   /** Camión de expedición en (x, y) píxeles con `ids` en la caja (o ninguno); `parts` da su SVG de detrás y de delante de la carga. */
   setShipTruck(pos: { x: number; y: number } | null, ids: string[], parts: () => { back: string; front: string }, prop: (zone: string) => string): void;
   /** Coches de la carretera de delante en este fotograma; `svg` dibuja el aspecto `key`. */
@@ -287,6 +298,7 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   const people = new Container();
   const palletsG = new Container();
   const cartsG = new Container();
+  const agvG = new Container();
   // Fuera de la nave, delante: el camión de expedición y, más cerca, los coches de la carretera.
   const truckG = new Container();
   truckG.visible = false;
@@ -304,11 +316,28 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
     ground.addChild(floor, flowG);
     return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [], worker: null, pallet: null };
   });
-  world.addChild(people, palletsG, cartsG, truckG, carsG);
+  world.addChild(people, palletsG, agvG, cartsG, truckG, carsG);
   const cartViews: CartView[] = [];
   /** Dibujo de la carretilla por ángulo y carga: lo de detrás de la carga y lo de delante (se comparte entre carretillas). */
   const cartBodies = new Map<string, { back: GraphicsContext; front: GraphicsContext }>();
   const shadow = new GraphicsContext().ellipse(iso(0, 0)[0], iso(0, 0)[1] + FORKLIFT_SHADOW.dy, FORKLIFT_SHADOW.rx, FORKLIFT_SHADOW.ry).fill({ color: 0x000000, alpha: FORKLIFT_SHADOW.alpha });
+
+  const agvViews: { root: Container; body: Graphics; key: string }[] = [];
+  /** Dibujo del AGV por ángulo (pasos de 10°) y carga, compartido entre los AGV. */
+  const agvBodies = new Map<string, GraphicsContext>();
+  const agvShadow = new GraphicsContext().ellipse(iso(0, 0)[0], iso(0, 0)[1] + AGV_SHADOW.dy, AGV_SHADOW.rx, AGV_SHADOW.ry).fill({ color: 0x000000, alpha: AGV_SHADOW.alpha });
+  function agvBody(step: number, loaded: boolean): GraphicsContext {
+    const key = `${step}|${loaded ? 1 : 0}`;
+    let body = agvBodies.get(key);
+    if (body) return body;
+    const ang = (step * Math.PI * 2) / CART_STEPS;
+    body = new GraphicsContext();
+    for (const p of agvPieces(ang, loaded))
+      for (const f of rblockFaces(p.cx, p.cy, p.z, p.l, p.w, p.h, ang, p.color))
+        body.poly(f.pts.flat(), true).fill({ color: num(f.fill) }).stroke({ width: 0.9, color: EDGE, join: 'round' });
+    agvBodies.set(key, body);
+    return body;
+  }
 
   /** Partes del camión: lo de detrás de la carga, un sprite por hueco y lo de delante. */
   const truckBack = new Sprite(Texture.EMPTY);
@@ -436,6 +465,27 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       sprite.position.set(spot.x + PALLET_BOX.x, spot.y + PALLET_BOX.y);
       palletsG.addChild(sprite);
       l.pallet = sprite;
+    },
+    setAgvs(list) {
+      while (agvViews.length < list.length) {
+        const root = new Container();
+        const body = new Graphics();
+        root.addChild(new Graphics(agvShadow), body);
+        agvG.addChild(root);
+        agvViews.push({ root, body, key: '' });
+      }
+      const order = [...list].sort((a, b) => a.y - b.y);
+      agvViews.forEach((v, k) => {
+        const a = order[k];
+        v.root.visible = !!a;
+        if (!a) return;
+        v.root.position.set(a.x, a.y);
+        const step = ((Math.round((a.ang * CART_STEPS) / (Math.PI * 2)) % CART_STEPS) + CART_STEPS) % CART_STEPS;
+        const key = `${step}|${a.loaded ? 1 : 0}`;
+        if (key === v.key) return;
+        v.key = key;
+        v.body.context = agvBody(step, a.loaded);
+      });
     },
     setCarts(list, prop) {
       while (cartViews.length < list.length) {

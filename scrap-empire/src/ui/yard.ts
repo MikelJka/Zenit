@@ -30,7 +30,7 @@ import {
 } from './scenery';
 import { TRUCK_SLOTS, agvIso, carIso, forkliftIso, goldenTruckIso, scrapTruckIso, shipTruckBackIso, shipTruckFrontIso, shipTruckIso } from './vehicles';
 import { reducedMotion } from './prefs';
-import { createMachineLayer, type CartPose, type FloorFlow, type FloorTile, type MachineLayer } from './machineLayer';
+import { createMachineLayer, type AgvPose, type CartPose, type FloorFlow, type FloorTile, type MachineLayer } from './machineLayer';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -1250,6 +1250,7 @@ export function createYard(container: HTMLElement): Yard {
     } else golden.setAttribute('visibility', 'hidden');
 
     // AGV: van al final de su ruta cargados, giran, descargan y vuelven vacíos.
+    const agvPoses: AgvPose[] = [];
     agvs.forEach((r, i) => {
       const len = Math.hypot(r.x1 - r.x0, r.y1 - r.y0);
       const move = len / r.speed;
@@ -1279,6 +1280,16 @@ export function createYard(container: HTMLElement): Yard {
       }
       const x = lerp(r.x0, r.x1, f);
       const y = lerp(r.y0, r.y1, f);
+      if (gpu) {
+        agvPoses.push({ ...isoXY(x, y), ang, loaded });
+        if (r.key !== 'gpu') {
+          r.key = 'gpu';
+          r.g.setAttribute('visibility', 'hidden');
+        }
+        r.o.depth = -99;
+        return;
+      }
+      if (r.key === 'gpu') r.g.setAttribute('visibility', 'visible');
       const key = `${Math.round((ang * 18) / Math.PI)}|${loaded ? 1 : 0}`;
       if (key !== r.key) {
         r.key = key;
@@ -1287,6 +1298,7 @@ export function createYard(container: HTMLElement): Yard {
       r.g.setAttribute('transform', at(x, y));
       r.o.depth = x + y + 0.3;
     });
+    gpu?.setAgvs(agvPoses);
 
     // Orden de dibujo: lo que está más al fondo, primero.
     const sorted = objs.filter((o) => o.depth > -99).sort((a, b) => a.depth - b.depth);
