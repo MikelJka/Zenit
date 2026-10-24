@@ -2,6 +2,13 @@
 
 Diario del juego espacial, la entrada más reciente arriba. Antes vivía en el diario de Scrap Empire (IdleScrapyard); se separó el 2026-10-21.
 
+## 2026-10-24 — Hito 0, primera parte: esqueleto del proyecto
+
+- Nuevo proyecto Vite + TypeScript estricto + Vitest + PixiJS en `space-harvest/`. `src/sim/core/` con `Rng` (semilla), `Clock` y tope de ganancias con el juego cerrado (8 h), contrato de módulo, `Registry` y guardado con versión por módulo (un módulo nuevo carga con valores por defecto). 7 tests en `tests/core.test.ts`; `npm test` y `npm run build` pasan.
+- `src/main.ts` solo abre PixiJS con un círculo de prueba; aún no hay menú ni mapa.
+- Qué probar: `cd space-harvest && npm i && npm run dev`.
+- Sigue: publicación de prueba (GitHub Pages) con prueba de humo, después textos es/en.
+
 ## 2026-10-21 — Documento de diseño completo (borrador)
 
 - Nuevo `docs/DISENO.md`: visión, público, pilares, tono y personajes, recursos y economía (con objetivos de ritmo), bucle y fases, los cinco módulos (núcleo, investigación con árbol de 32 nodos, agricultura con 8 cultivos, energía solar y minería de planetas con 6 destinos), sistemas transversales (pedidos, objetivos, racha, logros, sucesos, prestigio), monetización, interfaz, arte, arquitectura, plan de hitos, riesgos y 11 decisiones abiertas. El borrador anterior queda en `docs/BORRADOR_INICIAL.md`.

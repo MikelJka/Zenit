@@ -4,7 +4,7 @@ Decisiones de Mikel y preguntas abiertas. Antes vivía en `docs/FEEDBACK.md` de 
 
 ## Pendiente
 
-- [ ] **Hito 0 — Cimientos** (2026-10-21, aprobado por Mikel al aceptar las recomendaciones del diseño): esqueleto Vite + TypeScript + Vitest + PixiJS, publicación de prueba, textos es/en, menú de inicio, mapa con paralaje, scripts de rendimiento y equilibrio. Ver `docs/ROADMAP.md`.
+- [ ] **Hito 0 — Cimientos** (2026-10-21, aprobado por Mikel al aceptar las recomendaciones del diseño): esqueleto Vite + TypeScript + Vitest + PixiJS, publicación de prueba, textos es/en, menú de inicio, mapa con paralaje, scripts de rendimiento y equilibrio. Ver `docs/ROADMAP.md`. *En curso: hecho el esqueleto (2026-10-24); faltan publicación de prueba, textos es/en, menú, mapa y scripts.*
 - [ ] **Hito 1 — Núcleo + Investigación** (aprobado igual): toque «Transmitir», panel solar, laboratorio y árbol de 32 nodos. Después del Hito 0.
 
 ## Decidido
