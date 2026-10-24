@@ -136,3 +136,9 @@ Lo que Mikel aprueba en `FEEDBACK.md` se resume aquí.
 - Tarjeta bajo la barra de arriba con «Ir» (centra el mapa en el puesto y abre su panel con la mejora resaltada).
 - Qué recomienda: primero el atasco (falta chatarra → camión de chatarra; palé lleno → carretillas de esa línea; muelle lleno → camión de salida); sin atasco, la compra con más $/s por cada $.
 - Ocultar: la ✕ oculta el paso actual hasta que haya otro distinto; interruptor en ⚙ Ajustes para quitarlo del todo.
+- Durante el tutorial no se ve; aparece al terminarlo o saltarlo.
+
+### Tutorial guiado (2026-10-24)
+
+- Mano animada que señala lo que hay que tocar, con el resto un poco oscurecido, y bocadillo de un ayudante.
+- 6-7 pasos cortos: tocar la pila, mejora del puesto, camión de chatarra, carretillas, camión de salida, abrir la zona 2. Botón «Saltar». Solo para partidas nuevas.

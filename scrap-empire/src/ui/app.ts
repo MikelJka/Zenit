@@ -41,9 +41,11 @@ import {
   zoneRate,
   zoneStatus,
   type GameState,
+  type Purchase,
 } from '../sim/game';
 import { claimGoal, goalDone, refreshDaily, rerollGoal } from '../sim/daily';
 import type { DailyGoal } from '../sim/dailyCore';
+import { nextStep, stepKey, type Step } from '../sim/advice';
 import { HELPER_LOOKS } from './look';
 import { FORKLIFT, helperFace, esc, inlineIcon, productIcon, truck, uiIcon, type UiIconName } from './icons';
 import { createYard, machineGrade } from './yard';
@@ -53,13 +55,16 @@ import { fromCode, toCode } from '../sim/transfer';
 import { achievementName, getLang, helperBio, helperName, setLang, t, zoneName, zoneProduct, type Lang } from './texts';
 import { store } from './storage';
 import { showTitle } from './title';
-import { applyAccessibility, isBigText, isHighContrast, reducedMotion, setBigText, setHighContrast, setReducedMotion } from './prefs';
+import { applyAccessibility, readFlag, writeFlag, isBigText, isHighContrast, reducedMotion, setBigText, setHighContrast, setReducedMotion } from './prefs';
 import { buzz, isMuted, isMusicOn, isSfxOn, isVibeOn, play, setMuted, setMusicOn, setSfxOn, setVibeOn, syncMusic } from './sound';
 import { installErrorCapture, capturedErrors } from './bugReport';
 import { feedbackIssueUrl, type FeedbackKind } from '../sim/feedback';
 import { cleanNick, getNick, rankingEnabled, setNick, submitScore, topScores } from './ranking';
 
 const AUTOSAVE_MS = 10_000;
+/** Interruptor del siguiente paso recomendado y el paso que se ocultó con la ✕. */
+const NEXT_KEY = 'chatarrero.next';
+const NEXT_HIDDEN_KEY = 'chatarrero.nextHidden';
 
 function fmt(n: number): string {
   if (n < 1000) return n.toFixed(n < 10 ? 1 : 0);
@@ -169,6 +174,10 @@ export function startApp(root: HTMLElement): void {
           <b>${t('settings.contrast')}</b>
           <div><button type="button" data-v="1" ${isHighContrast() ? 'aria-pressed="true"' : ''}>${t('settings.on')}</button><button type="button" data-v="0" ${isHighContrast() ? '' : 'aria-pressed="true"'}>${t('settings.off')}</button></div>
         </div>
+        <div id="nextopt" class="opt" hidden>
+          <b>${t('settings.next')}</b>
+          <div><button type="button" data-v="1" ${readFlag(NEXT_KEY, true) ? 'aria-pressed="true"' : ''}>${t('settings.on')}</button><button type="button" data-v="0" ${readFlag(NEXT_KEY, true) ? '' : 'aria-pressed="true"'}>${t('settings.off')}</button></div>
+        </div>
         <div id="quality" hidden>
           <b>${t('settings.quality')}</b>
           <div><button type="button" data-q="auto">${t('settings.qualityAuto')}</button><button type="button" data-q="low">${t('settings.qualityLow')}</button></div>
@@ -233,6 +242,16 @@ export function startApp(root: HTMLElement): void {
   }
   // Tutorial de los primeros minutos: un mensaje abajo que guía paso a paso (se salta si ya se ha jugado).
   const TUT_KEY = 'chatarrero.tut';
+  // Siguiente paso recomendado: el calculado, cuándo, y el que el jugador ocultó con la ✕.
+  let step: Step | null = null;
+  let stepAt = -1e9;
+  let hiddenStep = (() => {
+    try {
+      return localStorage.getItem(NEXT_HIDDEN_KEY) ?? '';
+    } catch {
+      return '';
+    }
+  })();
   let tut = (() => {
     try {
       const v = localStorage.getItem(TUT_KEY);
@@ -317,6 +336,7 @@ export function startApp(root: HTMLElement): void {
     $('calm').hidden = sel !== 'settings';
     $('bigtext').hidden = sel !== 'settings';
     $('contrast').hidden = sel !== 'settings';
+    $('nextopt').hidden = sel !== 'settings';
     $('achieve').hidden = sel !== 'settings';
     $('prestige').hidden = sel !== 'settings';
     $('ranking').hidden = sel !== 'ranking';
@@ -370,6 +390,10 @@ export function startApp(root: HTMLElement): void {
   bindFlag('vibe', setVibeOn);
   bindFlag('bigtext', setBigText);
   bindFlag('contrast', setHighContrast);
+  bindFlag('nextopt', (v) => {
+    writeFlag(NEXT_KEY, v);
+    lastStats = '';
+  });
   applyAccessibility();
   bindFlag('calm', (v) => {
     setReducedMotion(v);
@@ -848,12 +872,11 @@ export function startApp(root: HTMLElement): void {
     const shop = mine
       .map((p) => {
         const def = p.zoneId ? ZONES.find((z) => z.id === p.zoneId) : undefined;
-        const kindKey = p.kind === 'transport' ? `transport.${def!.transport}` : '';
         const route = p.kind === 'route' ? p.id.split(':')[2] : '';
-        const name = p.kind === 'warehouse' ? t('buy.warehouse.' + def!.transport) : p.kind === 'captain' ? t('buy.captain.' + def!.transport) : p.kind === 'route' ? t('buy.route', { route: t('route.' + route) }) : p.kind === 'helper' ? t('buy.helper', { helper: helperName(def!) }) : t('buy.' + p.kind + (kindKey ? `.${def!.transport}` : ''));
+        const name = purchaseName(p);
         const routeDef = ROUTES.find((r) => r.id === route);
         const sub = p.kind === 'warehouse' ? t('sub.warehouse') : p.kind === 'captain' ? t('sub.captain') : p.kind === 'route' ? t('sub.route', { wait: routeDef!.wait, pay: routeDef!.pay }) : p.kind === 'transport' ? t('sub.transport.' + def!.transport) : p.kind === 'carts' || p.kind === 'cartLevel' ? t('sub.' + p.kind) : def ? (p.kind === 'unlock' ? zoneProduct(def) : zoneName(def)) : t('sub.' + p.kind);
-        const cls = p.kind === 'unlock' ? 'unlock' : p.kind === 'helper' ? 'helper' : '';
+        const cls = `${p.kind === 'unlock' ? 'unlock' : p.kind === 'helper' ? 'helper' : ''}${step && stepShown() && step.purchase.id === p.id ? ' rec' : ''}`;
         return `<button type="button" class="${cls}" data-id="${p.id}" ${p.cost > state.dollars ? 'disabled' : ''}>${shopIcon(p.kind, p.zoneId)}<span class="what"><b>${name}</b><small>${sub}</small></span><span class="price">$${fmt(p.cost)}</span></button>`;
       })
       .join('');
@@ -864,8 +887,64 @@ export function startApp(root: HTMLElement): void {
     }
   }
 
+  /** Nombre de una compra, como sale en la tienda. */
+  function purchaseName(p: Purchase): string {
+    const def = p.zoneId ? ZONES.find((z) => z.id === p.zoneId) : undefined;
+    const kindKey = p.kind === 'transport' ? `transport.${def!.transport}` : '';
+    const route = p.kind === 'route' ? p.id.split(':')[2] : '';
+    return p.kind === 'warehouse' ? t('buy.warehouse.' + def!.transport) : p.kind === 'captain' ? t('buy.captain.' + def!.transport) : p.kind === 'route' ? t('buy.route', { route: t('route.' + route) }) : p.kind === 'helper' ? t('buy.helper', { helper: helperName(def!) }) : t('buy.' + p.kind + (kindKey ? `.${def!.transport}` : ''));
+  }
+  /** Puesto donde está la compra: la carretera (camiones de chatarra), el muelle o la línea. */
+  const stepTarget = (p: Purchase): string => (p.kind === 'scrapTruck' ? 'trucks' : p.kind === 'dock' ? 'dock' : p.zoneId!);
+  /** El paso se ve si está activado en ajustes, el tutorial ha terminado y el jugador no ha ocultado este mismo paso. */
+  const stepShown = (): boolean => !!step && tut >= 4 && readFlag(NEXT_KEY, true) && stepKey(step) !== hiddenStep;
+  function stepText(st: Step): string {
+    const p = st.purchase;
+    const zone = (id?: string) => (id ? zoneName(ZONES.find((z) => z.id === id)!) : '');
+    const what = purchaseName(p);
+    switch (st.reason) {
+      case 'scrap':
+        return t('next.scrap');
+      case 'dock':
+        return t('next.dock', { what });
+      case 'carts':
+        return t('next.carts', { zone: zone(st.zoneId), what });
+      case 'unlock':
+        return t('next.unlock', { zone: zone(p.zoneId), cost: fmt(p.cost) });
+      case 'level':
+        return t('next.level', { zone: zone(p.zoneId), what, cost: fmt(p.cost) });
+      default:
+        return t('next.best', { what, where: panelTitle(stepTarget(p)) });
+    }
+  }
+  $('stats').addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-step]');
+    if (!b || !step) return;
+    play('tap');
+    if (b.dataset.step === 'go') {
+      const target = stepTarget(step.purchase);
+      if (panel !== target) openPanel(target);
+      else scene.focus(target);
+    } else {
+      hiddenStep = stepKey(step);
+      try {
+        localStorage.setItem(NEXT_HIDDEN_KEY, hiddenStep);
+      } catch {
+        /* vale para esta sesión */
+      }
+      lastStats = '';
+    }
+  });
+
   /** Cuánta chatarra hay y dónde se atasca la fábrica. */
   function renderStats(): void {
+    // El siguiente paso se recalcula cada 2 s (prueba cada compra en una copia de la partida).
+    const nowMs = performance.now();
+    if (nowMs - stepAt > 2000) {
+      stepAt = nowMs;
+      step = nextStep(state);
+    }
+    const nextHtml = step && stepShown() ? `<div class="next" role="group" aria-label="${t('next.title')}"><span class="next-text">${inlineIcon('finger', stepText(step))}</span><button type="button" data-step="go" class="next-go">${t('next.go')}</button><button type="button" data-step="hide" class="next-hide" aria-label="${t('next.hide')}">✕</button></div>` : '';
     const goal = currentGoal(state);
     const goalTxt =
       goal.kind === 'unlock'
@@ -879,7 +958,7 @@ export function startApp(root: HTMLElement): void {
       ord && ordDef
         ? t('order.line', { qty: ord.qty, product: zoneProduct(ordDef), done: Math.min(ord.qty, Math.floor(ord.delivered)), time: `${Math.floor(ord.left / 60)}:${String(Math.floor(ord.left % 60)).padStart(2, '0')}` })
         : '';
-    const html = `${goalTxt ? `<span class="goal">${inlineIcon('target', goalTxt)}</span>` : ''}${orderTxt ? `${goalTxt ? '<br>' : ''}<span class="order">${inlineIcon('coin', `${t('order.title')}: ${orderTxt}`)}</span>` : ''}`;
+    const html = `${goalTxt ? `<span class="goal">${inlineIcon('target', goalTxt)}</span>` : ''}${orderTxt ? `${goalTxt ? '<br>' : ''}<span class="order">${inlineIcon('coin', `${t('order.title')}: ${orderTxt}`)}</span>` : ''}${nextHtml}`;
     if (html !== lastStats) {
       lastStats = html;
       $('stats').innerHTML = html;

@@ -284,3 +284,12 @@ button:focus-visible { outline: 3px solid #ffd76a; outline-offset: 2px; }
 #bug button[type="submit"] { background: linear-gradient(180deg, #ffd76a, #f2a20f); }
 #bug textarea { min-height: 96px; padding: 8px 10px; font: inherit; font-size: 15px; color: var(--ink); background: #3a2d20; border: 2px solid #5f4a33; border-radius: 12px; resize: vertical; }
 #tip:not(.tut) { padding: 0 58px; }
+
+/* Siguiente paso recomendado: tarjeta dentro del recuadro de arriba (que no recibe toques; la tarjeta sí). */
+#stats .next { pointer-events: auto; display: flex; align-items: center; gap: 6px; margin-top: 4px; padding: 4px 4px 4px 8px; font-size: 12px; font-weight: 800; color: #2a1d14; background: #ffd76a; border: 2px solid #fff1a8; border-radius: 10px; box-shadow: 0 2px 0 #8a5a00; }
+#stats .next-text { flex: 1; min-width: 0; }
+#stats .next button { min-width: 44px; min-height: 36px; border: 0; border-radius: 8px; font-weight: 900; cursor: pointer; }
+#stats .next-go { padding: 0 12px; color: #fff6e0; background: #2a1d14; }
+#stats .next-hide { padding: 0; color: #2a1d14; background: transparent; font-size: 16px; }
+#shop button.rec { outline: 3px solid #ffd76a; outline-offset: -3px; box-shadow: 0 0 0 3px rgba(255, 215, 106, 0.45); }
+html.contrast #stats .next { background: #fff; color: #000; border-color: #000; }
