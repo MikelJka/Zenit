@@ -65,18 +65,59 @@ export function clearStoredSave(): void {
   }
 }
 
+/** Nombre del archivo de partida (sin extensión): «oxido-dia5-2026-10-24-12-30». */
+function saveFileBase(world: World): string {
+  const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+  return `oxido-dia${world.day}-${stamp}`;
+}
+
 /** Descarga la partida como archivo .json. */
 export function downloadWorld(world: World): void {
   const text = JSON.stringify(serializeWorld(world, gameVersion()));
   const blob = new Blob([text], { type: 'application/json' });
   const a = document.createElement('a');
-  const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
   a.href = URL.createObjectURL(blob);
-  a.download = `oxido-dia${world.day}-${stamp}.json`;
+  a.download = `${saveFileBase(world)}.json`;
   document.body.append(a);
   a.click();
   a.remove();
   window.setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+/**
+ * Envía la partida a otro dispositivo con el menú de compartir del sistema (WhatsApp, correo, Drive…).
+ * Donde no hay menú de compartir con archivos (casi todos los PC), la descarga como «⬇ Exportar».
+ * El archivo va como .txt porque los navegadores no dejan compartir .json; dentro es la misma partida
+ * y se carga igual con 📂 Cargar o ⬆ Importar.
+ * Devuelve 'shared' (enviado), 'cancelled' (el jugador cerró el menú) o 'downloaded'.
+ */
+export async function shareWorld(world: World): Promise<'shared' | 'cancelled' | 'downloaded'> {
+  const text = JSON.stringify(serializeWorld(world, gameVersion()));
+  const nav = navigator as Navigator & {
+    canShare?: (data: ShareData) => boolean;
+    share?: (data: ShareData) => Promise<void>;
+  };
+  if (typeof File !== 'undefined' && nav.share && nav.canShare) {
+    const file = new File([text], `${saveFileBase(world)}.txt`, { type: 'text/plain' });
+    const data: ShareData = { files: [file], title: `Óxido · partida del día ${world.day}` };
+    let ok = false;
+    try {
+      ok = nav.canShare(data);
+    } catch {
+      ok = false;
+    }
+    if (ok) {
+      try {
+        await nav.share(data);
+        return 'shared';
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled';
+        // Otro fallo (permiso, app de destino): se descarga para no perder la partida.
+      }
+    }
+  }
+  downloadWorld(world);
+  return 'downloaded';
 }
 
 /** Pide al jugador un archivo de partida y devuelve su texto. */
@@ -84,7 +125,8 @@ export function pickSaveFile(): Promise<string | null> {
   return new Promise((resolve) => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.json,application/json';
+    // .txt: así llegan las partidas enviadas con «📤 Enviar» (los navegadores no comparten .json).
+    input.accept = '.json,.txt,application/json,text/plain';
     input.addEventListener('change', () => {
       const file = input.files?.[0];
       if (!file) return resolve(null);

@@ -23,7 +23,7 @@ import { mountTutorial, tutorialWanted } from './ui/tutorial';
 import { mountGodMode } from './ui/godMode';
 import { makePrisoner, offerWanderer, startRaid, startTrader } from './sim/people';
 import { healthLabel, infectionLabel } from './sim/health';
-import { downloadWorld, pickSaveFile, readBackupSave, readStoredSave, storeWorld } from './ui/saveGame';
+import { downloadWorld, pickSaveFile, shareWorld, readBackupSave, readStoredSave, storeWorld } from './ui/saveGame';
 import { mountCloudSync } from './ui/cloudSync';
 import { parseSave } from './sim/save';
 import { finishBattle, retreat, startExpedition, updateExpedition } from './sim/expedition';
@@ -286,6 +286,11 @@ $('save-now').addEventListener('click', () => saveNow(true));
 $('save-export').addEventListener('click', () => {
   downloadWorld(scene().world);
   showToast('⬇ Partida exportada');
+});
+$('save-share').addEventListener('click', async () => {
+  const result = await shareWorld(scene().world);
+  if (result === 'shared') showToast('📤 Partida enviada. En el otro dispositivo: 📂 Cargar y elige el archivo', 4000);
+  else if (result === 'downloaded') showToast('⬇ Este navegador no tiene menú de compartir: partida descargada. Pásala al otro dispositivo y cárgala con 📂 Cargar', 5000);
 });
 $('save-import').addEventListener('click', async () => {
   const text = await pickSaveFile();

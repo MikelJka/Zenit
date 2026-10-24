@@ -2,6 +2,16 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (94) — Enviar la partida a otro dispositivo
+
+- Sin incidencias nuevas del 🐞 ni propuestas abiertas.
+- Nuevo botón **📤 Enviar** en ☰ → Partida (pedido por Mikel en el chat). En el móvil abre el menú de compartir del sistema con el archivo de la partida: WhatsApp, correo, Drive, Bluetooth… En el PC, donde no hay menú de compartir, la descarga como ⬇ Exportar.
+- El archivo se envía como `oxido-diaN-….txt`, porque los navegadores no dejan compartir archivos `.json`; dentro es la misma partida. **📂 Cargar** (menú principal) y **⬆ Importar** aceptan ahora `.json` y `.txt`.
+- Abrir el archivo tocándolo en el otro dispositivo no es posible sin instalar el juego como app; se carga con 📂 Cargar. Sin cuentas ni servidor; más adelante irá la cuenta de Google.
+- Sin cambios en las reglas ni en las partidas guardadas (`src/ui/saveGame.ts`).
+- Qué probar: en el móvil, ☰ → 📤 Enviar → mandártelo por WhatsApp o correo; en el otro dispositivo, guardar el archivo y abrir Óxido → 📂 Cargar → elegirlo.
+- Qué sigue: la regla del corte del día 10 para la versión de Google Play (primera parte de «Óxido en Google Play»).
+
 ## 2026-10-24 (93) — La hoguera alumbra más
 
 - Mikel eligió en el chat la opción **B** de Z#19.
