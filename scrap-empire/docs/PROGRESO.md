@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Autopista y pájaros pasan a canvas (#16, quinta parte)
+
+- Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».
+- Los 8 coches de la autopista elevada del fondo se dibujan ahora en la capa de canvas (cada aspecto se hornea una vez en una textura) y los 5 pájaros, con su aleteo, también. El SVG ya no mueve esos 13 grupos 30 veces por segundo ni anima el aleteo con CSS.
+- Las nubes se quedan en el SVG: pasan por detrás de la ciudad y la capa de canvas va por delante de ella, así que en canvas taparían los edificios.
+- De noche los pájaros desaparecen como antes; en «Calidad baja», sin autopista ni pájaros, como antes. Con `?svg=1`, o si WebGL no arranca, todo sigue en SVG.
+- Qué probar: que los coches de la autopista del fondo y los pájaros se vean y se muevan igual que antes, y que el mapa vaya igual o algo más suelto.
+- Sigue: S3 cuando Mikel pase los identificadores de AdMob y responda la Parte 29; si no, #16: el tren y el barco a canvas.
+
 ## 2026-10-24 — La pila pasa a canvas (#16, cuarta parte)
 
 - Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».

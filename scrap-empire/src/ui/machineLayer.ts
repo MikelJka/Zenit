@@ -10,6 +10,8 @@
 // Sexta parte (#16): los tres AGV de las rutas azules, por bloques girados como la carretilla, debajo de las carretillas.
 // Séptima parte (#16): la pila de chatarra, horneada en una textura que crece con la chatarra y salta al tocarla;
 // va encima de lo de la nave (como en el SVG, donde estaba en la capa de delante) y el toque lo sigue recibiendo el SVG.
+// Octava parte (#16): los coches de la autopista elevada del fondo y los pájaros, debajo de todo (están en el cielo,
+// por encima del horizonte, donde la nave no llega); las nubes siguen en el SVG porque pasan por detrás de la ciudad.
 import { Application, CanvasSource, Container, Graphics, GraphicsContext, Sprite, Texture } from 'pixi.js';
 import { iso, rblockFaces } from './iso';
 import { AGV_SHADOW, FORKLIFT_SHADOW, TRUCK_SLOTS, agvPieces, forkliftPieces, truckSlotAt } from './vehicles';
@@ -37,6 +39,11 @@ const CAR_RES = 4;
 /** Recuadro de la pila (píxeles desde la esquina de atrás de su sitio, sin escalar): 192 × 112 → 768 × 448 píxeles. */
 const PILE_BOX = { x: -100, y: -60, w: 192, h: 112 };
 const PILE_RES = 4;
+/** Recuadro de un coche de la autopista del fondo (con su altura de 2,7): 48 × 32 → 192 × 128 píxeles. */
+const HWAY_BOX = { x: -24, y: -22, w: 48, h: 32 };
+const HWAY_RES = 4;
+/** Pájaro: «M-7 0 Q-3.5 -5 0 0 Q3.5 -5 7 0», trazo de 1,6; aletea con el centro de su caja a 1,25 px por encima. */
+const BIRD_PIVOT_Y = -1.25;
 /** La carretilla gira en pasos de 10° (como las variantes del SVG). */
 const CART_STEPS = 36;
 const EDGE = 0x2a1d14;
@@ -110,6 +117,10 @@ export interface MachineLayer {
   setShipTruck(pos: { x: number; y: number } | null, ids: string[], parts: () => { back: string; front: string }, prop: (zone: string) => string): void;
   /** Coches de la carretera de delante en este fotograma; `svg` dibuja el aspecto `key`. */
   setCars(cars: CarPose[], svg: (key: string) => string): void;
+  /** Coches de la autopista del fondo en este fotograma (posición ya con la altura); `svg` dibuja el aspecto `key`. */
+  setHwayCars(cars: CarPose[], svg: (key: string) => string): void;
+  /** Pájaros del cielo en este fotograma (píxeles) y su opacidad (de noche no se ven). */
+  setBirds(birds: [number, number][], alpha: number): void;
   /** Pone la pila con su esquina de atrás en (x, y) píxeles; se cumple cuando ya se ve (para esconder la del SVG sin parpadeo). */
   setPile(pos: { x: number; y: number }, svg: () => string): Promise<void>;
   /** Tamaño de la pila en este fotograma (como el `scale` de `.pile-body`). */
@@ -303,6 +314,12 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   canvas.classList.add('machine-layer');
   const world = new Container();
   app.stage.addChild(world);
+  // Lo del cielo, debajo de todo: los coches de la autopista del fondo y, delante, los pájaros (como en el SVG).
+  const skyG = new Container();
+  const hwayG = new Container();
+  const birdsG = new Container();
+  skyG.addChild(hwayG, birdsG);
+  world.addChild(skyG);
   const ground = new Container();
   world.addChild(ground);
   // Los ayudantes van encima de todas las máquinas (se añade al mundo después de las líneas); encima, los palés y las carretillas.
@@ -372,6 +389,13 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   let truckKey = '';
   let truckBaked = false;
   const carViews: { sprite: Sprite; key: string }[] = [];
+  const hwayViews: { sprite: Sprite; key: string }[] = [];
+  const birdShape = new GraphicsContext()
+    .moveTo(-7, 0)
+    .quadraticCurveTo(-3.5, -5, 0, 0)
+    .quadraticCurveTo(3.5, -5, 7, 0)
+    .stroke({ width: 1.6, color: EDGE, cap: 'round', join: 'round' });
+  const birdViews: Graphics[] = [];
 
   /** Pone en `sp` la textura `key` (al momento si ya está horneada; si no, cuando llegue y siga queriéndose `want()`). */
   function setTex(sp: Sprite, key: string, make: () => Promise<Texture>, want: () => boolean): void {
@@ -626,6 +650,46 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
         setTex(v.sprite, `car-${c.key}`, () => bake(svg(want), CAR_BOX, CAR_RES), () => v.key === want);
       });
     },
+    setHwayCars(list, svg) {
+      while (hwayViews.length < list.length) {
+        const sprite = new Sprite(Texture.EMPTY);
+        sprite.scale.set(1 / HWAY_RES);
+        sprite.visible = false;
+        hwayG.addChild(sprite);
+        hwayViews.push({ sprite, key: '' });
+      }
+      hwayViews.forEach((v, k) => {
+        const c = list[k];
+        if (!c) {
+          v.sprite.visible = false;
+          v.key = '';
+          return;
+        }
+        v.sprite.position.set(c.x + HWAY_BOX.x, c.y + HWAY_BOX.y);
+        if (c.key === v.key) {
+          v.sprite.visible = v.sprite.texture !== Texture.EMPTY;
+          return;
+        }
+        v.key = c.key;
+        const want = c.key;
+        setTex(v.sprite, `hway-${c.key}`, () => bake(svg(want), HWAY_BOX, HWAY_RES), () => v.key === want);
+      });
+    },
+    setBirds(list, alpha) {
+      while (birdViews.length < list.length) {
+        const g = new Graphics(birdShape);
+        g.pivot.set(0, BIRD_PIVOT_Y);
+        birdsG.addChild(g);
+        birdViews.push(g);
+      }
+      birdsG.alpha = alpha;
+      birdsG.visible = alpha > 0.01;
+      birdViews.forEach((g, k) => {
+        const b = list[k];
+        g.visible = !!b;
+        if (b) g.position.set(b[0], b[1] + BIRD_PIVOT_Y);
+      });
+    },
     setLine(i, spots, variant, body) {
       const l = lines[i];
       for (const m of l.machines) m.root.destroy({ children: true });
@@ -699,6 +763,14 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       if (j < 1) dy = j < 0.3 ? (-5 * j) / 0.3 : j < 0.6 ? -5 + (6 * (j - 0.3)) / 0.3 : 1 - (j - 0.6) / 0.4;
       else pileJig = -1;
       pileG.y = pileY + dy;
+      // En «Calidad baja» no hay autopista ni pájaros (como en el SVG). Aleteo: alto de 1 a −0,6 en 0,45 s, ida y vuelta.
+      skyG.visible = !low;
+      if (!low) {
+        const f = (now / 0.45) % 2;
+        const u = f < 1 ? f : 2 - f;
+        const flap = 1 - 1.6 * (u * u * (3 - 2 * u));
+        for (const g of birdViews) g.scale.set(1, flap);
+      }
       for (const l of lines) {
         l.floor.visible = l.inView;
         l.flowG.visible = l.inView && l.level > 0 && l.flows.length > 0;

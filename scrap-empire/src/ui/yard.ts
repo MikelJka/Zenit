@@ -493,7 +493,8 @@ export function createYard(container: HTMLElement): Yard {
   const HWAY_COLORS = ['#c0392b', '#2f6fb3', '#e8e0d0', '#3fa7a0', '#d4a72c', '#4a4a4a'];
   const hwayCars = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
     const rev = i % 2 === 1;
-    return { g: mk(hway, hwayCarIso(HWAY_COLORS[(i * 5) % HWAY_COLORS.length], rev)), rev, off: Math.floor(i / 2) * 27, v: rev ? -0.5 : 0.5, speed: rev ? 4.2 : 3.4 };
+    const color = HWAY_COLORS[(i * 5) % HWAY_COLORS.length];
+    return { g: mk(hway, hwayCarIso(color, rev)), key: `${color}|${rev ? 1 : 0}`, rev, off: Math.floor(i / 2) * 27, v: rev ? -0.5 : 0.5, speed: rev ? 4.2 : 3.4 };
   });
 
   // Agua del puerto: destellos que parpadean.
@@ -846,6 +847,14 @@ export function createYard(container: HTMLElement): Yard {
   let seaStart = -1e9;
   let railStart = -1e9;
   let lastHourCheck = -1;
+  /** Capa en la que se dibujan ahora los coches de la autopista y los pájaros (null: en el SVG). */
+  let skyOnGpu: MachineLayer | null = null;
+  let birdAlpha = 1;
+  /** Aspecto de un coche de la autopista por su clave «color|sentido». */
+  const hwayCarSvg = (key: string) => {
+    const [color, rev] = key.split('|');
+    return hwayCarIso(color, rev === '1');
+  };
   let lastSparkCheck = -1;
   let sparksInSvg = true;
   let spkOn = false;
@@ -906,13 +915,23 @@ export function createYard(container: HTMLElement): Yard {
       q('lampglow').setAttribute('opacity', Math.min(1, night * 1.5 + dusk * 0.6).toFixed(3));
       clouds.setAttribute('opacity', (1 - night * 0.8).toFixed(2));
       birds.setAttribute('opacity', (1 - night).toFixed(2));
+      birdAlpha = 1 - night;
     }
-    // Autopista y tren.
+    // Autopista y tren. Con la capa de canvas, los coches de la autopista y los pájaros se dibujan allí.
+    if (gpu !== skyOnGpu) {
+      skyOnGpu = gpu;
+      for (const g of [hway, birds]) g.style.visibility = gpu ? 'hidden' : '';
+    }
+    const hwayPoses: { x: number; y: number; key: string }[] = [];
     hwayCars.forEach((c) => {
       const run = (((c.off + (c.rev ? -1 : 1) * t * c.speed) % 108) + 108) % 108;
       const [x, y, z] = hwayPoint(-52 + run, c.v);
-      c.g.setAttribute('transform', at(x, y, z));
+      if (gpu) {
+        const [px, py] = iso(x, y, z);
+        hwayPoses.push({ x: px, y: py, key: c.key });
+      } else c.g.setAttribute('transform', at(x, y, z));
     });
+    gpu?.setHwayCars(hwayPoses, hwayCarSvg);
     // Con la zona de vagones abierta, el tren pasa solo cuando sale cargado; antes pasa de adorno cada cierto tiempo.
     const railSent = state.transports.rail.sent;
     if (lastRailSent >= 0 && railSent > lastRailSent && t - railStart >= PORT.trainPeriod) railStart = t;
@@ -944,7 +963,13 @@ export function createYard(container: HTMLElement): Yard {
       svgBack.classList.toggle('spk', spk);
     }
     cloudEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((t * 2.5 + i * 700) % 2800) - 1200).toFixed(1)} ${HORIZON - 190 - i * 38})`));
-    birdEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((t * (16 + i * 3) + i * 520) % 2600) - 1100).toFixed(1)} ${(HORIZON - 120 - i * 34 + Math.sin(t * 1.3 + i) * 10).toFixed(1)})`));
+    const birdXY = (i: number): [number, number] => [(((t * (16 + i * 3) + i * 520) % 2600) - 1100), HORIZON - 120 - i * 34 + Math.sin(t * 1.3 + i) * 10];
+    if (gpu) gpu.setBirds(birdEls.map((_, i) => birdXY(i)), birdAlpha);
+    else
+      birdEls.forEach((g, i) => {
+        const [bx, by] = birdXY(i);
+        g.setAttribute('transform', `translate(${bx.toFixed(1)} ${by.toFixed(1)})`);
+      });
     mainLevel += ((working ? 1 : 0) - mainLevel) * Math.min(1, dtv * (working ? 6 : 1.4));
     mainFlow.style.display = mainLevel > 0 ? '' : 'none';
     mainFlow.style.opacity = (0.95 * mainLevel).toFixed(2);
