@@ -11,7 +11,7 @@ Terminado: la URL pública muestra la pantalla del juego en el móvil y en PC, l
 - [x] Estructura genérica de juego idle (`docs/DISENO.md`)
 - [x] Estilo visual decidido con Mikel (2D de dibujo animado, SVG por código)
 - [x] Diseño concreto decidido con Mikel en FEEDBACK.md (Partes 1-7)
-- [ ] Comprobar en la URL pública que se ve bien en el móvil (lo confirma Mikel)
+- [x] Comprobar en la URL pública que se ve bien en el móvil (confirmado por Mikel el 2026-10-24: «se ve bien»)
 
 ## Fase 1 — Bucle básico
 
@@ -63,6 +63,7 @@ Terminado: el juego se ve, suena y se siente como un título de estudio grande, 
 - [x] Equilibrio con el bot: simulación de jugador hecha (`scripts/balance.ts`), propuesta en la Parte 18; falta que Mikel elija
 - [x] Pedidos especiales y zonas 9-10 con tren y barco (barco animado; estación propia en el anexo hecha; falta equilibrar)
 - [x] Mapa en canvas con PixiJS (S1, 2026-10-23), por partes: suelo y máquinas primero (**hechas la primera parte, 2026-10-23: las máquinas en canvas, y la segunda, 2026-10-23: el suelo de los puestos y sus cintas, la tercera, 2026-10-23: los ayudantes de los puestos, y la cuarta, 2026-10-23: las carretillas y los palés de las líneas, y la quinta, 2026-10-23: el camión de expedición y los coches de la carretera de delante**; siguen, si hace falta, los AGV y la pila (los camiones de chatarra y los coches del fondo pasan por detrás de la nave y se quedan en SVG))
+- [ ] Siguiente paso recomendado (2026-10-24, Mikel): tarjeta bajo la barra de arriba con «Ir»; primero lo que atasca la fábrica y, si no hay atasco, la compra que más $/s da por cada $; ✕ oculta el paso actual e interruptor en Ajustes
 - [ ] Que vaya mejor en móviles flojos (#16, 2026-10-23, Mikel desde el botón 🐞): **hecha la primera parte, 2026-10-23: bucle entero a 30/s en táctiles, textos solo si cambian, sin recálculo de estilos por las chispas y canvas a resolución 1 en «Calidad baja»**; **hecha la segunda parte, 2026-10-23: arrastrar y pellizcar sin repintar los SVG (se mueven con CSS y se repintan al soltar)**; **hecha la tercera parte, 2026-10-24: los AGV en canvas**; **hecha la cuarta parte, 2026-10-24: la pila en canvas**; **hecha la quinta parte, 2026-10-24: autopista y pájaros en canvas** (las nubes se quedan en SVG, van detrás de la ciudad); **hecha la sexta parte, 2026-10-24: el tren y el barco del puerto en canvas**; **hecha la séptima parte, 2026-10-24: los destellos del agua en canvas y las nubes a 5 saltos por segundo**; sigue: ver cómo va en el Android de Mikel (en SVG se mueven aún los camiones de chatarra y coches que pasan detrás de la nave y el camión dorado)
 - [x] Botón 🐞 dentro del juego para abrir incidencias (S2, 2026-10-23; hecho el 2026-10-23)
 - [x] Pruebas: la prueba de humo comprueba el panel por línea, el ranking apagado y la noche (**hecho**; los tests de interfaz sencillos quedan para más adelante)
@@ -71,11 +72,16 @@ Terminado: el juego se ve, suena y se siente como un título de estudio grande, 
 
 Terminado: el juego está en la prueba cerrada de Google Play con anuncios de prueba funcionando.
 
-- [ ] Empaquetar con Capacitor y generar el archivo para Google Play en GitHub Actions (**hecho: Capacitor y workflow que genera un APK de prueba**, `docs/ANDROID.md`; falta la clave de firma y el AAB)
+- [ ] Empaquetar con Capacitor y generar el archivo para Google Play en GitHub Actions (**hecho: Capacitor y workflow que genera un APK de prueba**, `docs/ANDROID.md`; falta la clave de firma y el AAB: 2026-10-24, Mikel aprueba preparar el flujo del AAB firmado con la clave como secreto de GitHub)
 - [x] Anuncios y compras decididos (empujón, camión dorado, pase a 2,99 €)
-- [ ] Anuncios reales con AdMob y compra del pase con Google Play Billing
+- [ ] Anuncios reales con AdMob y compra del pase con Google Play Billing (2026-10-24, Mikel: preparar ya el código de Play Billing; el producto se crea en Play Console cuando aprueben la cuenta)
 - [ ] Consentimiento de anuncios (UE) y política de privacidad (S3, 2026-10-23: con Google UMP y AdMob en modo de prueba) (**hecha la política de privacidad en la web, 2026-10-23, enlazada desde Ajustes; contacto y edad (mayores de 13) puestos el 2026-10-24, Parte 29**) (**hecho el consentimiento UE con Google UMP y AdMob con los identificadores de prueba de Google en la app de Android, 2026-10-23**; faltan los identificadores reales de Mikel)
 - [x] Textos en inglés
+- [ ] Logo nuevo, más atractivo (2026-10-24, Mikel): 2-3 versiones para que elija Mikel
+- [ ] Capturas y vídeos nuevos, más atractivos, con textos accesibles y más juego en el vídeo (2026-10-24, Mikel)
+- [ ] Descripciones de la tienda al día con la última versión (10 zonas, tren y barco, prestigio, objetivos diarios, pedidos) (2026-10-24, Mikel)
+- [ ] Borradores para Play Console: «Seguridad de los datos» y cuestionario de clasificación por edades (2026-10-24, Mikel)
+- [ ] Mensajes para buscar testers en Reddit para la prueba cerrada (12 personas, 14 días) (2026-10-24, Mikel)
 - [ ] Ficha de la tienda (**hecho: textos, icono, capturas, gráfico y vídeo en `docs/FICHA_TIENDA.md` y `/press/`**; hecha la política de privacidad con contacto; clasificación: mayores de 13 años, se rellena en Play Console al crear la ficha)
 
 ## Fase 4 — Publicación

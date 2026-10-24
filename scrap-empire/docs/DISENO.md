@@ -130,3 +130,9 @@ Lo que Mikel aprueba en `FEEDBACK.md` se resume aquí.
 - **Almacén y menú (2026-10-21):** el almacén del tren y el barco cuesta la mitad que el transporte (×1,8 por nivel); el menú de inicio sale siempre al abrir el juego.
 - **Qué hacemos ahora (Parte 27, 2026-10-23, Mikel elige S1, S2, S3 y S4):** S1 mapa en canvas con PixiJS por partes, mismo aspecto; S2 botón 🐞 que abre incidencias `feedback` + `scrap-empire` en Zenit; S3 preparar Google Play (privacidad, consentimiento UE con Google UMP, AdMob de prueba); S4 prestigio (ver arriba).
 - **Privacidad y edades (Parte 29, 2026-10-24, Mikel):** contacto de privacidad mikeljka@gmail.com (PP1/PP3; cuando Mikel cree un correo de Zenit Studio, PP2, se cambia); juego para mayores de 13 años (PE1): AdMob normal con consentimiento UE.
+
+### Siguiente paso recomendado (2026-10-24)
+
+- Tarjeta bajo la barra de arriba con «Ir» (centra el mapa en el puesto y abre su panel con la mejora resaltada).
+- Qué recomienda: primero el atasco (falta chatarra → camión de chatarra; palé lleno → carretillas de esa línea; muelle lleno → camión de salida); sin atasco, la compra con más $/s por cada $.
+- Ocultar: la ✕ oculta el paso actual hasta que haya otro distinto; interruptor en ⚙ Ajustes para quitarlo del todo.
