@@ -9,6 +9,7 @@
 // y los bordes de la pantalla se oscurecen un poco (más de noche).
 import Phaser from 'phaser';
 import { eventDef } from '../data/events';
+import { isBurning } from '../sim/bonfire';
 import { isWinter } from '../sim/seasons';
 import { footprint } from '../sim/structures';
 import type { World } from '../sim/world';
@@ -306,8 +307,9 @@ function lightSources(world: World, toScreen: TileToScreen, view: Phaser.Geom.Re
   const inView = (p: { x: number; y: number }) => p.x > view.x - 60 && p.x < view.right + 60 && p.y > view.y - 60 && p.y < view.bottom + 60;
   for (const s of world.structures.all()) {
     if (!s.built) continue;
-    const lamp = s.def.light && s.powered;
-    const burning = (s.def.cheer || s.def.heater) && (s.fuel ?? 0) > 0;
+    // Hoguera o estufa encendida: luz de llama. La estufa con leña guardada pero apagada (sin frío) no da luz.
+    const burning = isBurning(s);
+    const lamp = !burning && !!s.def.light && s.powered;
     // Piloto: una máquina que gasta corriente y le llega (no las averiadas).
     const machine = !lamp && !burning && s.powered && !s.repair && ((s.def.power ?? 0) < 0 || s.electric);
     if (!lamp && !burning && !machine) continue;
@@ -315,7 +317,7 @@ function lightSources(world: World, toScreen: TileToScreen, view: Phaser.Geom.Re
     const p = toScreen(s.x + f.w / 2, s.y + f.h / 2);
     if (!inView(p)) continue;
     if (machine) out.push({ x: p.x, y: p.y - TILE_H / 2, radius: 1.3, color: 0x9ad4ff, flicker: false, small: true });
-    else out.push({ x: p.x, y: p.y - TILE_H / 2, radius: lamp ? (s.def.light ?? 3) + 1 : 3.5, color: lamp ? 0xffe2a8 : 0xff9a40, flicker: !lamp });
+    else out.push({ x: p.x, y: p.y - TILE_H / 2, radius: s.def.light ? s.def.light + 1 : 3.5, color: lamp ? 0xffe2a8 : 0xff9a40, flicker: !lamp });
   }
   let k = 0;
   for (const i of world.fires.keys()) {

@@ -15,6 +15,14 @@ export function isLitBonfire(s: Structure): boolean {
 }
 
 /**
+ * Arde ahora (da luz de llama y echa humo): una hoguera o una estufa construida que está encendida.
+ * La estufa guarda la leña sin gastarla mientras no hace frío y entonces está apagada aunque tenga leña.
+ */
+export function isBurning(s: Structure): boolean {
+  return (!!s.def.burnsCorpses || !!s.def.heater) && !!s.def.fuel && s.built && !!s.powered && (s.fuel ?? 0) > 0;
+}
+
+/**
  * Cada segundo (`hours` de juego): la leña que han traído pasa al depósito y la que arde se gasta.
  * `powered` queda a true mientras está encendida (lo lee el dibujo y la información de la casilla).
  */

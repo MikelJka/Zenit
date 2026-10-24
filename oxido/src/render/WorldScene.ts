@@ -2610,7 +2610,7 @@ function powerLabel(w: World, s: Structure): string {
   if (s.repair) parts.push(`🔧 averiada: parada hasta que un colono con «Construir» la arregle`);
   if (f && s.def.burnsCorpses) parts.push(s.powered ? 'encendida: quema los cadáveres' : 'apagada: hace falta leña', `${RESOURCE_NAMES[f.resource].toLowerCase()} ${Math.ceil(s.fuel ?? 0)}/${f.capacity}`);
   else if (s.def.mortar) parts.push(mortarShots(s) > 0 ? `${mortarShots(s)} disparos: lo maneja un colono reclutado pegado a él` : 'sin munición: hace falta chatarra', `${RESOURCE_NAMES[s.def.mortar.ammo.resource].toLowerCase()} ${Math.floor(s.fuel ?? 0)}/${s.def.mortar.ammo.capacity}`);
-  else if (f) parts.push(s.powered ? 'en marcha' : `sin ${RESOURCE_NAMES[f.resource].toLowerCase()}`, `${RESOURCE_NAMES[f.resource].toLowerCase()} ${Math.ceil(s.fuel ?? 0)}/${f.capacity}`);
+  else if (f) parts.push(s.powered ? 'en marcha' : s.def.heater && (s.fuel ?? 0) > 0 ? 'apagada: se enciende sola cuando hace frío' : `sin ${RESOURCE_NAMES[f.resource].toLowerCase()}`, `${RESOURCE_NAMES[f.resource].toLowerCase()} ${Math.ceil(s.fuel ?? 0)}/${f.capacity}`);
   else if (s.def.battery) parts.push(`${Math.round(s.stored ?? 0)}/${w.batteryCapacity(s)} Wh`);
   else if (s.def.source === 'solar') parts.push(s.powered ? `${s.output ?? 0} W` : 'de noche no produce');
   else if (s.def.source === 'wind') parts.push(s.sheltered ? 'tapado: necesita las casillas de alrededor libres' : `${s.output ?? 0} W, viento ${Math.round(w.wind * 100)} %`);

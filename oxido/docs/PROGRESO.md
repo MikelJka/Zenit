@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (87) — Las estufas apagadas ya no dan luz de noche
+
+- Incidencias nuevas del 🐞 pasadas a «Pendiente»: Z#19 (hogueras con más luz), Z#17 (árbol de investigación como árbol) y Z#18 (marcas de comerciantes y enemigos).
+- Arreglado Z#7 (luz de noche en dos puntos sin saber de dónde viene): las estufas con leña guardada daban luz de llama y humo aunque estuvieran apagadas (sin frío no queman leña). Bajo un tejado no se ven, así que la luz parecía salir de la nada. Ahora solo dan luz las hogueras y estufas encendidas (`isBurning` en `src/sim/bonfire.ts`); la hoguera se ve con luz de llama (naranja, parpadea) y el mismo alcance. La estufa apagada con leña pone «apagada: se enciende sola cuando hace frío».
+- La sesión no pudo abrir la captura de la incidencia: si las luces siguen, que Mikel diga con 🐞 qué hay al lado.
+- Tests nuevos en `tests/nightLights.test.ts`.
+- Qué probar: de noche en primavera, una estufa con leña no debe brillar; una hoguera con leña, sí (naranja).
+- Qué sigue: Z#19 (hogueras con más luz).
+
 ## 2026-10-23 (86) — Los colonos ya no se llaman igual y sus nombres se leen bien en el móvil
 
 - Sin incidencias nuevas del 🐞.
