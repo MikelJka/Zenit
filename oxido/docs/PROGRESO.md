@@ -9,7 +9,7 @@ Diario de sesiones, la más reciente arriba.
 - La estufa, mientras arde (de noche en invierno), ilumina lo mismo; antes solo se veía el resplandor y no contaba como luz. Apagada, con la leña guardada, no da luz.
 - El ánimo de estar cerca de la hoguera sigue a 3 casillas. Sin cambios en las partidas guardadas (los números van en `buildings.json`, con tests en `tests/bonfire.test.ts`).
 - Qué probar: de noche, encender una hoguera y mirar que el círculo de luz llega más lejos que el de una lámpara.
-- Qué sigue: Z#9 (menús de construcción nuevos; cómo agrupar, con propuesta antes si hay que decidirlo).
+- Qué sigue: **pasar la partida a otro dispositivo** compartiendo el archivo (pedido por Mikel en el chat; ver «Pendiente»); después, Z#9 (menús de construcción nuevos).
 
 ## 2026-10-24 (92) — Las construcciones desmontadas llevan su nombre
 
