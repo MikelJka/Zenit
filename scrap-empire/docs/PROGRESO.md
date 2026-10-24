@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Destellos del agua a canvas y nubes más ligeras (#16, séptima parte)
+
+- Sin incidencias nuevas ni propuestas abiertas. S3 sigue esperando los identificadores de AdMob de Mikel, así que sigue «Que vaya mejor (#16)».
+- Los 14 destellos del agua del puerto se dibujan ahora en la capa de canvas, con el mismo parpadeo (de 1 a 0,2 en 1,6 s, cada uno desfasado), por debajo del barco. En «Calidad baja» se quedan quietos, como antes.
+- Las nubes iban moviéndose una fracción de punto 30 veces por segundo; ahora se mueven a saltos de medio punto 5 veces por segundo, todas a la vez (van tan despacio que no se nota). Con esto el SVG de atrás (cielo, ciudad, suelo y nave) ya no tiene ninguna animación CSS y se repinta muchas menos veces.
+- Con `?svg=1`, o si WebGL no arranca, los destellos siguen en SVG.
+- Qué probar: que el agua del puerto siga brillando, que las nubes se muevan suaves y que el mapa vaya igual o algo más suelto en el móvil.
+- Sigue: S3 cuando Mikel pase los identificadores de AdMob; si no, ver cómo va #16 en su Android (en SVG aún se mueven los camiones de chatarra y coches de detrás de la nave y el camión dorado).
+
 ## 2026-10-24 — Contacto y edad en la política de privacidad (Parte 29)
 
 - Mikel responde a la Parte 29: contacto mikeljka@gmail.com (lo cambiará por un correo de Zenit Studio cuando lo cree) y juego para mayores de 13 años. Pasado a «Decidido» de DISENO.md y quitada la propuesta.

@@ -499,11 +499,14 @@ export function createYard(container: HTMLElement): Yard {
 
   // Agua del puerto: destellos que parpadean.
   const water = q('water');
-  water.innerHTML = Array.from({ length: 14 }, (_, k) => {
+  const waterLines = Array.from({ length: 14 }, (_, k): [number, number, number, number] => {
     const x = -24 + ((k * 37) % 70);
     const y = PORT.quayY + 1.2 + ((k * 13) % 9);
-    return `<polyline class="shimmer" points="${iso(x, y)[0]},${iso(x, y)[1]} ${iso(x + 1.4, y)[0]},${iso(x + 1.4, y)[1]}" stroke="#e6f6ff" stroke-width="1.6" fill="none" style="animation-delay:${(-k * 0.37).toFixed(2)}s"/>`;
-  }).join('');
+    return [...iso(x, y), ...iso(x + 1.4, y)];
+  });
+  water.innerHTML = waterLines
+    .map(([x0, y0, x1, y1], k) => `<polyline class="shimmer" points="${x0},${y0} ${x1},${y1}" stroke="#e6f6ff" stroke-width="1.6" fill="none" style="animation-delay:${(-k * 0.37).toFixed(2)}s"/>`)
+    .join('');
 
   // Barco: zarpa al enviarse el cargamento y vuelve vacío.
   const ship = mk(q('ship'), shipSvg());
@@ -847,6 +850,7 @@ export function createYard(container: HTMLElement): Yard {
   let lastHourCheck = -1;
   /** Capa en la que se dibujan ahora los coches de la autopista y los pájaros (null: en el SVG). */
   let skyOnGpu: MachineLayer | null = null;
+  let lastCloudStep = -1;
   /** El tren y el barco ya se ven en la capa de canvas (los del SVG están escondidos). */
   let portOnGpu = false;
   let birdAlpha = 1;
@@ -963,7 +967,14 @@ export function createYard(container: HTMLElement): Yard {
       svg.classList.toggle('spk', spk);
       svgBack.classList.toggle('spk', spk);
     }
-    cloudEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((t * 2.5 + i * 700) % 2800) - 1200).toFixed(1)} ${HORIZON - 190 - i * 38})`));
+    // Las nubes van muy despacio (2,5 por segundo): se mueven a saltos de medio punto, 5 veces por segundo y todas a la vez,
+    // para que el SVG de atrás no se repinte 30 veces por segundo solo por ellas.
+    const cloudStep = Math.floor(t / 0.2);
+    if (cloudStep !== lastCloudStep) {
+      lastCloudStep = cloudStep;
+      const ct = cloudStep * 0.2;
+      cloudEls.forEach((g, i) => g.setAttribute('transform', `translate(${(((ct * 2.5 + i * 700) % 2800) - 1200).toFixed(1)} ${HORIZON - 190 - i * 38})`));
+    }
     const birdXY = (i: number): [number, number] => [(((t * (16 + i * 3) + i * 520) % 2600) - 1100), HORIZON - 120 - i * 34 + Math.sin(t * 1.3 + i) * 10];
     if (gpu) gpu.setBirds(birdEls.map((_, i) => birdXY(i)), birdAlpha);
     else
@@ -1469,6 +1480,9 @@ export function createYard(container: HTMLElement): Yard {
     void layer.setPile(isoXY(PILE.x, PILE.y), pileIso).then(() => {
       pileBody.style.display = 'none';
     });
+    // Los destellos del agua también van al canvas (el SVG de atrás deja de tener una animación CSS que lo repinta sin parar).
+    layer.setWater(waterLines);
+    water.style.display = 'none';
     // Igual con el tren y el barco del puerto.
     void layer.setPort(trainSvg, shipSvg()).then(() => {
       portOnGpu = true;

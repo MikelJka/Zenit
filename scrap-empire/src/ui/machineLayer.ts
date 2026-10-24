@@ -127,6 +127,8 @@ export interface MachineLayer {
   setHwayCars(cars: CarPose[], svg: (key: string) => string): void;
   /** Pájaros del cielo en este fotograma (píxeles) y su opacidad (de noche no se ven). */
   setBirds(birds: [number, number][], alpha: number): void;
+  /** Destellos del agua del puerto: segmentos [x0, y0, x1, y1] en píxeles (se ponen una vez; parpadean solos). */
+  setWater(lines: [number, number, number, number][]): void;
   /** Hornea el tren y el barco; se cumple cuando ya se ven (para esconder los del SVG sin parpadeo). */
   setPort(trainSvg: string, shipSvg: string): Promise<void>;
   /** Desplazamiento en píxeles del tren y del barco en este fotograma (como su `transform` en el SVG). */
@@ -330,6 +332,10 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   const birdsG = new Container();
   skyG.addChild(hwayG, birdsG);
   world.addChild(skyG);
+  // Destellos del agua del puerto (encima del agua y debajo del barco; también en «Calidad baja», quietos).
+  const waterG = new Container();
+  world.addChild(waterG);
+  const waterViews: Graphics[] = [];
   const ground = new Container();
   world.addChild(ground);
   // Los ayudantes van encima de todas las máquinas (se añade al mundo después de las líneas); encima, los palés y las carretillas.
@@ -705,6 +711,15 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
         setTex(v.sprite, `hway-${c.key}`, () => bake(svg(want), HWAY_BOX, HWAY_RES), () => v.key === want);
       });
     },
+    setWater(list) {
+      for (const g of waterViews) g.destroy();
+      waterViews.length = 0;
+      for (const [x0, y0, x1, y1] of list) {
+        const g = new Graphics().moveTo(x0, y0).lineTo(x1, y1).stroke({ width: 1.6, color: 0xe6f6ff });
+        waterG.addChild(g);
+        waterViews.push(g);
+      }
+    },
     setBirds(list, alpha) {
       while (birdViews.length < list.length) {
         const g = new Graphics(birdShape);
@@ -803,6 +818,16 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
         const flap = 1 - 1.6 * (u * u * (3 - 2 * u));
         for (const g of birdViews) g.scale.set(1, flap);
       }
+      // Destellos del agua: de opacidad 1 a 0,2 en 1,6 s, ida y vuelta, cada uno desfasado 0,37 s (como `.shimmer`).
+      waterViews.forEach((g, k) => {
+        if (low) {
+          g.alpha = 1;
+          return;
+        }
+        const f = (((now + k * 0.37) / 1.6) % 2 + 2) % 2;
+        const u = f < 1 ? f : 2 - f;
+        g.alpha = 1 - 0.8 * (u * u * (3 - 2 * u));
+      });
       for (const l of lines) {
         l.floor.visible = l.inView;
         l.flowG.visible = l.inView && l.level > 0 && l.flows.length > 0;
