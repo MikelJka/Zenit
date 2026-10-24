@@ -2,6 +2,13 @@
 
 Diario del juego espacial, la entrada más reciente arriba. Antes vivía en el diario de Scrap Empire (IdleScrapyard); se separó el 2026-10-21.
 
+## 2026-10-24 — Hito 0, primera parte: esqueleto del proyecto
+
+- Nuevo esqueleto en `space-harvest/`: Vite + TypeScript estricto + Vitest + PixiJS (pantalla de prueba con un punto). `src/sim/core/` con `Rng` (semilla), `advance` (pasos de 1 s, también para el tiempo con el juego cerrado), guardado con versión por módulo (un módulo ausente carga por defecto) y `registry.ts` vacío.
+- 5 tests de la simulación y `npm run build` pasan.
+- Qué probar: `cd space-harvest && npm install && npm run dev`.
+- Sigue: publicación de prueba (hay que añadir `space-harvest` a `web/juegos.txt` y al flujo común, fuera de esta carpeta), textos es/en, menú de inicio, mapa con paralaje, scripts de rendimiento y equilibrio.
+
 ## 2026-10-21 — Documento de diseño completo (borrador)
 
 - Nuevo `docs/DISENO.md`: visión, público, pilares, tono y personajes, recursos y economía (con objetivos de ritmo), bucle y fases, los cinco módulos (núcleo, investigación con árbol de 32 nodos, agricultura con 8 cultivos, energía solar y minería de planetas con 6 destinos), sistemas transversales (pedidos, objetivos, racha, logros, sucesos, prestigio), monetización, interfaz, arte, arquitectura, plan de hitos, riesgos y 11 decisiones abiertas. El borrador anterior queda en `docs/BORRADOR_INICIAL.md`.
