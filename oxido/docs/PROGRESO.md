@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (90) — Rampas y acantilados se distinguen a simple vista
+
+- Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.
+- Segunda parte de Z#13: con el norte siempre arriba, las caídas de los lados no tenían pared que se viera. Ahora el **acantilado** (no se pasa) lleva en cada lado por el que cae una raya oscura en el borde y un labio de roca claro justo dentro, también al norte, al este y al oeste. La **pendiente** (se pasa) se oscurece hacia el lado bajo y lleva escalones claros cada pocos píxeles, como una rampa de tierra. Solo dibujo (`src/render/mapArt.ts`).
+- Sin cambios en la simulación ni en las partidas guardadas.
+- Qué probar: en una partida con colinas, acercar el zoom a un desnivel: donde hay escalones claros se puede subir; donde hay raya oscura con borde de roca, no.
+- Qué sigue: Z#19 cuando Mikel elija; si no, la última parte de Z#13 (que se vea lo que hay detrás de una construcción).
+
 ## 2026-10-24 (89) — La vista se queda con el norte arriba
 
 - Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.

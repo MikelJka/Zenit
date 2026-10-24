@@ -368,14 +368,40 @@ function shadeRelief(map: GameMap, c: RGB, pxl: number, py: number, g: number): 
     const h = ((pxl * 5 + py * 3) % 7) / 7;
     out = mix(out, mix(ROCK_FACE, CLIFF_TOP, 0.5 + (g - 0.5) * 0.4 + h * 0.1), 0.3);
   }
-  // Caídas a los lados (no se ve la pared): línea oscura en el borde y labio claro.
-  if (levelAt(tx + 1, ty) < lvl) {
-    if (lx >= 14) out = mix(out, ROCK_DARK, lx === 15 ? 0.7 : 0.35);
+  // Distancia (en píxeles) de este punto al borde de cada lado por el que la casilla cae.
+  const dropE = levelAt(tx + 1, ty) < lvl;
+  const dropW = levelAt(tx - 1, ty) < lvl;
+  const dropN = levelAt(tx, ty - 1) < lvl;
+  const dropS = levelAt(tx, ty + 1) < lvl;
+
+  if (map.cliff[i]) {
+    // Acantilado (no se pasa): borde de roca con un labio claro y una raya oscura justo en la
+    // caída, por los cuatro lados, para que se vea dónde termina el suelo aunque no se vea la pared.
+    const edge = Math.min(dropE ? 15 - lx : 99, dropW ? lx : 99, dropN ? ly : 99, dropS ? 15 - ly : 99);
+    if (edge === 0) out = mix(out, ROCK_DARK, 0.75);
+    else if (edge === 1) out = mix(out, ROCK_DARK, 0.45);
+    else if (edge === 2) out = mix(out, CLIFF_TOP, 0.55);
+    else if (edge === 3) out = mix(out, CLIFF_TOP, 0.25);
+  } else if (map.slope[i]) {
+    // Pendiente (se pasa): el suelo baja hacia el lado más bajo, más oscuro al pie, con
+    // escalones claros cada 4 píxeles en paralelo al borde, como una rampa de tierra.
+    let along = -1;
+    if (dropS) along = Math.max(along, ly / 15);
+    if (dropN) along = Math.max(along, 1 - ly / 15);
+    if (dropE) along = Math.max(along, lx / 15);
+    if (dropW) along = Math.max(along, 1 - lx / 15);
+    if (along >= 0) {
+      out = mix(out, [40, 32, 24], along * 0.28);
+      const d = Math.round(along * 15);
+      if (d % 4 === 1 && d > 2) out = mix(out, [196, 176, 136], 0.3);
+      else if (d % 4 === 2 && d > 2) out = mix(out, [40, 32, 24], 0.15);
+    }
+  } else {
+    // Escalón u orilla sin pared visible a los lados: línea oscura en el borde y labio claro.
+    if (dropE && lx >= 14) out = mix(out, ROCK_DARK, lx === 15 ? 0.7 : 0.35);
+    if (dropW && lx === 0) out = mix(out, CLIFF_TOP, 0.5);
+    if (dropN && ly === 0) out = mix(out, CLIFF_TOP, 0.45);
   }
-  if (levelAt(tx - 1, ty) < lvl) {
-    if (lx === 0) out = mix(out, CLIFF_TOP, 0.5);
-  }
-  if (levelAt(tx, ty - 1) < lvl && ly === 0) out = mix(out, CLIFF_TOP, 0.45);
 
   // Sombra al pie de una pared que queda detrás (norte) o a la izquierda (oeste).
   let shadow = 0;
