@@ -79,6 +79,23 @@ try {
   if (!(nightOpacity > 0.3)) problems.push(`noche: la capa nocturna no se aplica (opacidad ${nightOpacity})`);
   await night.screenshot({ path: 'smoke/movil-noche.png' });
   await nightCtx.close();
+  // Siguiente paso recomendado (tras el tutorial): sale la tarjeta e «Ir» abre el panel con la mejora resaltada.
+  const stepCtx = await browser.newContext({ viewport: { width: 390, height: 780 }, isMobile: true, hasTouch: true });
+  await stepCtx.addInitScript(() => localStorage.setItem('chatarrero.tut', '4'));
+  const stepPage = await stepCtx.newPage();
+  stepPage.on('pageerror', (e) => problems.push(`paso pageerror: ${e.message}`));
+  await stepPage.goto(`${URL}?notitle`);
+  await sleep(3000);
+  if (!(await stepPage.locator('#stats .next').count())) problems.push('paso: no sale la tarjeta del siguiente paso');
+  else {
+    await stepPage.screenshot({ path: 'smoke/movil-paso.png' });
+    await stepPage.click('[data-step="go"]');
+    await sleep(800);
+    if (await stepPage.locator('#sheet[hidden]').count()) problems.push('paso: «Ir» no abre el panel');
+    else if (!(await stepPage.locator('#shop button.rec').count())) problems.push('paso: la mejora recomendada no sale resaltada');
+    await stepPage.screenshot({ path: 'smoke/movil-paso-ir.png' });
+  }
+  await stepCtx.close();
   await browser.close();
 } finally {
   server.kill();
