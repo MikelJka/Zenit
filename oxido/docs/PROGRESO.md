@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (91) — Lo que hay detrás de una construcción se ve
+
+- Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.
+- Última parte de Z#13: con el norte siempre arriba, un muro, puerta, taller o mueble alto tapaba por completo a quien pasaba justo detrás. Ahora la construcción que tapa a un colono, animal, enemigo o vehículo se vuelve **translúcida** mientras lo tapa y vuelve a verse entera cuando se aparta. Los planos siguen como antes (azulados). Solo dibujo (`src/render/occlusion.ts`, con tests).
+- Z#13 queda terminada.
+- Sin cambios en la simulación ni en las partidas guardadas.
+- Qué probar: mandar a un colono a andar por detrás (al norte) de un muro o de un banco de trabajo: el muro debe verse transparente con el colono dentro y volver a verse entero al salir.
+- Qué sigue: Z#19 cuando Mikel elija; si no, Z#8 (kits con el nombre del objeto y agrupados en los filtros del almacén).
+
 ## 2026-10-24 (90) — Rampas y acantilados se distinguen a simple vista
 
 - Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.

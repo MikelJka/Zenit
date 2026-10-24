@@ -46,6 +46,7 @@ import { rotOf } from '../sim/corpses';
 import { TICKS_PER_DAY } from '../sim/time';
 import { canvasPropRasterizer, paintGround, PropRasterizer, TILE } from './mapArt';
 import { LIFT, liftOf, occludedFraction, pickTile, rowY, setTilt, TILE_H, tiltIndex, TILTS, TOP_MARGIN } from './projection';
+import { OccluderIndex, ScreenBox } from './occlusion';
 import { fromView, Rotation, rotateMap, tileFromView, tileToView, toView } from './rotation';
 
 export { TILE };
@@ -60,6 +61,8 @@ const DESIGN_DEPTH = COLONIST_DEPTH - 1.5;
 
 /** Zonas de almacén: por debajo de todo lo que está encima del suelo. */
 const ZONE_DEPTH = -0.5;
+/** Transparencia de una construcción que tapa a alguien o algo que está detrás. */
+const OCCLUDER_ALPHA = 0.45;
 
 /**
  * Modo de órdenes: designar un trabajo, quitar designaciones, marcar o quitar almacenes,
@@ -208,6 +211,10 @@ export class WorldScene extends Phaser.Scene {
   private zoneVersion = -1;
   private structSprites: Phaser.GameObjects.Image[] = [];
   private structVersion = -1;
+  /** Construcciones levantadas que pueden tapar a quien está detrás (más al norte). */
+  private occluders = new OccluderIndex<Phaser.GameObjects.Image>();
+  /** Las que este fotograma se ven translúcidas porque tapan a alguien o algo. */
+  private fadedStructs = new Set<Phaser.GameObjects.Image>();
   /** Última posición en la vista de cada vehículo y desde dónde se le ve. */
   private vehicleLast = new Map<number, { x: number; y: number; view: VehicleView }>();
   /** Sombras que proyectan las construcciones (cambian con la hora: el sol va de este a oeste). */
@@ -262,6 +269,8 @@ export class WorldScene extends Phaser.Scene {
     this.zoneVersion = -1;
     this.structVersion = -1;
     this.structSprites = [];
+    this.occluders.clear();
+    this.fadedStructs.clear();
     this.carrySprites.clear();
     this.vehicleSprites.clear();
     this.selectedVehicleId = null;
@@ -334,6 +343,7 @@ export class WorldScene extends Phaser.Scene {
     this.syncDesignations();
     this.syncZones();
     this.syncStructures();
+    this.fadeOccluders();
     this.syncPlants();
     this.syncPropLooks();
     this.syncSnow();
@@ -2242,10 +2252,14 @@ export class WorldScene extends Phaser.Scene {
     this.structVersion = st.version;
     for (const img of this.structSprites) img.destroy();
     this.structSprites = [];
+    this.occluders.clear();
+    this.fadedStructs.clear();
     for (const s of st.all()) {
       const img = this.buildingImage(s.def, st.tilesOf(s), !!s.raised, s.def.fence ? this.fenceLinks(s.x, s.y) : joinsWalls(s.def) ? this.wallLinks(s.x, s.y) : 0);
       if (!s.built) img.setAlpha(0.45).setTint(0x8fc0ff); // plano: translúcido y azulado
       else if (s.demolish) img.setTint(0xff8a7a); // marcada para demoler: rojiza
+      // Lo levantado y con altura puede tapar lo que tiene detrás: se apunta en el índice.
+      if (s.built && s.def.height > 0) this.occluders.add(this.screenBox(img), img);
       this.structSprites.push(img);
       if (s.moveTo) {
         // Adónde se va a llevar: su fantasma en blanco.
@@ -2359,6 +2373,32 @@ export class WorldScene extends Phaser.Scene {
     // Los cables, encima de los suelos.
     img.setDepth(def.category === 'suelo' ? ZONE_DEPTH - 0.1 : def.conduit ? ZONE_DEPTH - 0.05 : COLONIST_DEPTH + (vy0 + vh - 1 + rowOffset) / 1000);
     return img;
+  }
+
+  /** Rectángulo de pantalla que ocupa un dibujo (con su origen y escala) y su profundidad. */
+  private screenBox(img: Phaser.GameObjects.Image, shrinkX = 0): ScreenBox {
+    const w = img.displayWidth;
+    const h = img.displayHeight;
+    const x0 = img.x - w * img.originX;
+    const y0 = img.y - h * img.originY;
+    return { x0: x0 + w * shrinkX, y0, x1: x0 + w * (1 - shrinkX), y1: y0 + h, depth: img.depth };
+  }
+
+  /**
+   * Las construcciones que tapan a un colono, animal, enemigo o vehículo que está detrás
+   * (más al norte) se dibujan translúcidas, para que con el norte siempre arriba se vea lo de detrás.
+   */
+  private fadeOccluders(): void {
+    const now = new Set<Phaser.GameObjects.Image>();
+    const check = (img: Phaser.GameObjects.Image, shrinkX: number) => {
+      if (!img.visible) return;
+      this.occluders.covering(this.screenBox(img, shrinkX), 0.25, now);
+    };
+    for (const img of this.sprites.values()) check(img, 0.3);
+    for (const img of this.vehicleSprites.values()) check(img, 0.2);
+    for (const img of this.fadedStructs) if (!now.has(img)) img.setAlpha(1);
+    for (const img of now) img.setAlpha(OCCLUDER_ALPHA);
+    this.fadedStructs = now;
   }
 
   /** Dibuja lo que lleva cada colono encima de la cabeza. */
