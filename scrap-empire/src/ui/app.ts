@@ -46,6 +46,7 @@ import {
 import { claimGoal, goalDone, refreshDaily, rerollGoal } from '../sim/daily';
 import type { DailyGoal } from '../sim/dailyCore';
 import { nextStep, stepKey, type Step } from '../sim/advice';
+import { TUTORIAL_END, tutorialStep, type TutorialStep } from '../sim/tutorial';
 import { HELPER_LOOKS } from './look';
 import { FORKLIFT, helperFace, esc, inlineIcon, productIcon, truck, uiIcon, type UiIconName } from './icons';
 import { createYard, machineGrade } from './yard';
@@ -131,6 +132,9 @@ export function startApp(root: HTMLElement): void {
       <div id="welcome" hidden></div>
       <aside id="extras"></aside>
       <p id="tip">${t('tip')}</p>
+      <div id="coach-spot" hidden></div>
+      <div id="coach-hand" hidden>${uiIcon('finger')}</div>
+      <div id="coach" hidden role="status"><svg class="coach-face" viewBox="-16 -16 32 32">${helperFace(HELPER_LOOKS[ZONES[0].helper.id])}</svg><div class="coach-body"><b>${helperName(ZONES[0])}</b><p class="coach-text"></p><div class="coach-btns"><button type="button" data-coach="skip">${t('tut.skip')}</button><button type="button" data-coach="ok" hidden>${t('tut.ok')}</button></div></div></div>
       <section id="sheet" hidden>
         <div class="sheet-head"><h2 id="sheet-title"></h2><button id="close-shop" type="button" aria-label="${t('close')}">✕</button></div>
         <div id="panel-info"></div>
@@ -240,8 +244,9 @@ export function startApp(root: HTMLElement): void {
       }
     });
   }
-  // Tutorial de los primeros minutos: un mensaje abajo que guía paso a paso (se salta si ya se ha jugado).
-  const TUT_KEY = 'chatarrero.tut';
+  // Tutorial guiado (`src/sim/tutorial.ts`): bocadillo de Tuerca, mano que señala y el resto un poco más oscuro.
+  // Las partidas que ya han jugado no lo ven. `chatarrero.tut` era el del tutorial de texto (4 = terminado).
+  const TUT_KEY = 'chatarrero.tut2';
   // Siguiente paso recomendado: el calculado, cuándo, y el que el jugador ocultó con la ✕.
   let step: Step | null = null;
   let stepAt = -1e9;
@@ -255,11 +260,12 @@ export function startApp(root: HTMLElement): void {
   let tut = (() => {
     try {
       const v = localStorage.getItem(TUT_KEY);
-      if (v !== null) return Number(v);
+      if (v !== null) return Number(v) || 0;
+      if (localStorage.getItem('chatarrero.tut') === '4') return TUTORIAL_END;
     } catch {
       // sin almacenamiento
     }
-    return state.totalEarned > 0 ? 4 : 0;
+    return state.totalEarned > 0 ? TUTORIAL_END : 0;
   })();
   let taps = 0;
   const setTut = (n: number) => {
@@ -270,20 +276,82 @@ export function startApp(root: HTMLElement): void {
       // sin almacenamiento
     }
   };
+  /** Paso del tutorial que se está enseñando (null si ya terminó). */
+  let tutStep: TutorialStep | null = null;
   let lastTip = '';
+  let lastCoach = '';
+  let lastSpot = '';
+  let lastTutIndex = -1;
+  /** Lo que señala la mano: un elemento del mapa o de la interfaz, y el texto del bocadillo. */
+  function coachFor(st: TutorialStep): { text: string; point: Element | null; ok: boolean } {
+    const q = (sel: string) => root.querySelector(sel);
+    if (st.id === 'done') return { text: t('tut.done'), point: null, ok: true };
+    if (panel !== null && panel !== st.target) return { text: t('tut.close'), point: q('#close-shop'), ok: false };
+    if (st.id === 'tap') return { text: t('tut.tap', { n: Math.min(taps, ECONOMY.tutorial.taps), total: ECONOMY.tutorial.taps }), point: q('#pile'), ok: false };
+    if (panel !== st.target) return { text: t('tut.open', { where: panelTitle(st.target) }), point: q(`[data-sel="${st.target}"]`), ok: false };
+    const p = st.purchase;
+    if (!p) return { text: t('tut.close'), point: q('#close-shop'), ok: false };
+    const button = q(`#shop button[data-id="${p.id}"]`);
+    if (state.dollars < p.cost) return { text: t('tut.wait', { cost: fmt(p.cost - state.dollars) }), point: button, ok: false };
+    const zone = p.zoneId ? zoneName(ZONES.find((z) => z.id === p.zoneId)!) : '';
+    return { text: t('tut.' + st.id, { what: purchaseName(p), zone, cost: fmt(p.cost) }), point: button, ok: false };
+  }
   function renderTip(): void {
-    let text = t('tip');
-    let tipIcon: UiIconName | null = null;
-    if (tut === 0) [text, tipIcon] = [t('tut.tap', { n: Math.min(taps, 5) }), 'finger'];
-    else if (tut === 1) [text, tipIcon] = state.dollars >= 10 ? [t('tut.station'), 'finger'] : [t('tut.money'), 'coin'];
-    else if (tut === 2) [text, tipIcon] = [t('tut.buy'), 'cart'];
-    else if (tut === 3) [text, tipIcon] = [t('tut.close'), 'check'];
-    if (tut === 0 && taps >= 5) setTut(1);
-    if (text !== lastTip) {
-      lastTip = text;
-      $('tip').innerHTML = tipIcon ? inlineIcon(tipIcon, text) : esc(text);
-      $('tip').classList.toggle('tut', tut < 4);
+    tutStep = tut >= TUTORIAL_END ? null : tutorialStep(state, tut, taps);
+    if (!tutStep && tut < TUTORIAL_END) setTut(TUTORIAL_END);
+    if (tutStep && tutStep.index !== tut) setTut(tutStep.index);
+    const coach = $('coach');
+    const hand = $('coach-hand');
+    const spot = $('coach-spot');
+    if (!tutStep) {
+      if (!coach.hidden) [coach.hidden, hand.hidden, spot.hidden] = [true, true, true];
+      if (lastTip !== 'tip') {
+        lastTip = 'tip';
+        $('tip').textContent = t('tip');
+        $('tip').hidden = false;
+      }
+      return;
     }
+    if (lastTip !== 'tut') {
+      lastTip = 'tut';
+      $('tip').hidden = true;
+    }
+    // Al empezar un paso del mapa, la cámara lo enseña.
+    if (tutStep.index !== lastTutIndex) {
+      lastTutIndex = tutStep.index;
+      if (panel === null && tutStep.target !== 'pile' && tutStep.id !== 'done') scene.focus(tutStep.target);
+    }
+    const c = coachFor(tutStep);
+    const key = c.text + '|' + c.ok + '|' + (panel === null) + '|' + !!c.point;
+    if (key !== lastCoach) {
+      lastCoach = key;
+      coach.hidden = false;
+      // Sin panel abierto, el bocadillo va abajo (la cámara deja el puesto arriba); con panel, arriba.
+      coach.classList.toggle('low', panel === null);
+      coach.querySelector('.coach-text')!.textContent = c.text;
+      (coach.querySelector('[data-coach="ok"]') as HTMLElement).hidden = !c.ok;
+      (coach.querySelector('[data-coach="skip"]') as HTMLElement).hidden = c.ok;
+      // La mejora que pide, a la vista dentro de la lista (sin mover nada más de la pantalla).
+      if (c.point instanceof HTMLElement && c.point.closest('#shop')) {
+        for (const box of [$('shop'), $('sheet')]) {
+          const b = box.getBoundingClientRect();
+          const r = c.point.getBoundingClientRect();
+          if (r.bottom > b.bottom) box.scrollTop += r.bottom - b.bottom + 8;
+          else if (r.top < b.top) box.scrollTop -= b.top - r.top + 8;
+        }
+      }
+    }
+    // Mano y foco sobre lo que hay que tocar (si está en pantalla).
+    const r = c.point?.getBoundingClientRect();
+    const onScreen = !!r && r.width > 0 && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth;
+    const pos = onScreen ? `${Math.round(r!.left)},${Math.round(r!.top)},${Math.round(r!.width)},${Math.round(r!.height)}` : '';
+    if (pos === lastSpot) return;
+    lastSpot = pos;
+    hand.hidden = spot.hidden = !onScreen;
+    if (!onScreen) return;
+    const pad = 6;
+    Object.assign(spot.style, { left: `${r!.left - pad}px`, top: `${r!.top - pad}px`, width: `${r!.width + pad * 2}px`, height: `${r!.height + pad * 2}px` });
+    Object.assign(hand.style, { left: `${r!.left + r!.width / 2}px`, top: `${r!.top + r!.height / 2}px` });
   }
   const scene = createYard($('scene-wrap'));
   scene.el.querySelector('#pile')!.addEventListener('click', () => {
@@ -292,6 +360,12 @@ export function startApp(root: HTMLElement): void {
     play('tap');
     buzz(8);
     scene.pop('+' + ECONOMY.tap.scrap, 'pile');
+  });
+  $('coach').addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('button[data-coach]')) return;
+    play('tap');
+    setTut(TUTORIAL_END);
+    lastStats = '';
   });
   const mute = $('mute');
   const showMute = () => {
@@ -359,7 +433,6 @@ export function startApp(root: HTMLElement): void {
   };
   scene.onSelect((sel) => {
     play('tap');
-    if (tut === 1 && sel === 'crusher' && panel !== sel) setTut(2);
     openPanel(panel === sel ? null : sel);
   });
   $('ad-privacy-btn').addEventListener('click', () => void showAdPrivacyOptions());
@@ -598,7 +671,6 @@ export function startApp(root: HTMLElement): void {
     onPlay: () => undefined,
   });
   $('close-shop').addEventListener('click', () => {
-    if (tut === 3) setTut(4);
     openPanel(null);
   });
   scene.el.querySelector('#golden')!.addEventListener('click', async () => {
@@ -633,7 +705,6 @@ export function startApp(root: HTMLElement): void {
   $('shop').addEventListener('click', (e) => {
     const id = (e.target as HTMLElement).closest<HTMLElement>('button[data-id]')?.dataset.id;
     if (id && buy(state, id)) {
-      if (tut === 2) setTut(3);
       play('buy');
       buzz(15);
       const btn = (e.target as HTMLElement).closest<HTMLElement>('button[data-id]');
@@ -897,7 +968,7 @@ export function startApp(root: HTMLElement): void {
   /** Puesto donde está la compra: la carretera (camiones de chatarra), el muelle o la línea. */
   const stepTarget = (p: Purchase): string => (p.kind === 'scrapTruck' ? 'trucks' : p.kind === 'dock' ? 'dock' : p.zoneId!);
   /** El paso se ve si está activado en ajustes, el tutorial ha terminado y el jugador no ha ocultado este mismo paso. */
-  const stepShown = (): boolean => !!step && tut >= 4 && readFlag(NEXT_KEY, true) && stepKey(step) !== hiddenStep;
+  const stepShown = (): boolean => !!step && !tutStep && readFlag(NEXT_KEY, true) && stepKey(step) !== hiddenStep;
   function stepText(st: Step): string {
     const p = st.purchase;
     const zone = (id?: string) => (id ? zoneName(ZONES.find((z) => z.id === id)!) : '');

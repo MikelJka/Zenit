@@ -2,6 +2,16 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Tutorial guiado con mano y bocadillo
+
+- Incidencia #25 (almacén de fuera más real, sin tapar nunca las líneas) pasada a «Pendiente».
+- El texto de 4 pasos de abajo se cambia por un tutorial guiado: Tuerca habla en un bocadillo y una mano señala lo que hay que tocar, con el resto de la pantalla un poco más oscuro.
+- Pasos: tocar la pila 5 veces, comprar una mejora del Aplastado, un camión de chatarra, carretillas, el camión de salida y abrir la zona 2; al final, «¡Ya sabes lo básico!» con «¡Entendido!». Si hay otro panel abierto pide cerrarlo; si falta dinero, dice cuánto. «Saltar» lo quita en cualquier momento. Mientras dura no sale la tarjeta del siguiente paso.
+- Las partidas que ya habían terminado el tutorial de antes o habían ganado algo no lo ven.
+- Reglas en `src/sim/tutorial.ts` con 4 pruebas nuevas; la prueba de humo comprueba que sale el bocadillo con la mano y que «Saltar» lo quita.
+- Qué probar: abrir el juego en una ventana de incógnito (partida nueva), seguir el tutorial hasta abrir la zona 2 y ver que luego sale la tarjeta del siguiente paso; en otra, probar «Saltar».
+- Sigue: S3 cuando Mikel pase los identificadores de AdMob; si no, «Preparar el lanzamiento» (logo nuevo).
+
 ## 2026-10-24 — Siguiente paso recomendado (pedido por Mikel)
 
 - Mikel confirma que la web se ve bien en el móvil (Fase 0 terminada) y pide un siguiente paso recomendado, un tutorial guiado y preparar el lanzamiento (logo, capturas, vídeo, descripciones, AAB, Play Billing, Play Console, Reddit). Todo anotado en «Pendiente» y en «Decidido» de DISENO.md.

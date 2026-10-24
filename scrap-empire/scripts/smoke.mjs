@@ -48,6 +48,9 @@ try {
     await sleep(600);
     if (await page.locator('#title').count()) problems.push(`${d.name}: el menú de inicio no se cierra`);
     await page.screenshot({ path: `smoke/${d.name}-inicio.png` });
+    // Partida nueva: sale el tutorial guiado (bocadillo y mano sobre la pila).
+    if (!(await page.locator('#coach:not([hidden])').count())) problems.push(`${d.name}: no sale el tutorial guiado`);
+    if (!(await page.locator('#coach-hand:not([hidden])').count())) problems.push(`${d.name}: la mano del tutorial no señala nada`);
     for (let i = 0; i < 30; i++) await page.click('#pile');
     await sleep(3000);
     await page.screenshot({ path: `smoke/${d.name}-jugando.png` });
@@ -59,6 +62,10 @@ try {
     if (await page.locator('#sheet[hidden]').count()) problems.push(`${d.name}: el panel de la línea no se abre`);
     else if (!(await page.locator('#panel-info').innerText()).trim()) problems.push(`${d.name}: el panel de la línea está vacío`);
     await page.click('#close-shop');
+    // «Saltar» quita el tutorial.
+    await page.click('#coach [data-coach="skip"]');
+    await sleep(300);
+    if (await page.locator('#coach:not([hidden])').count()) problems.push(`${d.name}: «Saltar» no quita el tutorial`);
     // Con el ranking apagado (sin Firebase) el botón abre un aviso, no un error.
     await page.click('#ranking-btn');
     await sleep(400);

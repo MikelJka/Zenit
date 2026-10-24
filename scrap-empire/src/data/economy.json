@@ -4,6 +4,9 @@
   "tap": {
     "scrap": 1
   },
+  "tutorial": {
+    "taps": 5
+  },
   "scrapTrucks": {
     "baseCost": 10,
     "scrapPerSecond": 0.5
