@@ -46,7 +46,7 @@ import { rotOf } from '../sim/corpses';
 import { TICKS_PER_DAY } from '../sim/time';
 import { canvasPropRasterizer, paintGround, PropRasterizer, TILE } from './mapArt';
 import { LIFT, liftOf, occludedFraction, pickTile, rowY, setTilt, TILE_H, tiltIndex, TILTS, TOP_MARGIN } from './projection';
-import { fromView, normalizeRotation, Rotation, rotateMap, tileFromView, tileToView, toView } from './rotation';
+import { fromView, Rotation, rotateMap, tileFromView, tileToView, toView } from './rotation';
 
 export { TILE };
 const MAP_TEXTURE = 'world-map';
@@ -100,8 +100,6 @@ export const DESIGN_COLORS: Record<WorkType | TerrainJob | 'domar' | 'cancelar' 
 /** Color de relleno de un almacén según su prioridad. */
 export const ZONE_COLORS: Record<number, number> = { 1: 0x8a7a5a, 2: 0xd8c27a, 3: 0xe0a040, 4: 0xe06a3a };
 const UI_EMIT_MS = 200;
-/** Giro de los dedos (en radianes) que hace falta para girar la vista un cuarto de vuelta. */
-const TWIST_STEP = Math.PI / 4;
 /** Desplazamiento vertical (px de pantalla) de los dos dedos a la vez que cambia la inclinación un paso. */
 const TILT_DRAG_STEP = 60;
 
@@ -138,8 +136,11 @@ export class WorldScene extends Phaser.Scene {
   map!: GameMap;
   /** Mapa girado tal como se dibuja. Igual a `map` sin giro. */
   view!: GameMap;
-  /** Giro de la vista en cuartos de vuelta (se mantiene al generar un mapa nuevo). */
-  rotation: Rotation = 0;
+  /**
+   * Giro de la vista: siempre 0, con el norte arriba (Z#13, Mikel 2026-10-23: solo esa vista).
+   * El código de giro (`rotation.ts`) se mantiene para no tocar el dibujado, pero ya no se puede girar.
+   */
+  readonly rotation: Rotation = 0;
   private mapImage?: Phaser.GameObjects.Image;
   private mapTexture?: Phaser.Textures.CanvasTexture;
   private mapPixels?: ImageData;
@@ -148,7 +149,6 @@ export class WorldScene extends Phaser.Scene {
   private propSprites = new Map<number, Phaser.GameObjects.Image>();
   /** Última X dibujada de cada colono, para saber hacia dónde mira con la vista girada. */
   private lastViewX = new Map<number, number>();
-  private pinchStartAngle = 0;
   private pinchStartY: [number, number] = [0, 0];
   selectedId: number | null = null;
   /** false mientras se usa la vista 3D: las teclas y botones de cámara son suyos. */
@@ -319,7 +319,6 @@ export class WorldScene extends Phaser.Scene {
     this.game.events.emit('map-ready', this.map);
     this.game.events.emit('selection', null);
     this.emitClock();
-    this.game.events.emit('view-rotation', this.rotation);
     this.game.events.emit('view-tilt', tiltIndex);
     this.emitDesignations();
   }
@@ -783,14 +782,6 @@ export class WorldScene extends Phaser.Scene {
     this.changeView(() => {});
   }
 
-  /** Gira la vista un cuarto de vuelta (+1 horario, −1 antihorario) manteniendo centrado lo que se miraba. */
-  rotate(dir: 1 | -1): void {
-    this.changeView(() => {
-      this.rotation = normalizeRotation(this.rotation + dir);
-    });
-    this.game.events.emit('view-rotation', this.rotation);
-  }
-
   /** Cambia la inclinación un paso (+1 más de lado, −1 más desde arriba). */
   tilt(dir: 1 | -1): void {
     this.setTiltLevel(tiltIndex + dir);
@@ -973,8 +964,6 @@ export class WorldScene extends Phaser.Scene {
       kb.on('keydown-G', hotkey(() => this.toggleDraftSelected()));
       // Con la vista 3D, las teclas de cámara las lleva ella.
       const cam2d = (fn: () => void) => hotkey(() => this.cameraKeysEnabled && fn());
-      kb.on('keydown-Q', cam2d(() => this.rotate(-1)));
-      kb.on('keydown-E', cam2d(() => this.rotate(1)));
       // Al construir, R gira lo que se va a poner (lo hace main.ts); si no, inclina la vista.
       kb.on('keydown-R', cam2d(() => !this.placing && this.tilt(-1)));
       kb.on('keydown-F', cam2d(() => this.tilt(1)));
@@ -994,7 +983,6 @@ export class WorldScene extends Phaser.Scene {
     this.lastPinchAt = this.time.now;
     this.pinchStartDist = Phaser.Math.Distance.Between(a.x, a.y, b.x, b.y);
     this.pinchStartZoom = this.cameras.main.zoom;
-    this.pinchStartAngle = Math.atan2(b.y - a.y, b.x - a.x);
     this.pinchStartY = [a.y, b.y];
     const mid = this.cameras.main.getWorldPoint((a.x + b.x) / 2, (a.y + b.y) / 2);
     this.pinchAnchor.set(mid.x, mid.y);
@@ -1007,13 +995,6 @@ export class WorldScene extends Phaser.Scene {
     const dist = Phaser.Math.Distance.Between(a.x, a.y, b.x, b.y);
     this.lastPinchAt = this.time.now;
     if (this.pinchStartDist < 1) return;
-    // Girar los dos dedos gira la vista un cuarto de vuelta por cada 45°.
-    const angle = Math.atan2(b.y - a.y, b.x - a.x);
-    const twist = Phaser.Math.Angle.Wrap(angle - this.pinchStartAngle);
-    if (Math.abs(twist) >= TWIST_STEP) {
-      this.rotate(twist > 0 ? 1 : -1);
-      this.pinchStartAngle = angle;
-    }
     // Deslizar los dos dedos a la vez hacia arriba o abajo (sin separarlos) cambia la inclinación.
     const dyA = a.y - this.pinchStartY[0];
     const dyB = b.y - this.pinchStartY[1];

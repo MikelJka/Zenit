@@ -5,7 +5,6 @@ import { setTarget, targetOf, tileTemp } from './sim/climate';
 import { roofed } from './sim/roofs';
 import Phaser from 'phaser';
 import { WorldScene } from './render/WorldScene';
-import { northLabel, Rotation } from './render/rotation';
 import { DEFAULT_TILT, TILTS } from './render/projection';
 import { graphicsQuality, nextGraphicsQuality, setGraphicsQuality } from './render/graphics';
 import { seedFromString } from './sim/rng';
@@ -176,7 +175,7 @@ function checkBattleSwitch(): void {
   } else battleBar.hidden = true;
 }
 
-// --- Giro de la vista -------------------------------------------------------
+// --- Recarga por versión nueva --------------------------------------------
 /** Marca, en esta pestaña, de que se recargó sola para coger una versión nueva. */
 const RELOAD_KEY = 'oxido.recargaVersion';
 /** true si esta carga viene de una recarga automática por versión nueva (hace menos de un minuto). */
@@ -187,9 +186,6 @@ function cameFromVersionReload(): boolean {
     return false;
   }
 }
-$('rot-left').addEventListener('click', () => scene().rotate(-1));
-$('rot-right').addEventListener('click', () => scene().rotate(1));
-game.events.on('view-rotation', (r: Rotation) => ($('compass').textContent = `↑${northLabel(r)}`));
 // El botón de inclinación recorre las inclinaciones, de mirar desde arriba a mirar de lado, y vuelve a empezar.
 const tiltBtn = $('tilt-btn');
 let tiltNow = DEFAULT_TILT;

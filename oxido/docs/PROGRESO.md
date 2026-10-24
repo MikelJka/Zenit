@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (89) — La vista se queda con el norte arriba
+
+- Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.
+- Primera parte de Z#13: se quita el giro de la vista. Ya no están los botones ⟲ ⟳ ni la brújula «↑N», ni las teclas Q/E, ni el giro con dos dedos; el norte queda siempre arriba. La inclinación (∠, R/F o deslizar dos dedos) y el zoom siguen igual. La ayuda de ☰ ya no habla de girar.
+- Sin cambios en la simulación ni en las partidas guardadas.
+- Qué probar: en el móvil, pellizcar para hacer zoom girando un poco los dedos: la vista no debe girar; arriba a la derecha solo quedan ∠ (y 🪄 si está el modo Dios).
+- Qué sigue: Z#19 cuando Mikel elija; si no, la segunda parte de Z#13 (que se entiendan bien rampas y acantilados con el norte arriba).
+
 ## 2026-10-24 (88) — La investigación se ve como un árbol
 
 - Sin incidencias nuevas del 🐞.

@@ -129,7 +129,6 @@ button.active { border-color: var(--accent); color: var(--accent); }
 }
 #view-ctl button { padding: 4px 6px; font-size: 16px; }
 #tilt-btn { font-size: 13px !important; }
-#compass { min-width: 26px; text-align: center; color: var(--accent); font-weight: bold; }
 
 /* Inventario y casilla, uno debajo de otro, a la izquierda del control de la vista. */
 #info-stack {
