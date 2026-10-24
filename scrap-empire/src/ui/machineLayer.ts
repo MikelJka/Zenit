@@ -12,6 +12,8 @@
 // va encima de lo de la nave (como en el SVG, donde estaba en la capa de delante) y el toque lo sigue recibiendo el SVG.
 // Octava parte (#16): los coches de la autopista elevada del fondo y los pájaros, debajo de todo (están en el cielo,
 // por encima del horizonte, donde la nave no llega); las nubes siguen en el SVG porque pasan por detrás de la ciudad.
+// Novena parte (#16): el tren de mercancías y el barco del puerto, horneados cada uno en una textura, encima de todo
+// (están delante de la carretera); la grúa pórtico y la noche siguen en el SVG de delante y los tapan como antes.
 import { Application, CanvasSource, Container, Graphics, GraphicsContext, Sprite, Texture } from 'pixi.js';
 import { iso, rblockFaces } from './iso';
 import { AGV_SHADOW, FORKLIFT_SHADOW, TRUCK_SLOTS, agvPieces, forkliftPieces, truckSlotAt } from './vehicles';
@@ -42,6 +44,10 @@ const PILE_RES = 4;
 /** Recuadro de un coche de la autopista del fondo (con su altura de 2,7): 48 × 32 → 192 × 128 píxeles. */
 const HWAY_BOX = { x: -24, y: -22, w: 48, h: 32 };
 const HWAY_RES = 4;
+/** Recuadros del tren (en la vía, x = 0) y del barco (atracado), en píxeles absolutos como su SVG. */
+const TRAIN_BOX = { x: -660, y: 283, w: 582, h: 316 };
+const SHIP_BOX = { x: -790, y: 362, w: 752, h: 428 };
+const PORT_RES = 2;
 /** Pájaro: «M-7 0 Q-3.5 -5 0 0 Q3.5 -5 7 0», trazo de 1,6; aletea con el centro de su caja a 1,25 px por encima. */
 const BIRD_PIVOT_Y = -1.25;
 /** La carretilla gira en pasos de 10° (como las variantes del SVG). */
@@ -121,6 +127,10 @@ export interface MachineLayer {
   setHwayCars(cars: CarPose[], svg: (key: string) => string): void;
   /** Pájaros del cielo en este fotograma (píxeles) y su opacidad (de noche no se ven). */
   setBirds(birds: [number, number][], alpha: number): void;
+  /** Hornea el tren y el barco; se cumple cuando ya se ven (para esconder los del SVG sin parpadeo). */
+  setPort(trainSvg: string, shipSvg: string): Promise<void>;
+  /** Desplazamiento en píxeles del tren y del barco en este fotograma (como su `transform` en el SVG). */
+  setPortPos(train: { x: number; y: number }, ship: { x: number; y: number }): void;
   /** Pone la pila con su esquina de atrás en (x, y) píxeles; se cumple cuando ya se ve (para esconder la del SVG sin parpadeo). */
   setPile(pos: { x: number; y: number }, svg: () => string): Promise<void>;
   /** Tamaño de la pila en este fotograma (como el `scale` de `.pile-body`). */
@@ -348,7 +358,12 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
     ground.addChild(floor, flowG);
     return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [], worker: null, pallet: null };
   });
-  world.addChild(people, palletsG, agvG, cartsG, pileG, truckG, carsG);
+  // El puerto, delante de la carretera: el tren en la vía y, más cerca, el barco (como en el SVG).
+  const trainG = new Container();
+  const shipG = new Container();
+  trainG.visible = shipG.visible = false;
+  let portReady = false;
+  world.addChild(people, palletsG, agvG, cartsG, pileG, truckG, carsG, trainG, shipG);
   const cartViews: CartView[] = [];
   /** Dibujo de la carretilla por ángulo y carga: lo de detrás de la carga y lo de delante (se comparte entre carretillas). */
   const cartBodies = new Map<string, { back: GraphicsContext; front: GraphicsContext }>();
@@ -505,6 +520,21 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       return tex.then(() => {
         pileG.visible = true;
       });
+    },
+    setPort(trainSvg, shipSvg) {
+      const tt = texture('train', () => bake(trainSvg, TRAIN_BOX, PORT_RES));
+      const st = texture('ship', () => bake(shipSvg, SHIP_BOX, PORT_RES));
+      trainG.addChild(lateSprite(tt, TRAIN_BOX, PORT_RES));
+      shipG.addChild(lateSprite(st, SHIP_BOX, PORT_RES));
+      return Promise.all([tt, st]).then(() => {
+        portReady = true;
+        trainG.visible = !low;
+        shipG.visible = true;
+      });
+    },
+    setPortPos(train, ship) {
+      trainG.position.set(train.x, train.y);
+      shipG.position.set(ship.x, ship.y);
     },
     setPileScale(scale) {
       pileG.scale.set(scale);
@@ -765,6 +795,8 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       pileG.y = pileY + dy;
       // En «Calidad baja» no hay autopista ni pájaros (como en el SVG). Aleteo: alto de 1 a −0,6 en 0,45 s, ida y vuelta.
       skyG.visible = !low;
+      // En «Calidad baja» tampoco hay tren (como en el SVG); el barco sí se ve.
+      if (portReady) trainG.visible = !low;
       if (!low) {
         const f = (now / 0.45) % 2;
         const u = f < 1 ? f : 2 - f;

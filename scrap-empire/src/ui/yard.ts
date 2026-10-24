@@ -509,16 +509,14 @@ export function createYard(container: HTMLElement): Yard {
   const ship = mk(q('ship'), shipSvg());
 
   // Tren de mercancías que pasa de vez en cuando por la vía de delante.
-  const train = mk(
-    q('train'),
-    (() => {
-      const y = PORT.trackY + 0.2;
-      let t = block(0, y, 0.2, 2.4, 1.1, 1.0, '#c0392b') + block(1.7, y, 1.2, 0.9, 1.1, 0.7, '#e8e0d0') + block(0.2, y + 0.3, 1.2, 0.5, 0.5, 0.3, '#3b3b3b');
-      const cols = ['#c0392b', '#2f6fb3', '#d4a72c', '#3fa7a0', '#6b5a8a', '#e8e0d0'];
-      for (let k = 0; k < 6; k++) t += block(2.7 + k * 2.8, y, 0.2, 2.6, 1.1, 0.35, '#3b3b3b') + block(2.8 + k * 2.8, y + 0.05, 0.55, 2.4, 1.0, 0.95, cols[k % cols.length]);
-      return t;
-    })(),
-  );
+  const trainSvg = (() => {
+    const y = PORT.trackY + 0.2;
+    let t = block(0, y, 0.2, 2.4, 1.1, 1.0, '#c0392b') + block(1.7, y, 1.2, 0.9, 1.1, 0.7, '#e8e0d0') + block(0.2, y + 0.3, 1.2, 0.5, 0.5, 0.3, '#3b3b3b');
+    const cols = ['#c0392b', '#2f6fb3', '#d4a72c', '#3fa7a0', '#6b5a8a', '#e8e0d0'];
+    for (let k = 0; k < 6; k++) t += block(2.7 + k * 2.8, y, 0.2, 2.6, 1.1, 0.35, '#3b3b3b') + block(2.8 + k * 2.8, y + 0.05, 0.55, 2.4, 1.0, 0.95, cols[k % cols.length]);
+    return t;
+  })();
+  const train = mk(q('train'), trainSvg);
 
   // Pila de chatarra (se toca).
   const pile = mk(objectsG, `${pileHitIso()}<g class="pile-body">${pileIso()}</g>`, 'tappable');
@@ -849,6 +847,8 @@ export function createYard(container: HTMLElement): Yard {
   let lastHourCheck = -1;
   /** Capa en la que se dibujan ahora los coches de la autopista y los pájaros (null: en el SVG). */
   let skyOnGpu: MachineLayer | null = null;
+  /** El tren y el barco ya se ven en la capa de canvas (los del SVG están escondidos). */
+  let portOnGpu = false;
   let birdAlpha = 1;
   /** Aspecto de un coche de la autopista por su clave «color|sentido». */
   const hwayCarSvg = (key: string) => {
@@ -941,14 +941,15 @@ export function createYard(container: HTMLElement): Yard {
         ? -48 + ((t - railStart) / PORT.trainPeriod) * 130
         : 400
       : -48 + ((t % PORT.trainPeriod) / PORT.trainPeriod) * 130;
-    train.setAttribute('transform', at(trainPos, 0));
+    if (!portOnGpu) train.setAttribute('transform', at(trainPos, 0));
     // Barco: sale hacia la derecha (6 s), está fuera y vuelve por la izquierda (6 s).
     const seaSent = state.transports.sea.sent;
     if (lastSeaSent >= 0 && seaSent > lastSeaSent && t - seaStart >= 14) seaStart = t;
     lastSeaSent = seaSent;
     const sa = t - seaStart;
     const shipX = sa < 0 || sa >= 14 ? 0 : sa < 6 ? (sa / 6) ** 2 * 60 : sa < 8 ? 400 : -60 + (1 - (1 - (sa - 8) / 6) ** 2) * 60;
-    ship.setAttribute('transform', at(shipX, 0));
+    if (portOnGpu && gpu) gpu.setPortPos(isoXY(trainPos, 0), isoXY(shipX, 0));
+    else ship.setAttribute('transform', at(shipX, 0));
     // Cielo: nubes y pájaros.
     // Cambiar la clase del svg obliga a recalcular los estilos de todo el mapa: solo se hace si quedan chispas en el SVG
     // (con la capa de canvas, las chispas de las máquinas van allí y en el SVG no queda ninguna).
@@ -1467,6 +1468,12 @@ export function createYard(container: HTMLElement): Yard {
     // La pila del SVG se esconde cuando la del canvas ya se ve (el toque lo sigue recibiendo su zona transparente).
     void layer.setPile(isoXY(PILE.x, PILE.y), pileIso).then(() => {
       pileBody.style.display = 'none';
+    });
+    // Igual con el tren y el barco del puerto.
+    void layer.setPort(trainSvg, shipSvg()).then(() => {
+      portOnGpu = true;
+      train.style.visibility = 'hidden';
+      ship.style.visibility = 'hidden';
     });
     for (const l of lines) l.key = '';
     apply();

@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — El tren y el barco pasan a canvas (#16, sexta parte)
+
+- Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».
+- El tren de mercancías de la vía de delante y el barco del puerto se dibujan ahora en la capa de canvas: cada uno se hornea una vez en una textura y solo se desplaza. El SVG ya no mueve esos dos grupos (cientos de caras) 30 veces por segundo.
+- La grúa pórtico que cruza la vía, la luz de las farolas y la noche siguen en el SVG de delante, así que tapan y oscurecen al tren y al barco como antes. En «Calidad baja» sigue sin tren; el barco se ve. Con `?svg=1`, o si WebGL no arranca, todo sigue en SVG.
+- Comprobado: pruebas con `bun test` (102) y tipos con `tsc` (sin npm en la sesión); el flujo «Scrap Empire: probar rama» compila y saca capturas.
+- Qué probar: que el tren pase por la vía (por debajo de la grúa roja) y que el barco zarpe y vuelva igual que antes, de día y de noche, y que el mapa vaya igual o algo más suelto.
+- Sigue: S3 cuando Mikel pase los identificadores de AdMob y responda la Parte 29; si no, ver cómo va #16 en su Android (en SVG aún se mueven las nubes, los camiones y coches de detrás de la nave, el camión dorado y los destellos del agua).
+
 ## 2026-10-24 — Autopista y pájaros pasan a canvas (#16, quinta parte)
 
 - Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».
