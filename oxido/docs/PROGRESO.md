@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (95) — Iconos de la madera y la piedra, y ficha de cada recurso
+
+- Pasadas a «Pendiente» las 7 incidencias nuevas del 🐞 (Z#20–24, Z#26 y Z#27); los bugs van primero. La Z#25 es de Scrap Empire y se deja a su sesión.
+- **Z#22 (bug)**: en Windows 10 la 🪵 madera y la 🪨 piedra salían como un cuadro vacío porque el sistema no tiene esos emojis. Ahora los emojis que falten salen de la fuente libre Noto Color Emoji (OFL, sin coste; el navegador solo baja los trozos que usa).
+- Al tocar un recurso de la barra de arriba (o pasar el ratón en el PC) sale su ficha: nombre, cuánto hay, si se come, para qué construcciones sirve, en qué recetas se gasta y cómo se fabrica. Todo sale de los datos del juego (`src/sim/resourceInfo.ts`, tests en `tests/resourceInfo.test.ts`).
+- Sin cambios en las reglas ni en las partidas guardadas.
+- Qué probar: en el PC, mirar que la madera y la piedra de arriba tienen dibujo; tocar 🪵 y ver su ficha.
+- Qué sigue: Z#21 (animación de dormir y «zzz»).
+
 ## 2026-10-24 (94) — Enviar la partida a otro dispositivo
 
 - Sin incidencias nuevas del 🐞 ni propuestas abiertas.

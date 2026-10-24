@@ -28,6 +28,7 @@ import { mountCloudSync } from './ui/cloudSync';
 import { parseSave } from './sim/save';
 import { finishBattle, retreat, startExpedition, updateExpedition } from './sim/expedition';
 import { reachableResources } from './sim/resources';
+import { resourceInfoText } from './sim/resourceInfo';
 import { BASE_RESOURCES, HarvestJob, RESOURCE_ICONS, RESOURCE_NAMES, RESOURCES, storageFilterEntries } from './data/resources';
 import { isWeapon, WEAPON_IDS, WEAPONS } from './data/weapons';
 import { armorProtection } from './data/armor';
@@ -364,7 +365,12 @@ game.events.on('inventory', (inv: Stockpile) => {
     ...RESOURCES.filter((r) => BASE_RESOURCES.includes(r) || inv[r] > 0).map((r) => {
       const el = document.createElement('span');
       el.className = 'inv-item';
-      el.title = RESOURCE_NAMES[r];
+      // Z#22: al pasar el ratón o al tocarlo, qué recurso es y para qué sirve.
+      const info = resourceInfoText(r, inv[r]);
+      el.title = info;
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-label', RESOURCE_NAMES[r]);
+      el.addEventListener('click', () => showToast(info, 5000));
       el.textContent = `${RESOURCE_ICONS[r]} ${inv[r]}`;
       return el;
     }),

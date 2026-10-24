@@ -4,6 +4,15 @@ Escribe aquí lo que quieras, o usa el botón 🐞 del juego: abre una incidenci
 
 ## Pendiente
 
+- [ ] **🐞 del 2026-10-24 (Mikel, partida en el PC, semilla 538395, días 11–13)**. Los bugs, primero y uno por sesión; el resto, después de lo que ya estaba en cola:
+  - [x] **Z#22 (bug) Iconos de recursos sin dibujo**: en la barra de arriba, los dos primeros recursos de la izquierda salen sin icono. Además, al tocar un recurso (o pasar el ratón en el PC) debe decir qué recurso es y algo de información. *Hecho (sesión 95, 2026-10-24)*: eran 🪵 madera y 🪨 piedra, emojis que Windows 10 no tiene (tampoco 🪈 tubería). Ahora, si el sistema no tiene un emoji, sale de la fuente libre Noto Color Emoji (Google Fonts, licencia OFL; solo baja las partes que se usan). Al tocar un recurso de la barra (o al pasar el ratón en el PC) sale una ficha: nombre, cantidad, si se come, para qué construcciones sirve, en qué recetas se gasta y con cuáles se fabrica (sacado de los datos del juego).
+  - [ ] **Z#21 (bug) Animación de dormir**: a veces duermen de lado aunque la cama esté girada, o no se les ve dormir; que salgan unas «zzz» al dormir.
+  - [ ] **Z#23 (bug) Cables**: no deben verse como una X, sino como puntos que se unen con el cable de al lado formando un «—» o una «L».
+  - [ ] **Z#20 Atacar hasta el final**: las torretas y los colonos en modo atacar siguen con su objetivo hasta matarlo o dejarlo incapacitado en el suelo.
+  - [ ] **Z#24 Aviso de colonos ociosos**: arriba, un mensaje con cuántos colonos están ociosos, si hay alguno.
+  - [ ] **Z#27 Cama de cada colono**: cada cama tiene un colono asignado y ese colono siempre duerme en ella. (Cómo se asigna, si hay que decidirlo: propuesta con opciones antes.)
+  - [ ] **Z#26 Carpeta de prensa** (al final, cuando animaciones y modelos estén pulidos al 100 %): `oxido/prensa/` con capturas, vídeo de juego, logo, descripción larga y corta, y mensajes para buscar testers y luego jugadores en Reddit. Las capturas y el vídeo enseñan primero colonias primitivas y poco a poco colonias muy avanzadas de los días 30-40-50 con muchos colonos, raids avanzados y peleas con armas de fuego y torretas.
+
 - [ ] **Óxido en Google Play: prueba gratis hasta el día 10 y desbloqueo de 2,99 €** (decidido por Mikel en el chat del 2026-10-23: bloqueo en el **día 10** (pasó por el 15 y volvió al 10, justo después del primer raid),  precio **2,99 €**, pago único; mejor que meter anuncios). Por partes, una por sesión:
   - [ ] Regla del bloqueo en `src/sim/` (número en JSON): al empezar el día 10 la partida se pausa y sale una pantalla «Fin de la prueba gratis» con el botón de desbloquear; la partida queda guardada y sigue igual tras pagar. Sin anuncios.
   - [ ] Empaquetar Óxido para Android con Capacitor (como Scrap Empire, `.github/workflows/scrap-empire-android.yml`) y la compra única con Play Billing (plugin libre y gratuito), con una versión «de mentira» para la web y los tests.

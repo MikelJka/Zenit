@@ -14,7 +14,8 @@ html, body {
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  /* Los emojis que el sistema no tiene (p. ej. 🪵 y 🪨 en Windows 10) salen de Noto Color Emoji (Z#22). */
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
   font-size: 13px;
   touch-action: none;
   overscroll-behavior: none;
@@ -152,7 +153,7 @@ button.active { border-color: var(--accent); color: var(--accent); }
   white-space: nowrap;
 }
 #inventory:empty { display: none; }
-#inventory .inv-item { display: inline-flex; gap: 3px; }
+#inventory .inv-item { display: inline-flex; gap: 3px; padding: 2px 2px; pointer-events: auto; cursor: help; }
 #tile {
   padding: 4px 8px;
   color: var(--muted);
@@ -168,6 +169,8 @@ button.active { border-color: var(--accent); color: var(--accent); }
   transform: translateX(-50%);
   padding: 8px 14px;
   pointer-events: none;
+  white-space: pre-line;
+  max-width: min(420px, calc(100% - 32px));
 }
 
 #roster {
