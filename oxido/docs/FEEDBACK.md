@@ -4,6 +4,8 @@ Escribe aquí lo que quieras, o usa el botón 🐞 del juego: abre una incidenci
 
 ## Pendiente
 
+- [ ] **Pasar la partida a otro dispositivo, versión sencilla para probar** (pedido por Mikel en el chat del 2026-10-24; eligió «Compartir archivo»; va en la **siguiente sesión**, antes que lo demás). Un botón «📤 Enviar a otro dispositivo» (en ☰, junto a ⬇ Exportar) que abre el menú de compartir del móvil (Web Share API con el archivo de la partida: WhatsApp, correo, Drive…); donde no haya menú de compartir (PC), descarga el archivo como ahora. En el otro dispositivo se carga con 📂 Cargar (y, si se puede, abriendo el archivo). Sin cuentas ni servidor. **Más adelante** se cambiará por entrar con la cuenta de Google (no hacerlo ahora).
+
 - [ ] **Óxido en Google Play: prueba gratis hasta el día 10 y desbloqueo de 2,99 €** (decidido por Mikel en el chat del 2026-10-23: bloqueo en el **día 10** (pasó por el 15 y volvió al 10, justo después del primer raid),  precio **2,99 €**, pago único; mejor que meter anuncios). Por partes, una por sesión:
   - [ ] Regla del bloqueo en `src/sim/` (número en JSON): al empezar el día 10 la partida se pausa y sale una pantalla «Fin de la prueba gratis» con el botón de desbloquear; la partida queda guardada y sigue igual tras pagar. Sin anuncios.
   - [ ] Empaquetar Óxido para Android con Capacitor (como Scrap Empire, `.github/workflows/scrap-empire-android.yml`) y la compra única con Play Billing (plugin libre y gratuito), con una versión «de mentira» para la web y los tests.
