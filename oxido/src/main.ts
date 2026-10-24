@@ -28,7 +28,7 @@ import { mountCloudSync } from './ui/cloudSync';
 import { parseSave } from './sim/save';
 import { finishBattle, retreat, startExpedition, updateExpedition } from './sim/expedition';
 import { reachableResources } from './sim/resources';
-import { BASE_RESOURCES, HarvestJob, RESOURCE_ICONS, RESOURCE_NAMES, RESOURCES } from './data/resources';
+import { BASE_RESOURCES, HarvestJob, RESOURCE_ICONS, RESOURCE_NAMES, RESOURCES, storageFilterEntries } from './data/resources';
 import { isWeapon, WEAPON_IDS, WEAPONS } from './data/weapons';
 import { armorProtection } from './data/armor';
 import { CROPS } from './data/crops';
@@ -1129,10 +1129,12 @@ game.events.on('zone-select', (z: StorageZone | null) => {
   }
   lastZone = z.id;
   const accepted = RESOURCES.filter((r) => z.accepts[r]).length;
+  const entries = storageFilterEntries();
+  const acceptedEntries = entries.filter((e) => e.resources.every((r) => z.accepts[r])).length;
   // El inventario de un mueble (nevera, estantería…) va con él: no se borra desde aquí.
   $('zp-delete').hidden = z.furniture !== undefined;
   $('zp-name').textContent = `📦 ${z.name}`;
-  $('zp-sub').textContent = `${z.tiles.size} casillas · prioridad ${STORAGE_PRIORITY_NAMES[z.priority].toLowerCase()} · guarda ${accepted === RESOURCES.length ? 'de todo' : `${accepted} de ${RESOURCES.length}`}`;
+  $('zp-sub').textContent = `${z.tiles.size} casillas · prioridad ${STORAGE_PRIORITY_NAMES[z.priority].toLowerCase()} · guarda ${accepted === RESOURCES.length ? 'de todo' : `${acceptedEntries} de ${entries.length}`}`;
   $('zp-priority').replaceChildren(
     ...STORAGE_PRIORITIES.map((p) => {
       const b = mk('button', `prio-${p}`, STORAGE_PRIORITY_NAMES[p]);
@@ -1149,16 +1151,21 @@ game.events.on('zone-select', (z: StorageZone | null) => {
   );
   $<HTMLButtonElement>('zp-all').disabled = accepted === RESOURCES.length;
   $<HTMLButtonElement>('zp-none').disabled = accepted === 0;
+  // Un recurso por casilla, y todas las construcciones desmontadas (kits) juntas en una (Z#8).
   $('zp-filter').replaceChildren(
-    ...RESOURCES.map((r) => {
-      const on = z.accepts[r];
+    ...storageFilterEntries().map((e) => {
+      const onCount = e.resources.filter((r) => z.accepts[r]).length;
+      const on = onCount === e.resources.length;
+      const mixed = onCount > 0 && !on;
       const b = mk('button', 'ps-tile');
       b.type = 'button';
       b.classList.toggle('active', on);
-      b.setAttribute('aria-pressed', String(on));
-      b.append(mk('span', 'ps-tile-icon', RESOURCE_ICONS[r]), mk('span', 'ps-tile-name', RESOURCE_NAMES[r]));
+      b.classList.toggle('partial', mixed);
+      b.setAttribute('aria-pressed', mixed ? 'mixed' : String(on));
+      if (e.resources.length > 1) b.title = e.resources.map((r) => RESOURCE_NAMES[r]).join(', ');
+      b.append(mk('span', 'ps-tile-icon', e.icon), mk('span', 'ps-tile-name', e.name));
       b.addEventListener('click', () => {
-        scene().world.zones.setAccepts(z.id, r, !z.accepts[r]);
+        for (const r of e.resources) scene().world.zones.setAccepts(z.id, r, !on);
         scene().refreshZone();
       });
       return b;

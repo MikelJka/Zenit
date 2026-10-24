@@ -924,3 +924,5 @@ button.primary { background: var(--accent); color: var(--bg); border-color: var(
 /* Va dentro de #info-stack, debajo de los recursos, para no taparlos (Z#10). */
 #raid-countdown { padding: 4px 10px; font-size: 13px; color: #f0c8a0; border-color: #a04030; pointer-events: none; white-space: nowrap; }
 #raid-countdown[hidden] { display: none; }
+/* Grupo del filtro del almacén marcado a medias (algunos kits sí y otros no). */
+.ps-tile.partial { opacity: 0.85; background: repeating-linear-gradient(135deg, #2e2218 0 6px, transparent 6px 12px); }

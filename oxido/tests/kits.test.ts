@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { flatWorld } from './helpers';
 import { buildingDef, kitOf } from '../src/data/buildings';
 import { loadWorld, serializeWorld } from '../src/sim/save';
+import { isKit, KIT_RESOURCES, RESOURCE_NAMES, RESOURCES, storageFilterEntries } from '../src/data/resources';
 
 describe('kits', () => {
   it('las defensas y la energía se desmontan en kit; los muros, no', () => {
@@ -32,5 +33,26 @@ describe('kits', () => {
     for (let k = 0; k < 6000 && !plan.built; k++) w.step();
     expect(plan.built).toBe(true);
     expect(w.inventory().kit_torreta_ligera).toBe(0);
+  });
+});
+
+describe('kits con el nombre de la construcción (Z#8)', () => {
+  it('cada kit se llama como su construcción, sin «Kit»', () => {
+    for (const k of KIT_RESOURCES) {
+      expect(RESOURCE_NAMES[k]).toBe(buildingDef(k.slice(4)).name);
+      expect(RESOURCE_NAMES[k]).not.toMatch(/kit/i);
+    }
+  });
+
+  it('en el filtro del almacén los kits van todos juntos en una casilla', () => {
+    const entries = storageFilterEntries();
+    const kits = entries.filter((e) => e.resources.some(isKit));
+    expect(kits).toHaveLength(1);
+    expect([...kits[0].resources].sort()).toEqual([...KIT_RESOURCES].sort());
+    // Cada recurso sale una sola vez y no falta ninguno.
+    const all = entries.flatMap((e) => e.resources);
+    expect(all).toHaveLength(RESOURCES.length);
+    expect(new Set(all).size).toBe(RESOURCES.length);
+    expect(entries.length).toBe(RESOURCES.length - KIT_RESOURCES.length + 1);
   });
 });

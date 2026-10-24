@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (92) — Las construcciones desmontadas llevan su nombre
+
+- Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.
+- Z#8: un kit ya no se llama «Kit: Torreta ligera» sino **«Torreta ligera»** (con el icono 📦 de algo desmontado), en el almacén, en los tratos y en todas las listas.
+- En el filtro de un almacén, los 14 kits ya no salen uno a uno: van juntos en **una casilla, «📦 Construcciones desmontadas»**, que los admite o los quita todos a la vez (si en una partida antigua había unos sí y otros no, sale rayada y al tocarla los admite todos). El texto «guarda N de M» cuenta casillas del filtro.
+- Sin cambios en las reglas ni en las partidas guardadas (`src/data/resources.ts`, con tests en `tests/kits.test.ts`).
+- Qué probar: desmontar una torreta o una placa solar en kit y mirar el nombre en el almacén; abrir un almacén y tocar «📦 Construcciones desmontadas» para quitarlos y volver a admitirlos.
+- Qué sigue: Z#19 cuando Mikel elija; si no, Z#9 (menús de construcción nuevos; cómo agrupar, con propuesta antes si hay que decidirlo).
+
 ## 2026-10-24 (91) — Lo que hay detrás de una construcción se ve
 
 - Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.

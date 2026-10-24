@@ -53,21 +53,48 @@ export const RESOURCE_NAMES: Record<ResourceId, string> = {
   leche: 'Leche',
   huevos: 'Huevos',
   uranio: 'Uranio',
-  kit_barricada_madera: 'Kit: Barricada de madera',
-  kit_barricada_chatarra: 'Kit: Barricada de chatarra',
-  kit_barricada_metal: 'Kit: Barricada de metal',
-  kit_barricada_hormigon: 'Kit: Barricada de hormigón',
-  kit_sacos_arena: 'Kit: Sacos de arena',
-  kit_torreta_ligera: 'Kit: Torreta ligera',
-  kit_torreta_pesada: 'Kit: Torreta pesada',
-  kit_torreta_rotativa: 'Kit: Torreta rotativa',
-  kit_mortero: 'Kit: Mortero',
-  kit_generador_lena: 'Kit: Generador de leña',
-  kit_placa_solar: 'Kit: Placa solar',
-  kit_molino_viento: 'Kit: Molino de viento',
-  kit_bateria: 'Kit: Batería',
-  kit_lampara: 'Kit: Lámpara',
+  kit_barricada_madera: 'Barricada de madera',
+  kit_barricada_chatarra: 'Barricada de chatarra',
+  kit_barricada_metal: 'Barricada de metal',
+  kit_barricada_hormigon: 'Barricada de hormigón',
+  kit_sacos_arena: 'Sacos de arena',
+  kit_torreta_ligera: 'Torreta ligera',
+  kit_torreta_pesada: 'Torreta pesada',
+  kit_torreta_rotativa: 'Torreta rotativa',
+  kit_mortero: 'Mortero',
+  kit_generador_lena: 'Generador de leña',
+  kit_placa_solar: 'Placa solar',
+  kit_molino_viento: 'Molino de viento',
+  kit_bateria: 'Batería',
+  kit_lampara: 'Lámpara',
 };
+
+/** ¿Es una construcción desmontada (kit) que se guarda en el almacén? Se llama como la construcción (Z#8). */
+export function isKit(r: ResourceId): boolean {
+  return r.startsWith('kit_');
+}
+
+/** Construcciones desmontadas (kits), en el orden de `RESOURCES`. */
+export const KIT_RESOURCES: readonly ResourceId[] = RESOURCES.filter(isKit);
+
+/** Una casilla del filtro de un almacén: un recurso suelto o un grupo que se marca entero. */
+export interface StorageFilterEntry {
+  key: string;
+  icon: string;
+  name: string;
+  resources: readonly ResourceId[];
+}
+
+/** Casillas del filtro de los almacenes: cada recurso por su lado y todos los kits juntos en una (Z#8). */
+export function storageFilterEntries(): StorageFilterEntry[] {
+  const out: StorageFilterEntry[] = [];
+  for (const r of RESOURCES) {
+    if (isKit(r)) continue;
+    out.push({ key: r, icon: RESOURCE_ICONS[r], name: RESOURCE_NAMES[r], resources: [r] });
+  }
+  if (KIT_RESOURCES.length) out.push({ key: 'kits', icon: '📦', name: 'Construcciones desmontadas', resources: KIT_RESOURCES });
+  return out;
+}
 
 /** Recursos que se muestran siempre en el inventario (los demás, solo si hay). */
 export const BASE_RESOURCES: readonly ResourceId[] = ['madera', 'piedra', 'chatarra', 'componentes'];
