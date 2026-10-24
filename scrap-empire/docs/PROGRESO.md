@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Siguiente paso recomendado (pedido por Mikel)
+
+- Mikel confirma que la web se ve bien en el móvil (Fase 0 terminada) y pide un siguiente paso recomendado, un tutorial guiado y preparar el lanzamiento (logo, capturas, vídeo, descripciones, AAB, Play Billing, Play Console, Reddit). Todo anotado en «Pendiente» y en «Decidido» de DISENO.md.
+- Hecho el siguiente paso: una tarjeta amarilla en el recuadro de arriba dice qué hacer. Primero lo que atasca la fábrica (muelle lleno → «Más carga en el muelle»; palé lleno → carretillas de esa línea; falta chatarra → camión de chatarra) y, si no hay atasco, la compra que más $/s da por cada $ (o ahorrar para la siguiente zona).
+- «Ir» lleva al puesto y abre su panel con la mejora resaltada; la ✕ oculta ese paso hasta que haya otro; en ⚙ Ajustes, «Siguiente paso recomendado» lo quita del todo. No sale mientras dura el tutorial.
+- Reglas en `src/sim/advice.ts` con 5 pruebas nuevas (107 en total, con `bun test`).
+- Qué probar: empezar una partida nueva, acabar el tutorial y seguir la tarjeta un rato; ocultarla con la ✕ y apagarla en Ajustes.
+- Sigue: el tutorial guiado con mano y bocadillo.
+
 ## 2026-10-24 — Destellos del agua a canvas y nubes más ligeras (#16, séptima parte)
 
 - Sin incidencias nuevas ni propuestas abiertas. S3 sigue esperando los identificadores de AdMob de Mikel, así que sigue «Que vaya mejor (#16)».
