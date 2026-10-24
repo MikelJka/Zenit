@@ -2,6 +2,14 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — La pila pasa a canvas (#16, cuarta parte)
+
+- Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».
+- La pila de chatarra se dibuja ahora en la capa de canvas: se hornea una vez en una textura, crece con la chatarra como antes y da el mismo saltito al tocarla. En el SVG solo queda una zona transparente que recibe el toque, y su tamaño se actualiza solo cuando cambia (antes se reescribía 30 veces por segundo).
+- La pila del SVG se esconde cuando la del canvas ya está lista, para que no parpadee al arrancar. Con `?svg=1`, o si WebGL no arranca, sigue en SVG.
+- Qué probar: que la pila se vea igual (encima de los AGV y las carretillas), que tocarla siga dando chatarra con su saltito y sus trocitos, y que crezca al acumular chatarra.
+- Sigue: S3 cuando Mikel pase los identificadores de AdMob y responda la Parte 29; si no, #16: el decorado animado (nubes, pájaros, autopista, tren y barco) a canvas.
+
 ## 2026-10-24 — Los AGV pasan a canvas (#16, tercera parte)
 
 - Sin incidencias nuevas. S3 sigue esperando a Mikel (identificadores de AdMob y Parte 29), así que sigue «Que vaya mejor (#16)».

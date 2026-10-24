@@ -320,6 +320,16 @@ function staticYard(): string {
   return s;
 }
 
+/** Contorno del montón de la pila (puntos del mapa desde su esquina de atrás). */
+const PILE_MOUND: [number, number][] = [[0, 1.6], [1.2, 0.2], [2.6, 0.2], [3.8, 1.4], [3.8, 2.8], [2.4, 3.8], [0.6, 3.6]];
+
+/** Zona que se toca de la pila (transparente): con la capa de canvas, la pila se dibuja allí y aquí solo queda esto. */
+function pileHitIso(): string {
+  const [cx, cy] = iso(PILE.x, PILE.y);
+  const [ex, ey] = iso(2, 2);
+  return `<g class="pile-hit" fill="transparent"><ellipse cx="${ex - cx}" cy="${ey - cy}" rx="${3 * 28}" ry="${3 * 14}"/><polygon points="${PILE_MOUND.map(([x, y]) => iso(x, y)).map(([a, b]) => `${(a - cx).toFixed(1)},${(b - cy - 10).toFixed(1)}`).join(' ')}"/></g>`;
+}
+
 function pileIso(): string {
   const [cx, cy] = iso(PILE.x, PILE.y);
   const junk = [
@@ -330,7 +340,7 @@ function pileIso(): string {
     [1.6, 1.2, 1.0, 0.5, 0.5, 0.35, '#7d8b6a'],
     [0.6, 2.2, 0.2, 0.5, 0.6, 0.4, '#8c7b6b'],
   ] as const;
-  const mound = [iso(0, 1.6), iso(1.2, 0.2), iso(2.6, 0.2), iso(3.8, 1.4), iso(3.8, 2.8), iso(2.4, 3.8), iso(0.6, 3.6)];
+  const mound = PILE_MOUND.map(([x, y]) => iso(x, y));
   const [hx, hy] = iso(2, 2, 1.6);
   return `<g transform="translate(${-cx} ${-cy})">
     <ellipse cx="${iso(2, 2)[0]}" cy="${iso(2, 2)[1]}" rx="${3 * 28}" ry="${3 * 14}" fill="#000" opacity="0.15"/>
@@ -510,12 +520,13 @@ export function createYard(container: HTMLElement): Yard {
   );
 
   // Pila de chatarra (se toca).
-  const pile = mk(objectsG, `<g class="pile-body">${pileIso()}</g>`, 'tappable');
+  const pile = mk(objectsG, `${pileHitIso()}<g class="pile-body">${pileIso()}</g>`, 'tappable');
   pile.id = 'pile';
   pile.setAttribute('role', 'button');
   pile.setAttribute('aria-label', tr('map.pileAria'));
   pile.setAttribute('transform', at(PILE.x, PILE.y));
   const pileBody = pile.querySelector<SVGGElement>('.pile-body')!;
+  const pileHit = pile.querySelector<SVGGElement>('.pile-hit')!;
   const pileLabel = mk(labels, '', 'tag');
   const hint = mk(labels, `<rect x="-36" y="-12" width="72" height="20" rx="10" fill="#fff6e0" stroke="#2a1d14" stroke-width="1.2"/><text y="2.5" text-anchor="middle" font-size="10" font-weight="800" fill="#2a1d14">${tr('map.touchMe')}</text>`, 'hint');
   hint.setAttribute('pointer-events', 'none');
@@ -839,6 +850,7 @@ export function createYard(container: HTMLElement): Yard {
   let sparksInSvg = true;
   let spkOn = false;
   let pileShown = '';
+  let pileScaleShown = '';
   let pileText: SVGTextElement | null = null;
   let lastBadgeCheck = -1;
   let lastEarned = -1;
@@ -939,7 +951,14 @@ export function createYard(container: HTMLElement): Yard {
 
     // Pila.
     const s = 0.85 + Math.min(0.3, Math.log10(1 + state.scrap) / 10);
-    pileBody.setAttribute('transform', `scale(${s.toFixed(3)})`);
+    // Solo se toca si cambia (antes se reescribía en cada fotograma); con la capa de canvas, la pila se dibuja allí.
+    const pileScale = s.toFixed(3);
+    if (pileScale !== pileScaleShown) {
+      pileScaleShown = pileScale;
+      pileBody.setAttribute('transform', `scale(${pileScale})`);
+      pileHit.setAttribute('transform', `scale(${pileScale})`);
+      gpu?.setPileScale(s);
+    }
     const [plx, ply] = iso(PILE.x + 1.8, PILE.y + 2.6, 0);
     // El rótulo solo se toca si cambia el texto (antes se rehacía en cada fotograma).
     const pileTxt = state.scrap >= 1 ? tr('map.scrapPile', { n: fmtShort(state.scrap) }) : `+${fmtShort(scrapPerSecond(state))}/s`;
@@ -1320,9 +1339,12 @@ export function createYard(container: HTMLElement): Yard {
 
   function pop(text: string, where: 'pile' | 'dock'): void {
     if (where === 'pile') {
-      pileBody.classList.remove('jiggle');
-      void pileBody.getBoundingClientRect();
-      pileBody.classList.add('jiggle');
+      if (gpu) gpu.jigglePile();
+      else {
+        pileBody.classList.remove('jiggle');
+        void pileBody.getBoundingClientRect();
+        pileBody.classList.add('jiggle');
+      }
       const [cx, cy] = iso(PILE.x + 1.8, PILE.y + 1.4, 1.8);
       for (let k = 0; k < 4; k++) {
         const chip = document.createElementNS(NS, 'rect');
@@ -1416,6 +1438,11 @@ export function createYard(container: HTMLElement): Yard {
     container.insertBefore(layer.canvas, svg);
     layer.setLowQuality(lowQ);
     gpu = layer;
+    pileScaleShown = '';
+    // La pila del SVG se esconde cuando la del canvas ya se ve (el toque lo sigue recibiendo su zona transparente).
+    void layer.setPile(isoXY(PILE.x, PILE.y), pileIso).then(() => {
+      pileBody.style.display = 'none';
+    });
     for (const l of lines) l.key = '';
     apply();
   });

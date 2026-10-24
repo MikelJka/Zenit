@@ -8,6 +8,8 @@
 // Quinta parte: el camión de expedición del muelle (chasis y caja horneados en dos piezas, con los productos en medio)
 // y los coches de la carretera de delante, encima de todo lo de la nave (están fuera, delante de ella).
 // Sexta parte (#16): los tres AGV de las rutas azules, por bloques girados como la carretilla, debajo de las carretillas.
+// Séptima parte (#16): la pila de chatarra, horneada en una textura que crece con la chatarra y salta al tocarla;
+// va encima de lo de la nave (como en el SVG, donde estaba en la capa de delante) y el toque lo sigue recibiendo el SVG.
 import { Application, CanvasSource, Container, Graphics, GraphicsContext, Sprite, Texture } from 'pixi.js';
 import { iso, rblockFaces } from './iso';
 import { AGV_SHADOW, FORKLIFT_SHADOW, TRUCK_SLOTS, agvPieces, forkliftPieces, truckSlotAt } from './vehicles';
@@ -32,6 +34,9 @@ const TRUCK_RES = 4;
 /** Recuadro de un coche de la carretera: 72 × 48 → 288 × 192 píxeles. */
 const CAR_BOX = { x: -32, y: -24, w: 72, h: 48 };
 const CAR_RES = 4;
+/** Recuadro de la pila (píxeles desde la esquina de atrás de su sitio, sin escalar): 192 × 112 → 768 × 448 píxeles. */
+const PILE_BOX = { x: -100, y: -60, w: 192, h: 112 };
+const PILE_RES = 4;
 /** La carretilla gira en pasos de 10° (como las variantes del SVG). */
 const CART_STEPS = 36;
 const EDGE = 0x2a1d14;
@@ -105,6 +110,12 @@ export interface MachineLayer {
   setShipTruck(pos: { x: number; y: number } | null, ids: string[], parts: () => { back: string; front: string }, prop: (zone: string) => string): void;
   /** Coches de la carretera de delante en este fotograma; `svg` dibuja el aspecto `key`. */
   setCars(cars: CarPose[], svg: (key: string) => string): void;
+  /** Pone la pila con su esquina de atrás en (x, y) píxeles; se cumple cuando ya se ve (para esconder la del SVG sin parpadeo). */
+  setPile(pos: { x: number; y: number }, svg: () => string): Promise<void>;
+  /** Tamaño de la pila en este fotograma (como el `scale` de `.pile-body`). */
+  setPileScale(scale: number): void;
+  /** Salto de la pila al tocarla (como `.pile-body.jiggle`). */
+  jigglePile(): void;
   animate(i: number, level: number, phase: number, gearAngle: number, inView: boolean): void;
   /** Rebote de subida de nivel (como `.levelup`) con el pie en (px, py). */
   levelUp(i: number, px: number, py: number): void;
@@ -303,6 +314,10 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
   const truckG = new Container();
   truckG.visible = false;
   const carsG = new Container();
+  const pileG = new Container();
+  pileG.visible = false;
+  let pileJig = -1;
+  let pileY = 0;
   const textures = new Map<string, Promise<Texture>>();
   /** Las texturas ya horneadas, para ponerlas en el mismo fotograma (sin parpadeo al girar la carretilla). */
   const ready = new Map<string, Texture>();
@@ -316,7 +331,7 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
     ground.addChild(floor, flowG);
     return { root, machines: [], level: 0, phase: 0, gearAngle: 0, inView: true, bounce: -1, pivot: [0, 0], enter: -1, floor, flowG, flows: [], worker: null, pallet: null };
   });
-  world.addChild(people, palletsG, agvG, cartsG, truckG, carsG);
+  world.addChild(people, palletsG, agvG, cartsG, pileG, truckG, carsG);
   const cartViews: CartView[] = [];
   /** Dibujo de la carretilla por ángulo y carga: lo de detrás de la carga y lo de delante (se comparte entre carretillas). */
   const cartBodies = new Map<string, { back: GraphicsContext; front: GraphicsContext }>();
@@ -456,6 +471,23 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
 
   return {
     canvas,
+    setPile(pos, svg) {
+      pileG.removeChildren().forEach((c) => c.destroy());
+      pileG.position.set(pos.x, pos.y);
+      pileY = pos.y;
+      const tex = texture('pile', () => bake(svg(), PILE_BOX, PILE_RES));
+      const sprite = lateSprite(tex, PILE_BOX, PILE_RES);
+      pileG.addChild(sprite);
+      return tex.then(() => {
+        pileG.visible = true;
+      });
+    },
+    setPileScale(scale) {
+      pileG.scale.set(scale);
+    },
+    jigglePile() {
+      pileJig = performance.now() / 1000;
+    },
     setPallet(i, spot, key, svg) {
       const l = lines[i];
       l.pallet?.destroy();
@@ -661,6 +693,12 @@ export async function createMachineLayer(lineCount: number): Promise<MachineLaye
       const lampDark = !low && now % 1 >= 0.5;
       // Rayas de la chatarra en las cintas: 4 px de raya y 14 de hueco que avanzan 18 px cada 0,9 s (sin moverse en «Calidad baja»).
       const shift = low ? 0 : ((now / 0.9) % 1) * 18;
+      // Salto de la pila: sube 5 px al 30 % y baja a +1 px al 60 % de 0,22 s (como la animación «jig»).
+      const j = pileJig < 0 ? 1 : (now - pileJig) / 0.22;
+      let dy = 0;
+      if (j < 1) dy = j < 0.3 ? (-5 * j) / 0.3 : j < 0.6 ? -5 + (6 * (j - 0.3)) / 0.3 : 1 - (j - 0.6) / 0.4;
+      else pileJig = -1;
+      pileG.y = pileY + dy;
       for (const l of lines) {
         l.floor.visible = l.inView;
         l.flowG.visible = l.inView && l.level > 0 && l.flows.length > 0;
