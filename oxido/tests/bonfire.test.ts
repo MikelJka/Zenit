@@ -146,7 +146,7 @@ describe('🔥 hoguera', () => {
     expect(isLitBonfire(s)).toBe(true);
   });
 
-  it('encendida da luz como una lámpara (3 casillas); apagada, no', () => {
+  it('encendida ilumina 5 casillas, más que una lámpara (Z#19); apagada, no', () => {
     const w = flatWorld(1);
     const s = buildNow(w, 10, 10, 'hoguera');
     const at = (x: number, y: number) => y * w.map.width + x;
@@ -154,8 +154,8 @@ describe('🔥 hoguera', () => {
     s.fuel = 10;
     updateBonfires(w.structures, 0.01);
     const lit = litTiles(w.structures);
-    expect(lit.has(at(13, 10))).toBe(true);
-    expect(lit.has(at(14, 10))).toBe(false);
+    expect(lit.has(at(15, 10))).toBe(true);
+    expect(lit.has(at(16, 10))).toBe(false);
   });
 
   it('de noche, quien está a 3 casillas o menos gana un 5 % de ánimo que le dura 2 horas', () => {
@@ -182,5 +182,20 @@ describe('🔥 hoguera', () => {
     updateBonfires(w.structures, 0.01);
     updateBonfireCheer(w.structures, w.colonists, w.tick, TICKS_PER_HOUR, true);
     expect(warm(far, w.tick)).toBeUndefined();
+  });
+});
+
+describe('la estufa encendida ilumina como la hoguera (Z#19)', () => {
+  it('5 casillas solo mientras arde; con la leña guardada y sin frío, nada', () => {
+    const w = flatWorld(1);
+    const s = buildNow(w, 10, 10, 'estufa');
+    const at = (x: number, y: number) => y * w.map.width + x;
+    s.fuel = 5;
+    updateBonfires(w.structures, 0.01, false);
+    expect(litTiles(w.structures).has(at(10, 10))).toBe(false);
+    updateBonfires(w.structures, 0.01, true);
+    const lit = litTiles(w.structures);
+    expect(lit.has(at(15, 10))).toBe(true);
+    expect(lit.has(at(16, 10))).toBe(false);
   });
 });

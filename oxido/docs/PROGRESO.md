@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (93) — La hoguera alumbra más
+
+- Mikel eligió en el chat la opción **B** de Z#19.
+- La hoguera encendida ilumina ahora **5 casillas** a la redonda (antes 3), más que una lámpara (3), y su resplandor naranja se ve hasta unas 6. En esa zona se trabaja de noche sin la penalización de oscuridad y suma a la belleza del cuarto.
+- La estufa, mientras arde (de noche en invierno), ilumina lo mismo; antes solo se veía el resplandor y no contaba como luz. Apagada, con la leña guardada, no da luz.
+- El ánimo de estar cerca de la hoguera sigue a 3 casillas. Sin cambios en las partidas guardadas (los números van en `buildings.json`, con tests en `tests/bonfire.test.ts`).
+- Qué probar: de noche, encender una hoguera y mirar que el círculo de luz llega más lejos que el de una lámpara.
+- Qué sigue: Z#9 (menús de construcción nuevos; cómo agrupar, con propuesta antes si hay que decidirlo).
+
 ## 2026-10-24 (92) — Las construcciones desmontadas llevan su nombre
 
 - Sin incidencias nuevas del 🐞; Z#19 (cuánta luz da la hoguera) sigue esperando a que Mikel elija.

@@ -1187,7 +1187,7 @@
       "face": "#4e4640",
       "dark": "#241e1a"
     },
-    "light": 3,
+    "light": 5,
     "cheer": {
       "radius": 3,
       "mood": 0.05,
@@ -1213,6 +1213,7 @@
       "capacity": 10
     },
     "heater": true,
+    "light": 5,
     "colors": {
       "top": "#6a6460",
       "face": "#4a4440",
