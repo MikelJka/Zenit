@@ -17,6 +17,10 @@ import {
   orderBonus,
   transportLoad,
   buy,
+  canPrestige,
+  prestige,
+  prestigeReward,
+  prestigeUnlocked,
   ACHIEVEMENTS,
   canBoost,
   checkAchievements,
@@ -135,6 +139,7 @@ export function startApp(root: HTMLElement): void {
           <button type="submit">${t('bug.send')}</button>
         </form>
         <div id="goals" hidden></div>
+        <div id="prestige" class="opt" hidden></div>
         <div id="achieve" hidden></div>
         <div id="lang" hidden>
           <b>${t('settings.language')}</b>
@@ -313,6 +318,7 @@ export function startApp(root: HTMLElement): void {
     $('bigtext').hidden = sel !== 'settings';
     $('contrast').hidden = sel !== 'settings';
     $('achieve').hidden = sel !== 'settings';
+    $('prestige').hidden = sel !== 'settings';
     $('ranking').hidden = sel !== 'ranking';
     $('bug').hidden = sel !== 'bug';
     $('goals').hidden = sel !== 'goals';
@@ -324,7 +330,11 @@ export function startApp(root: HTMLElement): void {
     scene.setSelected(global ? null : sel);
     if (sel) $('sheet-title').textContent = panelTitle(sel);
     if (sel && !global) scene.focus(sel);
-    if (sel === 'settings') drawAchievements();
+    if (sel === 'settings') {
+      prestigeAsk = false;
+      drawPrestige();
+      drawAchievements();
+    }
     if (sel === 'ranking') void drawRanking();
   };
   scene.onSelect((sel) => {
@@ -419,10 +429,57 @@ export function startApp(root: HTMLElement): void {
     toast(t('bug.sent'));
   });
 
+  // Prestigio (S4, Parte 28): bloque en Ajustes con los Tornillos de oro, lo que daría reiniciar y confirmación.
+  let prestigeAsk = false;
+  const screwPct = (n: number): string => fmt(Math.round(n * ECONOMY.prestige.bonusPerScrew * 1000) / 10);
+  function drawPrestige(): void {
+    const box = $('prestige');
+    const have = state.goldScrews > 0 ? `<small>${t('prestige.have', { n: fmt(state.goldScrews), pct: screwPct(state.goldScrews) })}</small>` : '';
+    if (!prestigeUnlocked(state)) {
+      const zone = ZONES.find((z) => z.id === ECONOMY.prestige.unlockZone);
+      box.innerHTML = `<b>${t('prestige.title')}</b>${have}<small>${t('prestige.locked', { zone: zone ? esc(zoneName(zone)) : '', pct: screwPct(1) })}</small>`;
+      return;
+    }
+    const gain = prestigeReward(state);
+    if (!canPrestige(state)) {
+      box.innerHTML = `<b>${t('prestige.title')}</b>${have}<small>${t('prestige.notYet', { dollars: fmt(ECONOMY.prestige.screwDivisor) })}</small>`;
+      return;
+    }
+    if (!prestigeAsk) {
+      box.innerHTML = `<b>${t('prestige.title')}</b>${have}<small>${t('prestige.next', { n: fmt(gain), pct: screwPct(state.goldScrews + gain) })}</small><div><button type="button" data-prestige="ask">${t('prestige.button')}</button></div>`;
+      return;
+    }
+    box.innerHTML = `<b>${t('prestige.confirmTitle')}</b><small>${t('prestige.keep')}</small><small>${t('prestige.lose')}</small><div><button type="button" data-prestige="no">${t('prestige.no')}</button><button type="button" data-prestige="yes">${t('prestige.yes', { n: fmt(gain) })}</button></div>`;
+  }
+  $('prestige').addEventListener('click', (e) => {
+    const act = (e.target as HTMLElement).closest<HTMLElement>('button[data-prestige]')?.dataset.prestige;
+    if (!act) return;
+    play('tap');
+    if (act === 'yes') {
+      const gain = prestigeReward(state);
+      const next = prestige(state);
+      if (!next) return drawPrestige();
+      importing = true;
+      if (!store.write(pack(next, Date.now()))) {
+        importing = false;
+        return;
+      }
+      try {
+        sessionStorage.setItem('chatarrero.prestigeDone', String(gain));
+      } catch {
+        // sin aviso al volver
+      }
+      location.reload();
+      return;
+    }
+    prestigeAsk = act === 'ask';
+    drawPrestige();
+  });
   function drawAchievements(): void {
     const h = Math.floor(state.time / 3600);
     const time = h > 0 ? `${h} h ${Math.floor((state.time % 3600) / 60)} min` : `${Math.floor(state.time / 60)} min`;
-    const stats = `<b>${t('stats.title')}</b><ul class="stats"><li>${t('stats.time', { time })}</li><li>${t('stats.earned', { n: fmt(state.totalEarned) })}</li><li>${t('stats.trucks', { n: fmt(state.trucksSent) })}</li><li>${t('stats.streak', { n: state.bestStreak })}</li></ul>`;
+    const screws = state.goldScrews > 0 ? `<li>${t('stats.screws', { n: fmt(state.goldScrews), resets: state.prestiges })}</li>` : '';
+    const stats = `<b>${t('stats.title')}</b><ul class="stats"><li>${t('stats.time', { time })}</li><li>${t('stats.earned', { n: fmt(state.totalEarned) })}</li><li>${t('stats.trucks', { n: fmt(state.trucksSent) })}</li><li>${t('stats.streak', { n: state.bestStreak })}</li>${screws}</ul>`;
     $('achieve').innerHTML = stats + `<b>${t('achieve.title', { n: state.achievements.length, total: ACHIEVEMENTS.length })}</b><ul>${ACHIEVEMENTS.map((a) => `<li class="${state.achievements.includes(a.id) ? 'got' : ''}">${state.achievements.includes(a.id) ? '★' : '○'} ${esc(achievementName(a))}</li>`).join('')}</ul>`;
   }
   async function drawRanking(): Promise<void> {
@@ -470,6 +527,17 @@ export function startApp(root: HTMLElement): void {
     el.hidden = false;
     clearTimeout(toastTimer);
     toastTimer = window.setTimeout(() => (el.hidden = true), 3500);
+  }
+  // Aviso tras reiniciar con prestigio (el reinicio recarga la página).
+  try {
+    const done = sessionStorage.getItem('chatarrero.prestigeDone');
+    if (done) {
+      sessionStorage.removeItem('chatarrero.prestigeDone');
+      toast(t('prestige.done', { n: fmt(Number(done)), pct: screwPct(state.goldScrews) }), 'trophy');
+      play('reward');
+    }
+  } catch {
+    // sin almacenamiento de sesión
   }
   // El estado abierto/cerrado de «Más datos» se recuerda entre redibujados.
   $('panel-more').addEventListener('toggle', (e) => (moreOpen = (e.target as HTMLDetailsElement).open), true);

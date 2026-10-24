@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Pantalla del prestigio (S4, segunda parte)
+
+- Sin incidencias nuevas. S3 sigue esperando a Mikel (AdMob y Parte 29); se termina S4 con la segunda parte: el botón y la pantalla de reinicio.
+- En ⚙ Ajustes hay un bloque «Prestigio»: antes de abrir la zona 8 explica que se desbloquea con ella y que cada Tornillo de oro da +5 %; con la zona 8 abierta dice cuántos tornillos tienes y cuántos te daría reiniciar ahora (o que hace falta ganar 1 000 000 000 $ en la partida para el primero).
+- «Reiniciar con prestigio» pide confirmación: se conservan los tornillos, el Pase, la racha, los logros, el total ganado (ranking), los destinos del tren y el barco y los objetivos del día; vuelve a cero el dinero, la chatarra, las zonas, las máquinas, las mejoras y los ayudantes. Al confirmar, la partida se guarda y se recarga, y sale el aviso «+N Tornillos de oro».
+- Los tornillos y los reinicios salen también en Estadísticas. Textos en español e inglés.
+- Qué probar: con una partida que tenga la zona 8 (coches) abierta y más de 1 000 M$ ganados en la partida, abrir ⚙, reiniciar y ver que el dinero de los camiones sube un 5 % por tornillo.
+- Sigue: S3 cuando Mikel pase los identificadores de AdMob y responda la Parte 29; si no, «Que vaya mejor (#16)»: AGV, pila y decorado animado a canvas.
+
 ## 2026-10-24 — Prestigio en la simulación (S4, primera parte)
 
 - Sin incidencias nuevas. S3 espera a Mikel (AdMob y Parte 29), así que sigue S4: el prestigio (Parte 28: PA1 PB1 PC3 PD2).
