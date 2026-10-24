@@ -12,10 +12,10 @@ import { SKILLS, SKILL_NAMES } from '../data/colonists';
 import { TICKS_PER_DAY, TICKS_PER_HOUR } from '../sim/time';
 import { START_HOUR } from '../sim/world';
 import { mountAlerts } from './alerts';
-import { RESEARCH, RESEARCH_BENCH, researchDef } from '../data/research';
+import { RESEARCH, RESEARCH_BENCH, researchDef, type ResearchDef } from '../data/research';
 import { BUILDINGS, buildingDef } from '../data/buildings';
 import { RECIPES } from '../data/recipes';
-import { canResearch, isResearched, researchFraction, unlockedBy } from '../sim/research';
+import { canResearch, isResearched, researchFraction, researchTreeLayout, unlockedBy } from '../sim/research';
 import { factionDef, RADIO, RELATION, TRADER_FACTION } from '../data/factions';
 import { CROPS } from '../data/crops';
 import { MARKET } from '../data/market';
@@ -177,6 +177,9 @@ export function mountPeople(opts: Options): PeopleUI {
   }
 
   // --- Investigación -----------------------------------------------------------------
+  /** Proyecto elegido en el árbol y por dónde se ha deslizado (se conservan al repintar). */
+  let researchPick: string | null = null;
+  let researchScroll = { x: 0, y: 0 };
   function renderResearch(w: World): HTMLElement[] {
     const r = w.research;
     const out: HTMLElement[] = [];
@@ -190,39 +193,124 @@ export function mountPeople(opts: Options): PeopleUI {
     out.push(el('p', 'muted', cur
       ? `En marcha: ${cur.name} (${pct(researchFraction(r, cur.id))}). Avanza mientras alguien investiga en el banco; va más rápido con buena Investigación.`
       : 'Elige un proyecto. Lo que ya se podía construir sigue libre: no hace falta investigarlo.'));
-    for (const p of RESEARCH) {
+    // El proyecto elegido en el árbol, con sus detalles y el botón de investigar, va encima.
+    const pick = researchDef(researchPick ?? '') ?? cur ?? RESEARCH.find((p) => !isResearched(r, p.id) && canResearch(r, p.id)) ?? RESEARCH[0];
+    researchPick = pick.id;
+    out.push(researchCard(w, pick), researchTree(w, pick.id));
+    return out;
+  }
+
+  /** Detalles de un proyecto: qué desbloquea, lo hecho y el botón de investigar (o lo que falta antes). */
+  function researchCard(w: World, p: ResearchDef): HTMLElement {
+    const r = w.research;
+    const done = isResearched(r, p.id);
+    const on = r.current === p.id;
+    const open = canResearch(r, p.id);
+    const card = el('div', 'pp-card');
+    const head = el('div', 'pp-head');
+    head.append(el('strong', undefined, `${done ? '✅' : on ? '🔬' : open ? '📘' : '🔒'} ${p.name}`), el('span', 'muted', done ? 'Hecho' : `${p.hours} h`));
+    card.append(head, el('div', 'muted', `Desbloquea: ${p.unlocks}`));
+    // Del árbol completo, lo que aún no está en el juego llega en otra actualización.
+    const effect = p.batteryMultiplier !== undefined || p.woundHealTime !== undefined || p.infectionChance !== undefined || p.machineParts !== undefined || p.floodsTrenches || p.id === RADIO.research;
+    if (!effect && !unlockedBy(BUILDINGS, p.id).length && !unlockedBy(RECIPES, p.id).length && !unlockedBy(CROPS, p.id).length) card.append(el('div', 'pp-hint', '🕒 Todavía no desbloquea nada: llegará en una próxima actualización.'));
+    if (!done) {
+      const f = researchFraction(r, p.id);
+      if (f > 0) {
+        const row = el('div', 'need');
+        row.append(el('span', undefined, 'Hecho'), bar(f, '#9ab0e0'), el('span', 'num', String(Math.floor(f * 100))));
+        card.append(row);
+      }
+      if (open) {
+        const b = button(on ? '⏸ Parar' : '🔬 Investigar', () => {
+          w.setResearch(on ? null : p.id);
+          rerender();
+        }, on ? 'Dejar de investigarlo (lo hecho se guarda)' : 'Investigar este proyecto');
+        if (on) b.classList.add('active');
+        card.append(b);
+      } else {
+        const need = p.requires.filter((q) => !isResearched(r, q)).map((q) => researchDef(q)?.name ?? q);
+        card.append(el('div', 'pp-hint', `Antes hace falta: ${need.join(', ')}`));
+      }
+    }
+    return card;
+  }
+
+  /**
+   * Árbol de investigación (Z#17): crece hacia la derecha, de lo que no pide nada a lo más avanzado,
+   * con flechas de cada requisito a lo que abre. Se desliza con el dedo o la rueda; tocar un proyecto
+   * lo elige y enseña sus detalles encima.
+   */
+  function researchTree(w: World, selected: string): HTMLElement {
+    const r = w.research;
+    const t = researchTreeLayout();
+    const NODE_W = 132;
+    const NODE_H = 46;
+    const GAP_X = 26;
+    const GAP_Y = 8;
+    const PAD = 6;
+    const x = (col: number) => PAD + col * (NODE_W + GAP_X);
+    const y = (row: number) => PAD + row * (NODE_H + GAP_Y);
+    const width = x(t.cols) - GAP_X + PAD;
+    const height = y(t.rows) - GAP_Y + PAD;
+    const wrap = el('div', 'rt-tree');
+    const inner = el('div', 'rt-inner');
+    inner.style.width = `${width}px`;
+    inner.style.height = `${height}px`;
+    const at = new Map(t.nodes.map((n) => [n.id, n]));
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', String(width));
+    svg.setAttribute('height', String(height));
+    svg.setAttribute('class', 'rt-lines');
+    for (const e of t.edges) {
+      const a = at.get(e.from);
+      const b = at.get(e.to);
+      if (!a || !b) continue;
+      const x1 = x(a.col) + NODE_W;
+      const y1 = y(a.row) + NODE_H / 2;
+      const x2 = x(b.col);
+      const y2 = y(b.row) + NODE_H / 2;
+      const mid = x1 + Math.min(GAP_X / 2, (x2 - x1) / 2);
+      const path = document.createElementNS(NS, 'path');
+      // En ángulo recto: sale del padre, baja en el hueco entre columnas y entra al hijo.
+      path.setAttribute('d', `M${x1} ${y1} H${mid} V${y2} H${x2}`);
+      path.setAttribute('class', isResearched(r, e.from) ? 'rt-line done' : 'rt-line');
+      svg.append(path);
+    }
+    inner.append(svg);
+    for (const n of t.nodes) {
+      const p = researchDef(n.id);
+      if (!p) continue;
       const done = isResearched(r, p.id);
       const on = r.current === p.id;
       const open = canResearch(r, p.id);
-      const card = el('div', 'pp-card');
-      const head = el('div', 'pp-head');
-      head.append(el('strong', undefined, `${done ? '✅' : on ? '🔬' : open ? '📘' : '🔒'} ${p.name}`), el('span', 'muted', done ? 'Hecho' : `${p.hours} h`));
-      card.append(head, el('div', 'muted', `Desbloquea: ${p.unlocks}`));
-      // Del árbol completo, lo que aún no está en el juego llega en otra actualización.
-      const effect = p.batteryMultiplier !== undefined || p.woundHealTime !== undefined || p.infectionChance !== undefined || p.machineParts !== undefined || p.floodsTrenches || p.id === RADIO.research;
-      if (!effect && !unlockedBy(BUILDINGS, p.id).length && !unlockedBy(RECIPES, p.id).length && !unlockedBy(CROPS, p.id).length) card.append(el('div', 'pp-hint', '🕒 Todavía no desbloquea nada: llegará en una próxima actualización.'));
-      if (!done) {
-        const f = researchFraction(r, p.id);
-        if (f > 0) {
-          const row = el('div', 'need');
-          row.append(el('span', undefined, 'Hecho'), bar(f, '#9ab0e0'), el('span', 'num', String(Math.floor(f * 100))));
-          card.append(row);
-        }
-        if (open) {
-          const b = button(on ? '⏸ Parar' : '🔬 Investigar', () => {
-            w.setResearch(on ? null : p.id);
-            rerender();
-          }, on ? 'Dejar de investigarlo (lo hecho se guarda)' : 'Investigar este proyecto');
-          if (on) b.classList.add('active');
-          card.append(b);
-        } else {
-          const need = p.requires.filter((q) => !isResearched(r, q)).map((q) => researchDef(q)?.name ?? q);
-          card.append(el('div', 'pp-hint', `Antes hace falta: ${need.join(', ')}`));
-        }
-      }
-      out.push(card);
+      const f = researchFraction(r, p.id);
+      const b = button('', () => {
+        researchPick = p.id;
+        rerender();
+      }, p.name);
+      b.className = `rt-node ${done ? 'rt-done' : on ? 'rt-on' : open ? 'rt-open' : 'rt-lock'}${p.id === selected ? ' rt-sel' : ''}`;
+      b.style.left = `${x(n.col)}px`;
+      b.style.top = `${y(n.row)}px`;
+      b.style.width = `${NODE_W}px`;
+      b.style.height = `${NODE_H}px`;
+      b.append(
+        el('span', 'rt-name', `${done ? '✅' : on ? '🔬' : open ? '📘' : '🔒'} ${p.name}`),
+        el('span', 'rt-sub', done ? 'Hecho' : f > 0 ? `${p.hours} h · ${Math.floor(f * 100)} %` : `${p.hours} h`),
+      );
+      inner.append(b);
     }
-    return out;
+    wrap.append(inner);
+    // Al repintar (cada poco mientras avanza) el árbol no vuelve al principio.
+    wrap.addEventListener('scroll', () => {
+      researchScroll = { x: wrap.scrollLeft, y: wrap.scrollTop };
+    });
+    const { x: sx, y: sy } = researchScroll;
+    requestAnimationFrame(() => {
+      wrap.scrollLeft = sx;
+      wrap.scrollTop = sy;
+    });
+    return wrap;
   }
 
   // --- Facciones ---------------------------------------------------------------------

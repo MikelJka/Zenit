@@ -136,3 +136,72 @@ export function loadResearch(d: unknown): ResearchState {
   if (typeof s.current === 'string' && canResearch(out, s.current)) out.current = s.current;
   return out;
 }
+
+/** Sitio de un proyecto en el dibujo del árbol: columna (`col`, 0 = sin requisitos) y fila (`row`). */
+export interface ResearchTreeNode {
+  id: string;
+  col: number;
+  row: number;
+}
+
+/** Dibujo del árbol de investigación: cada proyecto con su sitio y las flechas (de lo que pide a él). */
+export interface ResearchTreeLayout {
+  nodes: ResearchTreeNode[];
+  edges: { from: string; to: string }[];
+  cols: number;
+  rows: number;
+}
+
+/**
+ * Coloca los proyectos como un árbol que crece hacia la derecha (pedido por Mikel, Z#17): la columna
+ * es la cadena más larga de requisitos que lleva hasta él y cada rama ocupa sus propias filas, con el
+ * padre a la altura de su primer hijo. Si un proyecto pide dos cosas, cuelga de la más profunda y la
+ * otra se une con una flecha. Solo depende de los datos: siempre sale igual.
+ */
+export function researchTreeLayout(projects: readonly ResearchDef[] = RESEARCH): ResearchTreeLayout {
+  const byId = new Map(projects.map((p) => [p.id, p]));
+  const depth = new Map<string, number>();
+  const depthOf = (id: string, seen: Set<string> = new Set()): number => {
+    const known = depth.get(id);
+    if (known !== undefined) return known;
+    const p = byId.get(id);
+    if (!p || seen.has(id)) return 0;
+    seen.add(id);
+    const reqs = p.requires.filter((q) => byId.has(q));
+    const d = reqs.length ? 1 + Math.max(...reqs.map((q) => depthOf(q, seen))) : 0;
+    depth.set(id, d);
+    return d;
+  };
+  // De quién cuelga cada uno: el requisito más profundo (el primero si empatan).
+  const children = new Map<string, string[]>();
+  const roots: string[] = [];
+  for (const p of projects) {
+    const reqs = p.requires.filter((q) => byId.has(q));
+    if (!reqs.length) {
+      roots.push(p.id);
+      continue;
+    }
+    let parent = reqs[0];
+    for (const q of reqs) if (depthOf(q) > depthOf(parent)) parent = q;
+    const list = children.get(parent) ?? [];
+    list.push(p.id);
+    children.set(parent, list);
+  }
+  const nodes: ResearchTreeNode[] = [];
+  const placed = new Set<string>();
+  let nextRow = 0;
+  const place = (id: string): number => {
+    placed.add(id);
+    const kids = (children.get(id) ?? []).filter((k) => !placed.has(k));
+    let row = nextRow;
+    if (kids.length) row = Math.min(...kids.map(place));
+    else nextRow++;
+    nodes.push({ id, col: depthOf(id), row });
+    return row;
+  };
+  for (const id of roots) if (!placed.has(id)) place(id);
+  for (const p of projects) if (!placed.has(p.id)) place(p.id); // requisitos en bucle: no debería pasar
+  nodes.sort((a, b) => a.row - b.row || a.col - b.col);
+  const edges = projects.flatMap((p) => p.requires.filter((q) => byId.has(q)).map((q) => ({ from: q, to: p.id })));
+  return { nodes, edges, cols: Math.max(1, ...nodes.map((n) => n.col + 1)), rows: Math.max(1, nextRow) };
+}

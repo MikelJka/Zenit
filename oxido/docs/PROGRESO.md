@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 (88) — La investigación se ve como un árbol
+
+- Sin incidencias nuevas del 🐞.
+- Z#19 (hogueras con más luz): hay que decidir cuánto; propuesta con 4 opciones en «Propuestas para Mikel» de `FEEDBACK.md`. Mientras, se hizo el siguiente bug.
+- Arreglado Z#17: la pestaña 🔬 Investigación ya no es una lista, sino un árbol que crece hacia la derecha con líneas de cada requisito a lo que abre (verdes las de lo ya investigado). Cada caja dice su estado y sus horas o su %; al tocarla se elige y encima salen sus detalles y el botón 🔬 Investigar. El árbol se desliza y no vuelve al principio al repintarse. Colocación en `researchTreeLayout` (`src/sim/research.ts`).
+- Tests nuevos en `tests/researchTree.test.ts`.
+- Qué probar: en el móvil, botón 📜 de arriba → pestaña 🔬, deslizar el árbol, tocar «Armas largas» y luego investigar algo que se pueda (📘).
+- Qué sigue: Z#19 cuando Mikel elija; si no, Z#13 (solo la vista con el norte arriba).
+
 ## 2026-10-24 (87) — Las estufas apagadas ya no dan luz de noche
 
 - Incidencias nuevas del 🐞 pasadas a «Pendiente»: Z#19 (hogueras con más luz), Z#17 (árbol de investigación como árbol) y Z#18 (marcas de comerciantes y enemigos).

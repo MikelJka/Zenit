@@ -527,6 +527,20 @@ button.primary { background: var(--accent); color: var(--bg); border-color: var(
 .pp-modes button { display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; padding: 4px 2px; font-size: 12px; line-height: 1.15; }
 .pp-modes .mi { font-size: 18px; line-height: 1; }
 .pp-hint { font-size: 12px; color: var(--muted); line-height: 1.4; }
+/* Árbol de investigación (Z#17): se desliza en las dos direcciones dentro de la pestaña. */
+.rt-tree { overflow: auto; max-height: 56vh; border: 1px solid var(--border); border-radius: 6px; background: rgba(0, 0, 0, 0.18); touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.rt-inner { position: relative; }
+.rt-lines { position: absolute; left: 0; top: 0; pointer-events: none; }
+.rt-line { fill: none; stroke: #5a5550; stroke-width: 2; }
+.rt-line.done { stroke: #8fb86a; }
+.rt-node { position: absolute; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1px; padding: 3px 7px; min-height: 36px; text-align: left; border-radius: 6px; border: 1px solid var(--border); background: #2a2622; line-height: 1.15; overflow: hidden; }
+.rt-name { font-size: 12px; font-weight: 600; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rt-sub { font-size: 11px; color: var(--muted); }
+.rt-done { background: #26331f; border-color: #5c7a44; }
+.rt-on { background: #23304a; border-color: #7a9ad8; }
+.rt-open { background: #2f2a24; border-color: #8a7a5a; }
+.rt-lock { opacity: 0.6; }
+.rt-sel { outline: 2px solid #e0c060; outline-offset: 1px; opacity: 1; }
 .trade-table { display: flex; flex-direction: column; gap: 6px; }
 .trade-row { border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
 .trade-row.on { border-color: #6fa8dc; }
