@@ -58,6 +58,7 @@ export function doubleOfflineEarnings(state: GameState, dollarsEarned: number): 
   const extra = Math.max(0, dollarsEarned);
   state.dollars += extra;
   state.totalEarned += extra;
+  state.runEarned += extra;
   return extra;
 }
 

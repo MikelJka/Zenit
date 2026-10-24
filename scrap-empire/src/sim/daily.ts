@@ -90,6 +90,7 @@ export function claimGoal(state: GameState, index: number): number {
   g.claimed = true;
   state.dollars += value;
   state.totalEarned += value;
+  state.runEarned += value;
   if (!d.bonusPaid && d.goals.every((x) => x.claimed)) {
     d.bonusPaid = true;
     claimGoldenTruckFree(state);

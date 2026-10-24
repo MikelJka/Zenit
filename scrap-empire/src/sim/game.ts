@@ -129,6 +129,10 @@ export interface GameState {
   /** Objetivos diarios (null hasta el primer sorteo) y camión dorado gratis pendiente de tocar. */
   daily: DailyState | null;
   freeGolden: boolean;
+  /** Prestigio: Tornillos de oro (para siempre), dinero ganado en esta partida (desde el último reinicio) y reinicios hechos. */
+  goldScrews: number;
+  runEarned: number;
+  prestiges: number;
 }
 
 function newTransport(): TransportState {
@@ -182,6 +186,9 @@ export function newGame(): GameState {
     bestStreak: 0,
     daily: null,
     freeGolden: false,
+    goldScrews: 0,
+    runEarned: 0,
+    prestiges: 0,
   };
 }
 
@@ -209,9 +216,21 @@ export function helperValueMultiplier(zone: ZoneState): number {
   return 1 + zone.helperLevel * ECONOMY.helpers.valuePerLevel;
 }
 
-/** Valor en dólares de cada unidad que sale de la zona (con el ayudante). */
-export function unitValue(def: ZoneDef, zone: ZoneState): number {
-  return def.unitValue * helperValueMultiplier(zone);
+/** Valor en dólares de cada unidad que sale de la zona (con el ayudante y, si se pasa, la bonificación del prestigio). */
+export function unitValue(def: ZoneDef, zone: ZoneState, bonus = 1): number {
+  return def.unitValue * helperValueMultiplier(zone) * bonus;
+}
+
+/** Bonificación permanente del prestigio: +5 % a lo producido por cada Tornillo de oro. */
+export function prestigeMultiplier(state: GameState): number {
+  return 1 + state.goldScrews * ECONOMY.prestige.bonusPerScrew;
+}
+
+/** Suma dinero ganado: a la cartera, al total de siempre (ranking y logros) y al de esta partida (prestigio). */
+export function earn(state: GameState, value: number): void {
+  state.dollars += value;
+  state.totalEarned += value;
+  state.runEarned += value;
 }
 
 /** Niveles del ayudante que la experiencia ya ha desbloqueado y que se pueden pagar. */
@@ -374,7 +393,7 @@ export function incomePerSecond(state: GameState, tapsPerSecond = 0): number {
     const units = Math.min(zoneRate(def, state.zones[def.id]), scrap / def.scrapPerUnit, own, cartThroughput(state.zones[def.id]));
     scrap -= units * def.scrapPerUnit;
     if (!def.transport) carry -= units;
-    income += units * unitValue(def, state.zones[def.id]) * (def.transport ? ECONOMY.transports[def.transport].payMultiplier * routeOf(state, def.transport).pay * captainPay(state, def.transport) : 1);
+    income += units * unitValue(def, state.zones[def.id], prestigeMultiplier(state)) * (def.transport ? ECONOMY.transports[def.transport].payMultiplier * routeOf(state, def.transport).pay * captainPay(state, def.transport) : 1);
   }
   return income;
 }
@@ -399,8 +418,7 @@ export function activateBoost(state: GameState): boolean {
 export function claimGoldenTruck(state: GameState): number {
   if (state.goldenVisible === 0) return 0;
   const value = state.dockValue * ECONOMY.goldenTruck.dockMultiplier;
-  state.dollars += value;
-  state.totalEarned += value;
+  earn(state, value);
   state.dockUnits = 0;
   state.dockValue = 0;
   state.dockByZone = {};
@@ -437,8 +455,7 @@ export function claimDaily(state: GameState, today: number): number {
   const value = dailyReward(state, today);
   // Sin producción todavía (al empezar) el premio sería 0: no se gasta el día de la racha.
   if (value <= 0) return 0;
-  state.dollars += value;
-  state.totalEarned += value;
+  earn(state, value);
   state.streakDay = day;
   state.bestStreak = Math.max(state.bestStreak, day);
   state.lastClaimDay = today;
@@ -491,7 +508,7 @@ function step(state: GameState, dt: number): void {
           continue;
         }
         out.units += trip.load;
-        out.value += trip.load * unitValue(def, zone);
+        out.value += trip.load * unitValue(def, zone, prestigeMultiplier(state));
       } else {
         // Si la huella del producto está llena, la carretilla espera con su tanda y la línea acaba parando.
         if ((state.dockByZone[def.id] ?? 0) + trip.load > dockProductCap(state, def) + 1e-9) {
@@ -499,7 +516,7 @@ function step(state: GameState, dt: number): void {
           continue;
         }
         state.dockUnits += trip.load;
-        state.dockValue += trip.load * unitValue(def, zone);
+        state.dockValue += trip.load * unitValue(def, zone, prestigeMultiplier(state));
         state.dockByZone[def.id] = (state.dockByZone[def.id] ?? 0) + trip.load;
       }
       if (state.order?.zoneId === def.id) state.order.delivered += trip.load;
@@ -524,8 +541,7 @@ function step(state: GameState, dt: number): void {
     state.dockValue -= value;
     // El empujón dobla lo que pagan los camiones de expedición.
     const paid = value * (state.boostSeconds > 0 ? ECONOMY.boost.multiplier : 1);
-    state.dollars += paid;
-    state.totalEarned += paid;
+    earn(state, paid);
     state.trucksSent += 1;
     dailyAdd(state.daily, 'trucks', 1);
     state.truckCooldown = ECONOMY.dock.returnSeconds;
@@ -545,8 +561,7 @@ function step(state: GameState, dt: number): void {
       out.value -= value;
       const paid = value * ECONOMY.transports[id].payMultiplier * routeOf(state, id).pay * captainPay(state, id) * bonus * (out.doubleNext ? 2 : 1) * (state.boostSeconds > 0 ? ECONOMY.boost.multiplier : 1);
       out.doubleNext = false;
-      state.dollars += paid;
-      state.totalEarned += paid;
+      earn(state, paid);
       out.sent += 1;
       out.cooldown = tripSeconds(state, id);
     }
@@ -565,8 +580,7 @@ function stepOrders(state: GameState, dt: number): void {
   if (state.order) {
     if (state.order.delivered >= state.order.qty) {
       const bonus = orderBonus(state, state.order);
-      state.dollars += bonus;
-      state.totalEarned += bonus;
+      earn(state, bonus);
       state.ordersDone += 1;
       dailyAdd(state.daily, 'orders', 1);
       state.order = null;
@@ -595,7 +609,7 @@ function stepOrders(state: GameState, dt: number): void {
 /** Bonificación que paga un pedido al cumplirse. */
 export function orderBonus(state: GameState, order: OrderState): number {
   const def = ZONES.find((d) => d.id === order.zoneId)!;
-  return order.qty * unitValue(def, state.zones[def.id]) * ECONOMY.orders.bonusMultiplier;
+  return order.qty * unitValue(def, state.zones[def.id], prestigeMultiplier(state)) * ECONOMY.orders.bonusMultiplier;
 }
 
 /** Cantidad que se podría pedir a una línea: 0 si no está abierta, sin chatarra o con ritmo para llenar al menos una tanda a tiempo. */
@@ -695,8 +709,8 @@ export function purchases(state: GameState): Purchase[] {
 }
 
 /** Premio por llegar a un múltiplo de 5 de nivel de máquina: 10 minutos de lo que produce la línea. */
-export function milestoneReward(def: ZoneDef, zone: ZoneState): number {
-  return 600 * zoneRate(def, zone) * unitValue(def, zone);
+export function milestoneReward(def: ZoneDef, zone: ZoneState, bonus = 1): number {
+  return 600 * zoneRate(def, zone) * unitValue(def, zone, bonus);
 }
 
 export interface AchievementDef {
@@ -797,9 +811,8 @@ export function buy(state: GameState, id: string): boolean {
       // Hito cada 5 niveles de máquina: premio único de unos minutos de producción de la línea.
       if (zone!.machineLevel % 5 === 0 && zone!.machineLevel > zone!.milestone) {
         zone!.milestone = zone!.machineLevel;
-        const reward = milestoneReward(ZONES.find((d) => d.id === p.zoneId)!, zone!);
-        state.dollars += reward;
-        state.totalEarned += reward;
+        const reward = milestoneReward(ZONES.find((d) => d.id === p.zoneId)!, zone!, prestigeMultiplier(state));
+        earn(state, reward);
       }
       break;
     }
@@ -835,5 +848,51 @@ export function load(json: string): GameState {
   // Un pedido guardado de una zona que ya no existe, o con datos raros, se descarta.
   const o = data.order;
   const order = o && ZONES.some((d) => d.id === o.zoneId) && Number.isFinite(o.qty) && o.qty > 0 ? { zoneId: o.zoneId, qty: o.qty, delivered: Number(o.delivered) || 0, left: Number(o.left) || 0 } : null;
-  return { ...base, ...data, transports, order, dockByZone: { ...(data.dockByZone ?? {}) }, version: SAVE_VERSION, zones };
+  // Partidas de antes del prestigio: todo lo ganado cuenta como ganado en esta partida.
+  const runEarned = typeof data.runEarned === 'number' ? data.runEarned : (data.totalEarned ?? 0);
+  return { ...base, ...data, runEarned, transports, order, dockByZone: { ...(data.dockByZone ?? {}) }, version: SAVE_VERSION, zones };
+}
+
+/** Zona que hay que abrir para poder reiniciar con prestigio. */
+export function prestigeUnlocked(state: GameState): boolean {
+  return state.zones[ECONOMY.prestige.unlockZone]?.unlocked ?? false;
+}
+
+/** Tornillos de oro que daría reiniciar ahora: √(dinero ganado en la partida / 1 000 000 000), redondeado hacia abajo. */
+export function prestigeReward(state: GameState): number {
+  return Math.floor(Math.sqrt(Math.max(0, state.runEarned) / ECONOMY.prestige.screwDivisor) + 1e-12);
+}
+
+/** Se puede reiniciar: zona 8 abierta y al menos un Tornillo de oro que ganar. */
+export function canPrestige(state: GameState): boolean {
+  return prestigeUnlocked(state) && prestigeReward(state) >= 1;
+}
+
+/**
+ * Reinicio con prestigio (Parte 28: PA1 PB1 PC3 PD2). Devuelve una partida nueva que conserva el Pase, la racha, los logros,
+ * el total ganado de siempre (ranking), los destinos comprados del tren y el barco y los Tornillos de oro (más los ganados);
+ * todo lo demás vuelve a cero. Se mantienen también el tiempo de juego y los objetivos del día (no son avance de la fábrica).
+ * Si no se puede reiniciar, devuelve null.
+ */
+export function prestige(state: GameState): GameState | null {
+  if (!canPrestige(state)) return null;
+  const next = newGame();
+  next.goldScrews = state.goldScrews + prestigeReward(state);
+  next.prestiges = state.prestiges + 1;
+  next.time = state.time;
+  next.totalEarned = state.totalEarned;
+  next.hasPass = state.hasPass;
+  next.streakDay = state.streakDay;
+  next.lastClaimDay = state.lastClaimDay;
+  next.bestStreak = state.bestStreak;
+  next.achievements = [...state.achievements];
+  next.trucksSent = state.trucksSent;
+  next.ordersDone = state.ordersDone;
+  next.daily = state.daily ? JSON.parse(JSON.stringify(state.daily)) : null;
+  for (const id of ['rail', 'sea'] as const) {
+    const old = state.transports[id];
+    next.transports[id].routesUnlocked = [...old.routesUnlocked];
+    next.transports[id].route = old.routesUnlocked.includes(old.route) ? old.route : 'local';
+  }
+  return next;
 }

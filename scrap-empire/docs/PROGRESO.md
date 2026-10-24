@@ -2,6 +2,15 @@
 
 Diario de sesiones, la más reciente arriba.
 
+## 2026-10-24 — Prestigio en la simulación (S4, primera parte)
+
+- Sin incidencias nuevas. S3 espera a Mikel (AdMob y Parte 29), así que sigue S4: el prestigio (Parte 28: PA1 PB1 PC3 PD2).
+- Primera parte, solo las reglas (todavía no se ve en el juego): con la zona 8 (coches) abierta se puede reiniciar a cambio de Tornillos de oro = √(dinero ganado en la partida / 1 000 000 000), redondeado hacia abajo; cada tornillo da +5 % al valor de todo lo que se cobra, para siempre.
+- Se conservan el Pase, la racha, los logros, el total ganado (ranking) y los destinos comprados del tren y el barco; también el tiempo de juego, los objetivos del día y los contadores de camiones y pedidos. Todo lo demás vuelve a cero.
+- La partida guarda aparte el dinero ganado desde el último reinicio; en las partidas de antes cuenta todo lo ganado. Números en `src/data/economy.json` (`prestige`); 7 pruebas nuevas en `tests/prestige.test.ts`.
+- Qué probar: nada visible todavía (sigue igual que ayer).
+- Sigue: S4 segunda parte, el botón y la pantalla de reinicio (cuántos tornillos darías, qué se conserva y confirmación).
+
 ## 2026-10-23 — Anuncios de AdMob y consentimiento UE en la app de Android (S3, segunda parte)
 
 - Sin incidencias nuevas. Sigue S3 (preparar Google Play): consentimiento UE con Google UMP y AdMob en modo de prueba.

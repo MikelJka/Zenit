@@ -156,5 +156,10 @@
     "bonusPerStep": 0.05,
     "stepFill": 0.25,
     "maxSteps": 4
+  },
+  "prestige": {
+    "unlockZone": "cars",
+    "screwDivisor": 1000000000,
+    "bonusPerScrew": 0.05
   }
 }
